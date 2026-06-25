@@ -31,17 +31,33 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
 
     if (audienceId) {
-      await resend.contacts.create({
+      const { error: resendError } = await resend.contacts.create({
         email,
         audienceId,
       });
+
+      if (resendError) {
+        console.error("Resend contact creation error:", resendError);
+        return NextResponse.json(
+          { error: resendError.message || "Failed to add subscription to newsletter." },
+          { status: 400 }
+        );
+      }
     } else {
-      await resend.emails.send({
+      const { error: resendError } = await resend.emails.send({
         from: `${site.name} website <onboarding@resend.dev>`,
         to: site.email,
         subject: "New newsletter subscriber",
         html: `<p>New subscriber: ${escapeHtml(email)}</p>`,
       });
+
+      if (resendError) {
+        console.error("Resend API error:", resendError);
+        return NextResponse.json(
+          { error: "Newsletter service encountered an error. Please try again later." },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ success: true });

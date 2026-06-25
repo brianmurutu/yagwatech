@@ -27,8 +27,7 @@ export async function POST(request: Request) {
     }
 
     const resend = new Resend(apiKey);
-
-    await resend.emails.send({
+    const { error: resendError } = await resend.emails.send({
       from: `${site.name} website <onboarding@resend.dev>`,
       to: site.email,
       replyTo: email,
@@ -43,6 +42,14 @@ export async function POST(request: Request) {
         <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
       `,
     });
+
+    if (resendError) {
+      console.error("Resend API error:", resendError);
+      return NextResponse.json(
+        { error: "Email service encountered an error. Please try again later or reach us on WhatsApp." },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
