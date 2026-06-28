@@ -2,11 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
+  Download,
   Search,
   Compass,
   Lightbulb,
   Trophy,
   Star,
+  ChevronRight,
 } from "lucide-react";
 import { site, stats } from "@/lib/site";
 import { services } from "@/lib/services";
@@ -24,7 +26,7 @@ export const metadata = buildMetadata({
   path: "/",
 });
 
-// Per-project images
+// Per-project images — only the first 3 shown on homepage
 const projectImages: Record<string, string> = {
   "rusinga-digital-empowerment-initiative": "/images/portfolio-community.png",
   "business-matching": "/images/portfolio-branding.png",
@@ -43,7 +45,6 @@ function getBlogImage(category: string, index: number): string {
   return fallbacks[index % 3];
 }
 
-// WebPage JSON-LD
 const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -58,6 +59,8 @@ const webPageJsonLd = {
 
 export default function HomePage() {
   const recentPosts = getRecentPosts(undefined, 3);
+  // Show exactly 3 portfolio projects on homepage
+  const featuredProjects = projects.slice(0, 3);
 
   return (
     <>
@@ -67,66 +70,153 @@ export default function HomePage() {
       />
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-blueDark via-brand-blue to-[#1A3F8F] py-20 lg:py-28">
+      <section className="relative overflow-hidden bg-brand-blueDark py-20 lg:py-28 min-h-[88vh] flex items-center">
+        {/* Hero background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero-bg.png"
+            alt="Yagwa Tech Solutions — digital solutions background"
+            fill
+            className="object-cover opacity-35"
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-blueDark/90 via-brand-blueDark/70 to-brand-purple/20" />
+        </div>
+
         {/* Animated orbs */}
-        <div className="hero-orb absolute -right-20 -top-20 h-96 w-96 rounded-full bg-brand-orange/10" />
-        <div className="hero-orb absolute right-24 -bottom-32 h-72 w-72 rounded-full bg-white/5" style={{ animationDelay: "3s" }} />
-        <div className="hero-orb absolute left-1/3 top-1/2 h-48 w-48 rounded-full bg-brand-orange/5" style={{ animationDelay: "1.5s" }} />
+        <div className="hero-orb absolute -right-20 -top-20 h-96 w-96 rounded-full bg-brand-orange/15" />
+        <div className="hero-orb absolute right-24 -bottom-32 h-72 w-72 rounded-full bg-brand-purple/15" style={{ animationDelay: "3s" }} />
+        <div className="hero-orb absolute left-1/3 top-1/2 h-48 w-48 rounded-full bg-brand-orange/8" style={{ animationDelay: "1.5s" }} />
+        {/* Grid overlay for depth */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.4) 1px,transparent 1px)", backgroundSize: "60px 60px" }}
+        />
 
-        <div className="container-wrap relative z-10">
-          <div className="max-w-2xl">
-            <AnimatedSection>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3.5 py-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand-orange animate-pulse" />
-                <span className="text-xs font-medium text-brand-orangeLight">
-                  Kenya&apos;s leading digital solutions agency
+        <div className="container-wrap relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: copy */}
+            <div>
+              <AnimatedSection>
+                <span className="inline-flex items-center gap-2 rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3.5 py-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-orange animate-pulse" />
+                  <span className="text-xs font-medium text-brand-orangeLight">
+                    Kenya&apos;s leading digital solutions agency
+                  </span>
                 </span>
-              </span>
-            </AnimatedSection>
+              </AnimatedSection>
 
-            <AnimatedSection delay={100}>
-              <h1 className="mt-6 text-4xl lg:text-5xl font-bold text-white leading-tight text-balance">
-                Build. Secure. Scale.{" "}
-                <span className="text-brand-orange">With Yagwa Tech</span> Solutions.
-              </h1>
-            </AnimatedSection>
+              <AnimatedSection delay={100}>
+                <h1 className="mt-6 text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight text-balance">
+                  Build.{" "}
+                  <span className="text-brand-orange">Secure.</span>{" "}
+                  Scale.
+                  <span className="block mt-1 text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/85">
+                    With Yagwa Tech Solutions.
+                  </span>
+                </h1>
+              </AnimatedSection>
 
-            <AnimatedSection delay={200}>
-              <p className="mt-5 text-base lg:text-lg text-white/80 leading-relaxed max-w-xl">
-                From custom software and cloud infrastructure to cybersecurity, branding,
-                and automation, we deliver smart, scalable IT solutions that move your
-                business forward across Kenya and beyond.
-              </p>
-            </AnimatedSection>
+              <AnimatedSection delay={200}>
+                <p className="mt-5 text-base lg:text-lg text-white/75 leading-relaxed max-w-xl">
+                  From custom software and cloud infrastructure to cybersecurity, branding,
+                  and automation, we deliver smart, scalable IT solutions that move your
+                  business forward across Kenya and beyond.
+                </p>
+              </AnimatedSection>
 
-            <AnimatedSection delay={300}>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/get-quote"
-                  className="inline-flex items-center gap-2 rounded-md bg-brand-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-orangeLight transition-all hover:-translate-y-0.5 shadow-lg shadow-brand-orange/25"
-                >
-                  Get a free quote <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/portfolio"
-                  className="inline-flex items-center gap-2 rounded-md border border-white/40 px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition-all hover:-translate-y-0.5"
-                >
-                  View our work
-                </Link>
-              </div>
-            </AnimatedSection>
+              <AnimatedSection delay={300}>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link
+                    href="/get-quote"
+                    className="inline-flex items-center gap-2 rounded-md bg-brand-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-orangeLight transition-all hover:-translate-y-0.5 shadow-lg shadow-brand-orange/30"
+                  >
+                    Get a free quote <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="/portfolio"
+                    className="inline-flex items-center gap-2 rounded-md border border-white/40 px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition-all hover:-translate-y-0.5"
+                  >
+                    View our work
+                  </Link>
+                </div>
+              </AnimatedSection>
 
-            <AnimatedSection delay={400}>
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-white/10 pt-8 stagger">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="reveal visible">
-                    <AnimatedCounter
-                      value={stat.value}
-                      className="text-2xl lg:text-3xl font-bold text-brand-orange"
-                    />
-                    <div className="mt-1 text-xs text-white/60">{stat.label}</div>
+              <AnimatedSection delay={400}>
+                <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-white/10 pt-8 stagger">
+                  {stats.map((stat) => (
+                    <div key={stat.label} className="reveal visible">
+                      <AnimatedCounter
+                        value={stat.value}
+                        className="text-2xl lg:text-3xl font-bold text-brand-orange"
+                      />
+                      <div className="mt-1 text-xs text-white/60">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </AnimatedSection>
+            </div>
+
+            {/* Right: floating tech badge panel */}
+            <AnimatedSection type="scale" delay={200}>
+              <div className="hidden lg:flex flex-col gap-4 items-end">
+                {/* Logo card */}
+                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 shadow-2xl w-72">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-xl bg-white p-2 shadow">
+                      <Image
+                        src="/images/logo.jpg"
+                        alt="Yagwa Tech Solutions"
+                        width={60}
+                        height={60}
+                        className="h-12 w-auto object-contain"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-white">YagwaTech</div>
+                      <div className="text-xs text-white/60">Karen, Nairobi</div>
+                      <div className="mt-1 flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-3 w-3 fill-brand-orange text-brand-orange" />
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                ))}
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    {["Software Dev", "Cloud", "Security", "Design"].map((tag) => (
+                      <span key={tag} className="rounded-full bg-brand-orange/20 px-2.5 py-1 text-[11px] font-medium text-brand-orange text-center">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Live indicator */}
+                <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/15 p-4 shadow-xl w-64">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
+                    </span>
+                    <span className="text-xs font-semibold text-white">Available for projects</span>
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-white/55">
+                    150+ projects completed across East Africa
+                  </p>
+                </div>
+
+                {/* Services pill stack */}
+                <div className="flex flex-wrap gap-2 justify-end max-w-xs">
+                  {["IT Consulting", "AI & Automation", "Digital Marketing", "ERP Systems"].map((s, i) => (
+                    <span
+                      key={s}
+                      className="rounded-full border border-white/20 bg-white/8 px-3 py-1 text-[11px] text-white/70"
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
               </div>
             </AnimatedSection>
           </div>
@@ -168,7 +258,7 @@ export default function HomePage() {
                   <div className="text-xs opacity-90">Industry experience</div>
                 </div>
                 <div className="absolute top-4 right-4 rounded-lg bg-brand-blueDark/80 backdrop-blur-sm px-3 py-2 text-white text-xs font-medium">
-                  📍 Nairobi, Kenya
+                  📍 Karen, Nairobi
                 </div>
               </div>
             </AnimatedSection>
@@ -205,12 +295,22 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-              <Link
-                href="/about"
-                className="mt-6 inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:bg-brand-blueLight transition-all hover:-translate-y-0.5 shadow-md shadow-brand-blue/20"
-              >
-                Learn more about us <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:bg-brand-blueLight transition-all hover:-translate-y-0.5 shadow-md shadow-brand-blue/20"
+                >
+                  Learn more about us <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href={site.portfolioPdf}
+                  download
+                  className="inline-flex items-center gap-2 rounded-md border border-brand-blue/30 bg-ink-50 px-6 py-3 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white transition-all hover:-translate-y-0.5"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Company Portfolio
+                </a>
+              </div>
             </AnimatedSection>
           </div>
         </div>
@@ -324,24 +424,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Portfolio ─────────────────────────────────────────────────── */}
+      {/* ── Portfolio (3 projects only) ────────────────────────────────── */}
       <section className="py-20 lg:py-24">
         <div className="container-wrap">
-          <AnimatedSection>
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
-              Our work
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-ink-900">
-              Featured <span className="text-brand-blue">portfolio</span>
-            </h2>
-            <p className="mt-3 text-[15px] text-ink-400 max-w-xl leading-relaxed">
-              From scalable enterprise technology to community centered digital literacy
-              programs, projects that drive transformation across Kenya and beyond.
-            </p>
-          </AnimatedSection>
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <AnimatedSection>
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
+                Our work
+              </p>
+              <h2 className="mt-2 text-3xl font-bold text-ink-900">
+                Featured <span className="text-brand-blue">portfolio</span>
+              </h2>
+              <p className="mt-3 text-[15px] text-ink-400 max-w-xl leading-relaxed">
+                From scalable enterprise technology to community centered digital literacy
+                programs, projects that drive transformation across Kenya and beyond.
+              </p>
+            </AnimatedSection>
+            <AnimatedSection>
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue hover:text-brand-blueLight transition-colors"
+              >
+                View all projects <ChevronRight className="h-4 w-4" />
+              </Link>
+            </AnimatedSection>
+          </div>
 
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {projects.slice(0, 6).map((project) => (
+            {featuredProjects.map((project) => (
               <AnimatedSection key={project.slug} type="scale">
                 <Link
                   href={`/portfolio/${project.slug}`}
@@ -376,15 +486,6 @@ export default function HomePage() {
                 </Link>
               </AnimatedSection>
             ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:bg-brand-blueLight transition-all hover:-translate-y-0.5 shadow-md shadow-brand-blue/20"
-            >
-              View all projects <ArrowRight className="h-4 w-4" />
-            </Link>
           </div>
         </div>
       </section>
@@ -456,11 +557,15 @@ export default function HomePage() {
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="mt-5 flex items-center gap-3 border-t border-black/5 pt-4">
-                    <div
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
-                      style={{ background: t.color }}
-                    >
-                      {t.initials}
+                    {/* Real reviewer photo */}
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full shadow-sm ring-2 ring-brand-orange/20">
+                      <Image
+                        src={t.photo}
+                        alt={`${t.name} — client review`}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
                     </div>
                     <div>
                       <div className="text-sm font-semibold text-ink-900">{t.name}</div>

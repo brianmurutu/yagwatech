@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   MapPin,
   Phone,
@@ -46,13 +47,16 @@ export default function Footer() {
       <div className="container-wrap py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
-            <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-orange text-sm font-medium text-white">
-                YT
-              </span>
-              <span className="text-base font-medium text-white">
-                Yagwa<span className="text-brand-orange">Tech</span> Solutions
-              </span>
+            <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
+              <div className="rounded-lg bg-white px-2 py-1 shadow transition-transform group-hover:scale-105">
+                <Image
+                  src="/images/logo.jpg"
+                  alt="Yagwa Tech Solutions logo"
+                  width={110}
+                  height={40}
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-white/55">
               A forward thinking digital solutions agency delivering comprehensive IT

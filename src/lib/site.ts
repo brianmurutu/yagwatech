@@ -8,7 +8,10 @@ export const site = {
   phoneRaw: "+254117722077",
   email: "info@yagwatech.com",
   supportEmail: "support@yagwatech.com",
-  address: "Nairobi, Kenya",
+  address: "Karen Professional Centre, Karen, Nairobi, Kenya",
+  addressShort: "Karen, Nairobi, Kenya",
+  mapsUrl: "https://maps.google.com/?q=Karen+Professional+Centre+Karen+Nairobi+Kenya",
+  portfolioPdf: "/yagwatech-company-portfolio.pdf",
   hours: "Monday to Friday, 9:00am to 5:00pm",
   founded: "2019",
   social: {

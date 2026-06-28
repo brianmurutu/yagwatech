@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -53,12 +54,12 @@ export default function Header() {
         <div className="container-wrap flex items-center justify-between text-white">
           <div className="flex items-center gap-6">
             <a
-              href={`https://maps.google.com/?q=Nairobi,Kenya`}
+              href={site.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-xs text-white/85 hover:text-white transition-colors"
             >
-              <MapPin className="h-3.5 w-3.5 text-brand-orange" /> {site.address}
+              <MapPin className="h-3.5 w-3.5 text-brand-orange" /> {site.addressShort}
             </a>
             <a
               href={`tel:${site.phoneRaw}`}
@@ -104,13 +105,17 @@ export default function Header() {
             scrolled ? "h-14" : "h-16"
           }`}
         >
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-orange text-sm font-bold text-white group-hover:bg-brand-orangeLight transition-colors">
-              YT
-            </span>
-            <span className="text-base font-semibold text-white">
-              Yagwa<span className="text-brand-orange">Tech</span>
-            </span>
+          <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
+            <div className="rounded-lg bg-white px-2 py-1 shadow-sm transition-transform group-hover:scale-105">
+              <Image
+                src="/images/logo.jpg"
+                alt="Yagwa Tech Solutions logo"
+                width={100}
+                height={36}
+                className="h-9 w-auto object-contain"
+                priority
+              />
+            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">

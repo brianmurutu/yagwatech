@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Target, Eye, Award, Layers } from "lucide-react";
+import Link from "next/link";
+import { Target, Eye, Award, Layers, Download, ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
-import { stats } from "@/lib/site";
+import { stats, site } from "@/lib/site";
 import { team } from "@/lib/team";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -44,9 +45,8 @@ export default function AboutPage() {
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-blueDark/40 to-transparent" />
-                <div className="absolute bottom-6 left-6 rounded-xl bg-brand-orange px-4 py-3 text-white shadow-lg">
-                  <div className="text-xl font-bold">Est. 2019</div>
-                  <div className="text-xs opacity-90">Nairobi, Kenya</div>
+                <div className="absolute top-4 right-4 rounded-lg bg-brand-blueDark/80 backdrop-blur-sm px-3 py-2 text-white text-xs font-medium">
+                  📍 Karen, Nairobi
                 </div>
               </div>
             </AnimatedSection>
@@ -72,6 +72,22 @@ export default function AboutPage() {
                 including community organizations and initiatives working on digital
                 empowerment across Kenya.
               </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:bg-brand-blueLight transition-all hover:-translate-y-0.5 shadow-md shadow-brand-blue/20"
+                >
+                  Work with us <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href={site.portfolioPdf}
+                  download
+                  className="inline-flex items-center gap-2 rounded-md border border-brand-blue/30 bg-ink-50 px-6 py-3 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white transition-all hover:-translate-y-0.5"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Company Portfolio
+                </a>
+              </div>
             </AnimatedSection>
           </div>
         </div>

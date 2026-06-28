@@ -16,8 +16,11 @@ const config: Config = {
           blueLight: "#1A56C4",
           blueDark: "#07255A",
           orange: "#F47B20",
-          orangeLight: "#FFA04D",
+          orangeLight: "#F99A50",
           orangeDark: "#D96A10",
+          purple: "#8B2FC9",
+          purpleLight: "#A855E8",
+          purpleDark: "#6B1FA0",
         },
         ink: {
           50: "#F7F9FC",
