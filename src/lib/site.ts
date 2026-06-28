@@ -11,7 +11,7 @@ export const site = {
   address: "Karen Professional Centre, Karen, Nairobi, Kenya",
   addressShort: "Karen, Nairobi, Kenya",
   mapsUrl: "https://maps.google.com/?q=Karen+Professional+Centre+Karen+Nairobi+Kenya",
-  portfolioPdf: "/yagwatech-company-portfolio.pdf",
+  portfolioPdf: "/yagwatech-company-profile.pdf",
   hours: "Monday to Friday, 9:00am to 5:00pm",
   founded: "2019",
   social: {

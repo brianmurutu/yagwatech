@@ -13,12 +13,22 @@ import {
 import { site, stats } from "@/lib/site";
 import { services } from "@/lib/services";
 import { projects } from "@/lib/projects";
-import { team, testimonials, clients } from "@/lib/team";
+import { team, testimonials } from "@/lib/team";
 import { getRecentPosts } from "@/lib/blog";
 import { getServiceIcon } from "@/lib/icons";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import {
+  SafaricomLogo,
+  KcbLogo,
+  EquityLogo,
+  CoopLogo,
+  AwsLogo,
+  MicrosoftLogo,
+  CiscoLogo,
+  GcpLogo,
+} from "@/components/BrandLogos";
 
 export const metadata = buildMetadata({
   title: `${site.name} | IT Services and Digital Solutions in Kenya`,
@@ -223,21 +233,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Trusted by ────────────────────────────────────────────────── */}
-      <div className="border-b border-black/5 bg-white py-5">
-        <div className="container-wrap flex flex-wrap items-center gap-8">
-          <span className="text-xs font-semibold uppercase tracking-widest text-ink-400">
-            Trusted by
-          </span>
-          <div className="flex flex-wrap gap-10 stagger">
-            {clients.map((c) => (
-              <span key={c} className="text-sm font-semibold text-ink-400/60 hover:text-ink-400 transition-colors">
-                {c}
-              </span>
-            ))}
+      {/* ── Trusted by & Partners Marquee ────────────────────────────── */}
+      <section className="border-b border-black/5 bg-ink-50/30 py-8 overflow-hidden">
+        <div className="container-wrap grid lg:grid-cols-[180px_1fr] gap-6 items-center">
+          <div className="shrink-0 lg:border-r border-black/10 pr-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-ink-500">Trusted by</h4>
+            <p className="mt-0.5 text-[11px] text-ink-400">Leading enterprises in Kenya</p>
+          </div>
+          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
+            <div className="flex w-max gap-16 items-center animate-marquee">
+              <SafaricomLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <KcbLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <EquityLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <CoopLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              {/* Duplicate for gapless infinite scrolling */}
+              <SafaricomLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <KcbLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <EquityLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <CoopLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+            </div>
           </div>
         </div>
-      </div>
+
+        <div className="container-wrap grid lg:grid-cols-[180px_1fr] gap-6 items-center mt-6 border-t border-black/5 pt-6">
+          <div className="shrink-0 lg:border-r border-black/10 pr-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-ink-500">Our Partners</h4>
+            <p className="mt-0.5 text-[11px] text-ink-400">Global cloud & infrastructure</p>
+          </div>
+          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
+            <div className="flex w-max gap-16 items-center animate-marquee-reverse">
+              <AwsLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <MicrosoftLogo className="h-6 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <CiscoLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <GcpLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              {/* Duplicate for gapless infinite scrolling */}
+              <AwsLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <MicrosoftLogo className="h-6 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <CiscoLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <GcpLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── About ─────────────────────────────────────────────────────── */}
       <section className="py-20 lg:py-24">

@@ -27,6 +27,12 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config, { dev }) => {
+    if (config.cache && !dev) {
+      config.cache = false;
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
