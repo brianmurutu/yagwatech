@@ -13,7 +13,7 @@ import {
 import { site, stats } from "@/lib/site";
 import { services } from "@/lib/services";
 import { projects } from "@/lib/projects";
-import { team, testimonials } from "@/lib/team";
+import { testimonials } from "@/lib/team";
 import { getRecentPosts } from "@/lib/blog";
 import { getServiceIcon } from "@/lib/icons";
 import { buildMetadata } from "@/lib/seo";
@@ -521,43 +521,6 @@ export default function HomePage() {
                     </span>
                   </div>
                 </Link>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Team ──────────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
-        <div className="container-wrap text-center">
-          <AnimatedSection>
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
-              The people
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-ink-900">
-              Meet our <span className="text-brand-blue">team</span>
-            </h2>
-            <p className="mt-3 mx-auto text-[15px] text-ink-400 max-w-xl leading-relaxed">
-              Strategists, developers, designers, and problem solvers working together to
-              turn ideas into impact.
-            </p>
-          </AnimatedSection>
-
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 stagger">
-            {team.map((member) => (
-              <AnimatedSection key={member.name} type="scale">
-                <div className="group rounded-xl border border-black/5 p-5 text-center hover:shadow-md hover:border-brand-blue/20 transition-all hover:-translate-y-1">
-                  <div
-                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-base font-bold text-white shadow-md"
-                    style={{
-                      background: `linear-gradient(135deg, ${member.colorFrom}, ${member.colorTo})`,
-                    }}
-                  >
-                    {member.initials}
-                  </div>
-                  <h4 className="mt-3 text-sm font-semibold text-ink-900">{member.name}</h4>
-                  <p className="mt-1 text-xs leading-relaxed text-ink-400">{member.role}</p>
-                </div>
               </AnimatedSection>
             ))}
           </div>
