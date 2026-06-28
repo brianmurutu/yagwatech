@@ -28,6 +28,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          "var(--font-inter)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
@@ -36,6 +37,25 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+      },
+      animation: {
+        "slide-down": "slideDown 0.22s ease forwards",
+        "fade-in": "fadeIn 0.3s ease forwards",
+        "hero-pulse": "heroPulse 6s ease-in-out infinite",
+      },
+      keyframes: {
+        slideDown: {
+          from: { opacity: "0", transform: "translateY(-8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        heroPulse: {
+          "0%, 100%": { opacity: "0.08", transform: "scale(1)" },
+          "50%": { opacity: "0.16", transform: "scale(1.08)" },
+        },
       },
       maxWidth: {
         wrap: "1240px",
