@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Plus, Search, Edit2, Trash2, ArrowLeft, Save, Send, Tag, BookOpen,
@@ -288,6 +288,24 @@ const emptyPost = (): Omit<BlogPost, 'id'> => ({
 
 export default function AdminBlogManager() {
   const [posts, setPosts] = useState<BlogPost[]>(INITIAL_POSTS);
+
+  // Load posts from localStorage on mount (hydration safe)
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_blog_posts');
+    if (saved) {
+      try {
+        setPosts(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load posts from localStorage:', e);
+      }
+    }
+  }, []);
+
+  // Save posts to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('yagwa_blog_posts', JSON.stringify(posts));
+  }, [posts]);
+
   const [view, setView] = useState<'list' | 'editor'>('list');
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>(emptyPost());
