@@ -59,7 +59,7 @@ export default function Header() {
   }, [mobileOpen]);
 
   return (
-    <header>
+    <>
       {/* Top info bar — desktop only */}
       <div className="hidden lg:block bg-brand-blue py-1.5">
         <div className="container-wrap flex items-center justify-between text-white">
@@ -106,7 +106,7 @@ export default function Header() {
       </div>
 
       {/* Main nav bar */}
-      <div
+      <header
         className={`bg-brand-blueDark sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "shadow-lg shadow-black/20" : ""
         }`}
@@ -117,8 +117,8 @@ export default function Header() {
           }`}
         >
           <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
-            <span className="text-xl font-bold tracking-tight text-white transition-colors duration-200">
-              Yagwa<span className="text-brand-orange">Tech</span>
+            <span className="text-2xl font-bold tracking-tight text-white transition-colors duration-200">
+              Yagwa<span className="text-brand-orange">Tech</span> Solutions
             </span>
           </Link>
 
@@ -282,7 +282,7 @@ export default function Header() {
             </Link>
           </div>
         )}
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
