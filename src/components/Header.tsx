@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -118,16 +117,9 @@ export default function Header() {
           }`}
         >
           <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
-            <div className="rounded-lg bg-white px-2 py-1 shadow-sm transition-transform group-hover:scale-105">
-              <Image
-                src="/images/logo.jpg"
-                alt="Yagwa Tech Solutions logo"
-                width={100}
-                height={36}
-                className="h-9 w-auto object-contain"
-                priority
-              />
-            </div>
+            <span className="text-xl font-bold tracking-tight text-white transition-colors duration-200">
+              Yagwa<span className="text-brand-orange">Tech</span>
+            </span>
           </Link>
 
           {/* Desktop nav */}

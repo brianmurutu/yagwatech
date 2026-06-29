@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, ArrowRight, Tag, BookOpen } from 'lucide-react';
-import { blogPosts, getRecentPosts } from '@/lib/blog';
+import { BlogPost, blogPosts } from '@/lib/blog';
 
 interface BlogSidebarProps {
   currentSlug: string;
@@ -13,10 +13,37 @@ interface BlogSidebarProps {
 export default function BlogSidebar({ currentSlug }: BlogSidebarProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const recentPosts = getRecentPosts(currentSlug, 3);
+  const [posts, setPosts] = useState<BlogPost[]>(blogPosts);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_blog_posts');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as BlogPost[];
+        const published = parsed.filter((p) => p.status === 'Published');
+        if (published.length > 0) {
+          // Merge static and dynamic, filtering out duplicates by slug
+          const merged = [...published];
+          blogPosts.forEach((staticPost) => {
+            if (!merged.some((p) => p.slug === staticPost.slug)) {
+              merged.push(staticPost);
+            }
+          });
+          setPosts(merged);
+        }
+      } catch (e) {
+        console.error('Failed to load posts from localStorage in sidebar:', e);
+      }
+    }
+  }, []);
+
+  // Sort posts by date descending
+  const sortedPosts = [...posts].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   // Extract all categories dynamically and count posts in each
-  const categoryCounts = blogPosts.reduce((acc, post) => {
+  const categoryCounts = sortedPosts.reduce((acc, post) => {
     acc[post.category] = (acc[post.category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -29,12 +56,16 @@ export default function BlogSidebar({ currentSlug }: BlogSidebarProps) {
   // Extract all unique tags dynamically
   const tags = Array.from(
     new Set(
-      blogPosts
+      sortedPosts
         .map((p) => p.tags || '')
         .flatMap((t) => t.split(',').map((s) => s.trim()))
         .filter(Boolean)
     )
   ).slice(0, 10); // Display top 10 tags
+
+  const recentPosts = sortedPosts
+    .filter((p) => p.slug !== currentSlug)
+    .slice(0, 3);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

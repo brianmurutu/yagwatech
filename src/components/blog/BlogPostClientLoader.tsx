@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import PageHero from '@/components/PageHero';
-import { BlogPost, getRecentPosts } from '@/lib/blog';
+import { BlogPost, blogPosts } from '@/lib/blog';
 import BlogComments from '@/components/blog/BlogComments';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 
@@ -15,20 +15,43 @@ interface BlogPostClientLoaderProps {
 
 export default function BlogPostClientLoader({ slug }: BlogPostClientLoaderProps) {
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [related, setRelated] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem('yagwa_blog_posts');
+    let allPosts = [...blogPosts];
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as BlogPost[];
-        const found = parsed.find((p) => p.slug === slug && p.status === 'Published');
-        if (found) {
-          setPost(found);
+        const published = parsed.filter((p) => p.status === 'Published');
+        if (published.length > 0) {
+          // Merge static and dynamic, filtering out duplicates by slug
+          const merged = [...published];
+          blogPosts.forEach((staticPost) => {
+            if (!merged.some((p) => p.slug === staticPost.slug)) {
+              merged.push(staticPost);
+            }
+          });
+          allPosts = merged;
         }
       } catch (e) {
         console.error('Failed to load post from localStorage:', e);
       }
+    }
+
+    // Sort by date descending
+    allPosts.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    const found = allPosts.find((p) => p.slug === slug);
+    if (found) {
+      setPost(found);
+      const filteredRelated = allPosts
+        .filter((p) => p.slug !== slug)
+        .slice(0, 3);
+      setRelated(filteredRelated);
     }
     setLoading(false);
   }, [slug]);
@@ -45,8 +68,6 @@ export default function BlogPostClientLoader({ slug }: BlogPostClientLoaderProps
     notFound();
     return null;
   }
-
-  const related = getRecentPosts(post.slug, 3);
 
   return (
     <>

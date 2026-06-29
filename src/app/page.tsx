@@ -164,14 +164,8 @@ export default function HomePage() {
                 {/* Logo card */}
                 <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 shadow-2xl w-72">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-xl bg-white p-2 shadow">
-                      <Image
-                        src="/images/logo.jpg"
-                        alt="Yagwa Tech Solutions"
-                        width={60}
-                        height={60}
-                        className="h-12 w-auto object-contain"
-                      />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-orange font-bold text-white shadow text-sm shrink-0">
+                      YT
                     </div>
                     <div>
                       <div className="text-sm font-bold text-white">YagwaTech</div>
