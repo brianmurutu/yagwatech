@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BlogPost } from '@/lib/blog';
 import AnimatedSection from '@/components/AnimatedSection';
 
@@ -45,7 +45,21 @@ export default function BlogList({ initialPosts }: BlogListProps) {
     }
   }, []);
 
-  const [featured, ...rest] = posts;
+  const [currentPage, setCurrentPage] = useState(1);
+  const POSTS_PER_PAGE = 7;
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+  };
+
+  const featured = currentPage === 1 ? posts[0] : undefined;
+  const rest = currentPage === 1
+    ? posts.slice(1, POSTS_PER_PAGE)
+    : posts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
 
   return (
     <section className="py-20 lg:py-24">
@@ -149,6 +163,49 @@ export default function BlogList({ initialPosts }: BlogListProps) {
             </AnimatedSection>
           ))}
         </div>
+
+        {/* Pager / Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-16 flex justify-center">
+            <nav className="flex items-center gap-2 overflow-x-auto max-w-full no-scrollbar py-2 px-4 bg-white/50 backdrop-blur-md rounded-2xl border border-black/5 shadow-sm">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-black/5 text-ink-600 hover:border-brand-blue hover:text-brand-blue disabled:opacity-40 disabled:hover:border-black/5 disabled:hover:text-ink-600 transition-all shadow-sm active:scale-95"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`w-10 h-10 rounded-xl font-bold text-sm transition-all flex items-center justify-center active:scale-95 ${
+                      isActive
+                        ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/25'
+                        : 'bg-white border border-black/5 text-ink-600 hover:border-brand-blue hover:text-brand-blue hover:shadow-sm'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-black/5 text-ink-600 hover:border-brand-blue hover:text-brand-blue disabled:opacity-40 disabled:hover:border-black/5 disabled:hover:text-ink-600 transition-all shadow-sm active:scale-95"
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </nav>
+          </div>
+        )}
       </div>
     </section>
   );
