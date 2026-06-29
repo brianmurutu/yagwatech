@@ -19,8 +19,6 @@ const quickLinks = [
   { href: "/blog", label: "Blog" },
   { href: "/careers", label: "Careers" },
   { href: "/faqs", label: "FAQs" },
-  { href: "/portal", label: "Employee Portal" },
-  { href: "/admin", label: "Admin Portal" },
 ];
 
 const serviceLinks = [

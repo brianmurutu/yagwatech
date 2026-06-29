@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import WhatsAppFab from "@/components/WhatsAppFab";
+import LayoutWrapper from "@/components/LayoutWrapper";
 import { site } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -187,10 +185,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <WhatsAppFab />
+        <LayoutWrapper>{children}</LayoutWrapper>
         <Analytics />
       </body>
     </html>

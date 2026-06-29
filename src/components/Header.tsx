@@ -25,7 +25,6 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/faqs", label: "FAQs" },
-  { href: "/portal", label: "Employee Portal" },
   { href: "/contact", label: "Contact us" },
 ];
 
@@ -174,15 +173,6 @@ export default function Header() {
                     </div>
                   )}
                 </div>
-              ) : link.label === "Employee Portal" ? (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm font-medium transition-colors px-3 py-1 rounded-full border border-brand-orange/50 text-brand-orangeLight hover:bg-brand-orange/20"
-                  aria-current={pathname.startsWith(link.href) ? "page" : undefined}
-                >
-                  {link.label}
-                </Link>
               ) : (
                 <Link
                   key={link.href}
@@ -235,22 +225,6 @@ export default function Header() {
         {mobileOpen && (
           <div className="lg:hidden bg-brand-blueDark border-t border-white/10 px-5 py-4 animate-slide-down relative z-50 max-h-[80vh] overflow-y-auto">
             {navLinks.map((link) => {
-              if (link.label === "Employee Portal") {
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2 py-3 text-sm border-b border-white/5 transition-colors text-brand-orangeLight font-medium"
-                  >
-                    {link.label}
-                    <span className="ml-auto inline-flex items-center rounded-full bg-brand-orange/20 border border-brand-orange/30 px-2 py-0.5 text-[10px] font-bold text-brand-orange uppercase tracking-wide">
-                      Staff
-                    </span>
-                  </Link>
-                );
-              }
-
               if (link.hasDropdown) {
                 return (
                   <div key={link.href} className="border-b border-white/5">
