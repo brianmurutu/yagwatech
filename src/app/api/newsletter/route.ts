@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { newsletterSchema } from "@/lib/validation";
 import { site } from "@/lib/site";
 
-const FROM_ADDRESS = `${site.name} <onboarding@resend.dev>`;
+const FROM_ADDRESS = `${site.name} <${site.email}>`;
 
 // Validate UUID format to detect placeholder values
 function isValidUuid(id: string) {

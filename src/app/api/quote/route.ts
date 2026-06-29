@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { quoteSchema } from "@/lib/validation";
 import { site } from "@/lib/site";
 
-const FROM_ADDRESS = `${site.name} <onboarding@resend.dev>`;
+const FROM_ADDRESS = `${site.name} <${site.email}>`;
 
 export async function POST(request: Request) {
   try {
