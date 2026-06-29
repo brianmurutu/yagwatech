@@ -6,7 +6,7 @@ interface EmailWrapperOptions {
 }
 
 export function getBrandedEmailHtml(contentHtml: string, options: EmailWrapperOptions) {
-  const logoUrl = `${site.url}/images/logo.jpg`;
+  const logoUrl = `${site.url}/images/logo.png`;
 
   return `<!DOCTYPE html>
 <html>
