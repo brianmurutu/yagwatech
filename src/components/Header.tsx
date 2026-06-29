@@ -118,7 +118,7 @@ export default function Header() {
         >
           <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
             <span className="text-2xl font-bold tracking-tight text-white transition-colors duration-200">
-              Yagwa<span className="text-brand-orange">Tech</span> Solutions
+              Yagwa <span className="text-brand-orange">Tech</span> Solutions
             </span>
           </Link>
 

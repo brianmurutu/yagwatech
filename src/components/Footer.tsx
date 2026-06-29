@@ -50,8 +50,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
-              <span className="text-xl font-bold tracking-tight text-white transition-colors duration-200">
-                Yagwa<span className="text-brand-orange">Tech</span>
+              <span className="text-2xl font-bold tracking-tight text-white transition-colors duration-200">
+                Yagwa <span className="text-brand-orange">Tech</span> Solutions
               </span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-white/55">
