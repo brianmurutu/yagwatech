@@ -93,7 +93,7 @@ export const testimonials: Testimonial[] = [
     role: "IT Manager, Manufacturing Firm",
     initials: "SN",
     color: "#0B3D91",
-    photo: "/images/reviewer-samuel.jpg",
+    photo: "/images/reviewer_samuel.jpg",
     quote:
       "Their cybersecurity audit revealed vulnerabilities we did not know existed. They fixed everything, trained our team, and gave us peace of mind. Highly recommend for any organization serious about data protection.",
   },
@@ -102,7 +102,7 @@ export const testimonials: Testimonial[] = [
     role: "Co-Founder, Fintech Startup",
     initials: "DK",
     color: "#F47B20",
-    photo: "/images/reviewer-david.jpg",
+    photo: "/images/reviewer_david.jpg",
     quote:
       "We needed a custom SaaS platform built from scratch. YagwaTech delivered on time with scalability and security in mind. Their backend architecture and onboarding flows were spot on.",
   },
@@ -111,7 +111,7 @@ export const testimonials: Testimonial[] = [
     role: "Operations Lead, East Africa NGO",
     initials: "GM",
     color: "#0F6E56",
-    photo: "/images/reviewer-grace.jpg",
+    photo: "/images/reviewer_grace.jpg",
     quote:
       "We approached them with a broken website and no clear strategy. Within weeks they delivered a sleek, responsive platform and helped us streamline our operations. Their team is sharp, communicative, and genuinely invested in our success.",
   },

@@ -64,7 +64,7 @@ export default function PortalTeam() {
             phone: emp.phone,
             online: idx % 3 !== 0, // Simulation of online status
             initials: emp.avatar || emp.name.split(' ').map((n: any) => n[0]).join('').slice(0, 2).toUpperCase(),
-            avatarUrl: emp.avatarUrl || '',
+            avatarUrl: emp.avatarUrl ? emp.avatarUrl.replace('reviewer-', 'reviewer_') : '',
             colorFrom: grad.from,
             colorTo: grad.to
           };

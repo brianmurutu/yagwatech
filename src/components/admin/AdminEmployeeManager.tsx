@@ -53,7 +53,15 @@ export default function AdminEmployeeManager() {
     const saved = localStorage.getItem('yagwa_employees');
     if (saved) {
       try {
-        setEmployees(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as Employee[];
+        const fixed = parsed.map(emp => {
+          let avatarUrl = emp.avatarUrl || '';
+          if (avatarUrl.includes('reviewer-')) {
+            avatarUrl = avatarUrl.replace('reviewer-', 'reviewer_');
+          }
+          return { ...emp, avatarUrl };
+        });
+        setEmployees(fixed);
       } catch (e) {
         console.error('Failed to load employees:', e);
       }
