@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import PageHero from "@/components/PageHero";
 import { blogPosts } from "@/lib/blog";
 import { buildMetadata } from "@/lib/seo";
@@ -31,7 +32,13 @@ export default function BlogIndexPage() {
         breadcrumbs={[{ label: "Blog", href: "/blog" }]}
       />
 
-      <BlogList initialPosts={sorted} />
+      <Suspense fallback={
+        <div className="min-h-[50vh] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-brand-orange border-t-transparent" />
+        </div>
+      }>
+        <BlogList initialPosts={sorted} />
+      </Suspense>
     </>
   );
 }
