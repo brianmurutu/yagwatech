@@ -17,7 +17,7 @@ html {
 }
 
 * {
-  scroll-margin-top: 90px;
+  scroll-margin-top: 70px;
 }
 
 /* ─── Animation Keyframes ───────────────────────────────────────────── */
@@ -96,8 +96,31 @@ html {
     max-width: 1240px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-wrap {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  /* Minimum 44×44px touch targets for accessibility */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* iOS safe-area padding */
+  @supports (padding: max(0px)) {
+    .safe-bottom {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .safe-top {
+      padding-top: max(0px, env(safe-area-inset-top));
+    }
   }
 
   /* Scroll-reveal: starts invisible, JS adds .visible */
@@ -183,6 +206,14 @@ html {
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+/* ─── iOS Safe Area ─────────────────────────────────────────────────── */
+
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
 

@@ -4,11 +4,11 @@ import { site } from "@/lib/site";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      // Standard crawlers — allow everything except API routes
+      // Standard crawlers — allow everything except API/internal routes
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        disallow: ["/api/", "/portal/", "/admin/"],
       },
       // Google crawlers — explicitly allowed
       {

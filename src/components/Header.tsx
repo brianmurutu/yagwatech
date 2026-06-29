@@ -25,12 +25,14 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/faqs", label: "FAQs" },
+  { href: "/portal", label: "Employee Portal" },
   { href: "/contact", label: "Contact us" },
 ];
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
@@ -45,11 +47,22 @@ export default function Header() {
   useEffect(() => {
     setMobileOpen(false);
     setServicesOpen(false);
+    setMobileServicesOpen(false);
   }, [pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   return (
     <header>
-      {/* Top info bar */}
+      {/* Top info bar — desktop only */}
       <div className="hidden lg:block bg-brand-blue py-1.5">
         <div className="container-wrap flex items-center justify-between text-white">
           <div className="flex items-center gap-6">
@@ -94,7 +107,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Main nav bar — shrinks on scroll */}
+      {/* Main nav bar */}
       <div
         className={`bg-brand-blueDark sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "shadow-lg shadow-black/20" : ""
@@ -118,6 +131,7 @@ export default function Header() {
             </div>
           </Link>
 
+          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
             {navLinks.map((link) =>
               link.hasDropdown ? (
@@ -160,6 +174,15 @@ export default function Header() {
                     </div>
                   )}
                 </div>
+              ) : link.label === "Employee Portal" ? (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium transition-colors px-3 py-1 rounded-full border border-brand-orange/50 text-brand-orangeLight hover:bg-brand-orange/20"
+                  aria-current={pathname.startsWith(link.href) ? "page" : undefined}
+                >
+                  {link.label}
+                </Link>
               ) : (
                 <Link
                   key={link.href}
@@ -188,8 +211,9 @@ export default function Header() {
             Get a quote
           </Link>
 
+          {/* Mobile hamburger */}
           <button
-            className="lg:hidden text-white p-1 rounded-md hover:bg-white/10 transition-colors"
+            className="lg:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors flex items-center justify-center min-h-[44px] min-w-[44px]"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
@@ -198,27 +222,95 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile overlay backdrop */}
         {mobileOpen && (
-          <div className="lg:hidden bg-brand-blueDark border-t border-white/10 px-6 py-4 animate-slide-down">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`block py-3 text-sm border-b border-white/5 last:border-0 transition-colors ${
-                  (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href))
-                    ? "text-brand-orange font-medium"
-                    : "text-white/85 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Mobile menu drawer */}
+        {mobileOpen && (
+          <div className="lg:hidden bg-brand-blueDark border-t border-white/10 px-5 py-4 animate-slide-down relative z-50 max-h-[80vh] overflow-y-auto">
+            {navLinks.map((link) => {
+              if (link.label === "Employee Portal") {
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 py-3 text-sm border-b border-white/5 transition-colors text-brand-orangeLight font-medium"
+                  >
+                    {link.label}
+                    <span className="ml-auto inline-flex items-center rounded-full bg-brand-orange/20 border border-brand-orange/30 px-2 py-0.5 text-[10px] font-bold text-brand-orange uppercase tracking-wide">
+                      Staff
+                    </span>
+                  </Link>
+                );
+              }
+
+              if (link.hasDropdown) {
+                return (
+                  <div key={link.href} className="border-b border-white/5">
+                    <button
+                      onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                      className="flex w-full items-center justify-between py-3 text-sm transition-colors text-white/85 hover:text-white min-h-[44px]"
+                      aria-expanded={mobileServicesOpen}
+                    >
+                      <span>{link.label}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          mobileServicesOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {mobileServicesOpen && (
+                      <div className="pb-2 pl-3 animate-slide-down">
+                        <Link
+                          href="/services"
+                          onClick={() => setMobileOpen(false)}
+                          className="block py-2 text-[13px] text-brand-orange font-medium hover:text-brand-orangeLight transition-colors"
+                        >
+                          All Services &rarr;
+                        </Link>
+                        {services.map((s) => (
+                          <Link
+                            key={s.slug}
+                            href={`/services/${s.slug}`}
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-2 py-2 text-[13px] text-white/70 hover:text-white transition-colors"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-orange/70 shrink-0" />
+                            {s.shortName}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block py-3 text-sm border-b border-white/5 last:border-0 transition-colors min-h-[44px] flex items-center ${
+                    (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href))
+                      ? "text-brand-orange font-medium"
+                      : "text-white/85 hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <Link
               href="/get-quote"
               onClick={() => setMobileOpen(false)}
-              className="mt-4 block rounded-md bg-brand-orange px-5 py-3 text-center text-sm font-semibold text-white hover:bg-brand-orangeLight transition-colors"
+              className="mt-4 flex items-center justify-center rounded-md bg-brand-orange px-5 py-3 text-center text-sm font-semibold text-white hover:bg-brand-orangeLight transition-colors min-h-[44px]"
             >
               Get a quote
             </Link>
