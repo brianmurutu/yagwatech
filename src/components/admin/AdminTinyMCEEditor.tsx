@@ -14,8 +14,9 @@ export default function AdminTinyMCEEditor({ value, onChange, height = 500 }: Ti
 
   return (
     <Editor
-      apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
-      onInit={(_evt, editor) => (editorRef.current = editor as unknown as null)}
+      tinymceScriptSrc="https://cdn.jsdelivr.net/npm/tinymce@7.6.0/tinymce.min.js"
+      licenseKey="gpl"
+      onInit={(_evt: any, editor: any) => (editorRef.current = editor as unknown as null)}
       value={value}
       onEditorChange={onChange}
       init={{
