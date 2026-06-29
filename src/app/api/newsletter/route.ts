@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { newsletterSchema } from "@/lib/validation";
 import { site } from "@/lib/site";
+import { getBrandedEmailHtml } from "@/lib/emailTemplate";
 
 const FROM_ADDRESS = `${site.name} <${site.email}>`;
 
@@ -53,12 +54,29 @@ export async function POST(request: Request) {
         );
       }
     } else {
-      // Fallback: notify team via email
+      // Fallback: notify admin team via email
       const { error: emailError } = await resend.emails.send({
         from: FROM_ADDRESS,
-        to: site.email,
+        to: site.adminEmails,
         subject: "New newsletter subscriber",
-        html: `<p style="font-family:sans-serif;">New newsletter subscriber: <strong>${escapeHtml(email)}</strong></p>`,
+        html: getBrandedEmailHtml(
+          `
+          <h2 style="color:#0B3D91;margin-top:0;font-size:20px;font-weight:700;margin-bottom:16px;border-bottom:2px solid #EEF1F7;padding-bottom:12px;">
+            New Newsletter Subscription
+          </h2>
+          <p style="color:#1A1A2E;font-size:15px;line-height:1.6;margin-bottom:16px;">
+            A visitor has subscribed to the newsletter.
+          </p>
+          <div style="background:#F7F9FC;border-left:4px solid #F47B20;padding:20px;border-radius:6px;margin-bottom:16px;">
+            <strong style="font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#5A6680;display:block;margin-bottom:4px;">Subscriber Email:</strong>
+            <span style="font-size:16px;color:#1A1A2E;font-weight:600;"><a href="mailto:${escapeHtml(email)}" style="color:#0B3D91;text-decoration:none;">${escapeHtml(email)}</a></span>
+          </div>
+          `,
+          {
+            title: "New newsletter subscriber",
+            preheader: `New subscription from ${email}`,
+          }
+        ),
       });
 
       if (emailError) {
@@ -75,23 +93,23 @@ export async function POST(request: Request) {
       from: FROM_ADDRESS,
       to: email,
       subject: `Welcome to the ${site.name} newsletter!`,
-      html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-          <h2 style="color:#0B3D91;">You're subscribed!</h2>
-          <p style="color:#5A6680;font-size:14px;line-height:1.6;">
-            Thanks for subscribing to the <strong>${site.name}</strong> newsletter. 
-            You'll receive the latest tech insights, digital transformation stories, and updates from our team in Nairobi.
-          </p>
-          <p style="color:#5A6680;font-size:14px;line-height:1.6;">
-            In the meantime, explore our latest articles at 
-            <a href="${site.url}/blog" style="color:#0B3D91;">${site.url}/blog</a>
-          </p>
-          <div style="margin-top:24px;padding:16px;background:#F7F9FC;border-radius:8px;font-size:13px;color:#5A6680;">
-            <strong>${site.name}</strong><br/>
-            ${site.address} · <a href="mailto:${site.email}" style="color:#5A6680;">${site.email}</a>
-          </div>
-        </div>
-      `,
+      html: getBrandedEmailHtml(
+        `
+        <h2 style="color:#0B3D91;margin-top:0;font-size:20px;font-weight:700;margin-bottom:16px;">You're Subscribed!</h2>
+        <p style="color:#1A1A2E;font-size:15px;line-height:1.6;margin-bottom:16px;">
+          Thanks for subscribing to the <strong>${site.name}</strong> newsletter. 
+          You'll receive the latest tech insights, digital transformation stories, and updates from our team in Nairobi.
+        </p>
+        <p style="color:#5A6680;font-size:14px;line-height:1.6;margin-bottom:24px;">
+          In the meantime, explore our latest articles at 
+          <a href="${site.url}/blog" style="color:#0B3D91;font-weight:500;text-decoration:none;">${site.url}/blog</a>.
+        </p>
+        `,
+        {
+          title: `Welcome to the ${site.name} newsletter!`,
+          preheader: `You have successfully subscribed to updates from ${site.name}`,
+        }
+      ),
     });
 
     return NextResponse.json({ success: true });

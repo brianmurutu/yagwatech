@@ -7,6 +7,7 @@ export const site = {
   phone: "+254 117 722 077",
   phoneRaw: "+254117722077",
   email: "info@yagwatech.com",
+  adminEmails: ["info@yagwatech.com", "yagwatechsolutions@gmail.com"],
   supportEmail: "support@yagwatech.com",
   address: "Karen Professional Centre, Karen, Nairobi, Kenya",
   addressShort: "Karen, Nairobi, Kenya",
