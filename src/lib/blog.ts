@@ -1,21 +1,29 @@
 export type BlogPost = {
+  id?: string;
   slug: string;
   title: string;
   category: string;
   date: string;
-  excerpt: string;
+  excerpt?: string;
+  metaTitle?: string;
   metaDescription: string;
-  readingMinutes: number;
+  focusKeyword?: string;
+  featuredImage?: string;
+  readingMinutes?: number;
   author: string;
-  content: string[];
+  content: string | string[];
+  status?: 'Published' | 'Draft';
+  tags?: string;
 };
 
 export const blogPosts: BlogPost[] = [
   {
+    id: "why-every-business-needs-cloud-migration",
     slug: "why-every-business-needs-cloud-migration",
     title: "Why every business needs cloud migration",
     category: "Cloud and Infrastructure",
     date: "2025-12-11",
+    status: "Published",
     excerpt:
       "Cloud technology is no longer optional. It is the backbone of modern business infrastructure, and the businesses that delay migration are quietly falling behind on cost, reliability, and speed.",
     metaDescription:
@@ -27,15 +35,17 @@ export const blogPosts: BlogPost[] = [
       "For many businesses in Kenya, the hesitation around cloud migration comes from a fear of disruption. Servers that have run the same way for years feel safer than an unfamiliar environment, even when the real cost of staying put is rising every month in maintenance, hardware replacement, and missed opportunities for automatic scaling.",
       "The case for migration usually comes down to three things. First, cost predictability. Cloud infrastructure lets you pay for what you use, rather than over provisioning hardware for peak demand that only happens a few times a year. Second, reliability. Major cloud providers offer uptime guarantees and redundancy that are difficult and expensive to replicate with on premise servers. Third, speed. Spinning up new infrastructure for a project takes minutes in the cloud, compared to weeks of procurement for physical hardware.",
       "None of this means migration should happen overnight. A well planned move starts with an honest assessment of what you currently run, which systems are safe to move first, and which need more careful handling because of data sensitivity or legacy dependencies. We typically recommend starting with lower risk systems to build confidence and refine the process before tackling anything business critical.",
-      "Cost is often the first concern raised, and it deserves a direct answer. Cloud costs can rise unexpectedly if resources are not monitored, which is why ongoing cost management matters as much as the migration itself. A migration without a follow up plan for monitoring and optimization tends to disappoint on the cost side within the first year.",
+      "Cost is often the first concern raised, and it deserves a more direct answer. Cloud costs can rise unexpectedly if resources are not monitored, which is why ongoing cost management matters as much as the migration itself. A migration without a follow up plan for monitoring and optimization tends to disappoint on the cost side within the first year.",
       "If your business is still weighing whether to move, the more useful question is not whether to migrate, but how to do it in a way that protects uptime and controls cost from day one. That planning conversation is worth having before any infrastructure actually moves.",
     ],
   },
   {
+    id: "kenya-ai-readiness-ranking-what-it-means",
     slug: "kenya-ai-readiness-ranking-what-it-means",
     title: "Kenya ranks in the global top 100 for AI readiness, here is what it means",
     category: "AI and Technology",
     date: "2025-09-01",
+    status: "Published",
     excerpt:
       "Kenya has been ranked among the top 100 countries globally and top 10 in Africa for government AI readiness. Here is what that ranking actually means for jobs, schools, and the economy.",
     metaDescription:
@@ -52,10 +62,12 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
+    id: "essential-managed-it-services-for-small-business",
     slug: "essential-managed-it-services-for-small-business",
     title: "10 essential managed IT services for small business",
     category: "Managed Services",
     date: "2024-10-30",
+    status: "Published",
     excerpt:
       "What are managed IT services? Small businesses exploring IT outsourcing options can turn to managed services for the support a full in house team would normally provide.",
     metaDescription:
@@ -78,10 +90,12 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
+    id: "mpesa-daraja-integration-guide-for-kenyan-businesses",
     slug: "mpesa-daraja-integration-guide-for-kenyan-businesses",
     title: "A practical guide to M-Pesa Daraja integration for Kenyan businesses",
     category: "Payments and Fintech",
     date: "2026-02-18",
+    status: "Published",
     excerpt:
       "Integrating M-Pesa through the Daraja API is one of the most requested features for Kenyan businesses going digital. Here is what the process actually involves, and what tends to go wrong.",
     metaDescription:
@@ -99,10 +113,12 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
+    id: "signs-your-business-website-needs-a-redesign",
     slug: "signs-your-business-website-needs-a-redesign",
     title: "Seven signs your business website needs a redesign, not just a refresh",
     category: "Web and Branding",
     date: "2026-04-05",
+    status: "Published",
     excerpt:
       "Some websites just need new content. Others are quietly costing the business customers every month. Here is how to tell which situation you are actually in.",
     metaDescription:
@@ -110,7 +126,7 @@ export const blogPosts: BlogPost[] = [
     readingMinutes: 5,
     author: "Yagwa Tech Solutions",
     content: [
-      "Every business website eventually starts to feel dated, but feeling dated and actually underperforming are two different problems with two different solutions. Updating copy and swapping a few images solves the first. It does nothing for the second.",
+      "Every business website eventually starts to feel dated, but feeling dated and underperforming are two different problems with two different solutions. Updating copy and swapping a few images solves the first. It does nothing for the second.",
       "The first real warning sign is page load time. If your homepage takes more than three seconds to load on a typical mobile connection, you are losing visitors before they see any content at all, regardless of how good that content is.",
       "The second sign is a mobile experience that feels like an afterthought. With most traffic for Kenyan businesses now coming from mobile devices, a site that was clearly designed for desktop first and squeezed onto a phone screen afterward is actively working against you.",
       "The third sign is a navigation structure that makes sense to the people who built it, but not to a first time visitor. If you regularly have to explain to customers where to find something on your own website, that is a structural problem no amount of new content will fix.",
@@ -122,10 +138,12 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
+    id: "digital-transformation-roadmap-for-smes-in-kenya",
     slug: "digital-transformation-roadmap-for-smes-in-kenya",
     title: "Building a realistic digital transformation roadmap for SMEs in Kenya",
     category: "Strategy",
     date: "2026-05-22",
+    status: "Published",
     excerpt:
       "Digital transformation does not have to mean replacing everything at once. Here is how growing businesses can build a roadmap that fits their actual budget and pace.",
     metaDescription:

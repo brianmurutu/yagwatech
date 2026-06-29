@@ -1,66 +1,53 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
-import PageHero from "@/components/PageHero";
-import { blogPosts, getBlogPostBySlug, getRecentPosts } from "@/lib/blog";
-import { buildMetadata } from "@/lib/seo";
-import { site } from "@/lib/site";
-import type { Metadata } from "next";
-import BlogPostClientLoader from "@/components/blog/BlogPostClientLoader";
+'use client';
 
-export function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import { BlogPost, getRecentPosts } from '@/lib/blog';
+
+interface BlogPostClientLoaderProps {
+  slug: string;
 }
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Metadata {
-  const post = getBlogPostBySlug(params.slug);
-  if (!post) return {};
-  return buildMetadata({
-    title: post.title,
-    description: post.metaDescription,
-    path: `/blog/${post.slug}`,
-  });
-}
+export default function BlogPostClientLoader({ slug }: BlogPostClientLoaderProps) {
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default function BlogPostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const post = getBlogPostBySlug(params.slug);
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_blog_posts');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as BlogPost[];
+        const found = parsed.find((p) => p.slug === slug && p.status === 'Published');
+        if (found) {
+          setPost(found);
+        }
+      } catch (e) {
+        console.error('Failed to load post from localStorage:', e);
+      }
+    }
+    setLoading(false);
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-brand-orange border-t-transparent" />
+      </div>
+    );
+  }
+
   if (!post) {
-    return <BlogPostClientLoader slug={params.slug} />;
+    notFound();
+    return null;
   }
 
   const related = getRecentPosts(post.slug, 3);
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.metaDescription,
-    datePublished: post.date,
-    dateModified: post.date,
-    author: { "@type": "Organization", name: post.author },
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      logo: { "@type": "ImageObject", url: `${site.url}/logo.png` },
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${site.url}/blog/${post.slug}` },
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-
       <PageHero
         eyebrow={post.category}
         title={post.title}
@@ -83,7 +70,7 @@ export default function BlogPostPage({
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {post.readingMinutes} min read
+              {post.readingMinutes || 5} min read
             </span>
             <span>By {post.author}</span>
           </div>
@@ -132,8 +119,8 @@ export default function BlogPostPage({
                     <h3 className="mt-1.5 text-sm font-medium text-ink-900 leading-snug">
                       {p.title}
                     </h3>
-                    <span className="mt-3 flex items-center gap-1 text-xs font-medium text-brand-blue">
-                      Read article <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="mt-3 flex items-center gap-1 text-xs font-semibold text-brand-blue">
+                      Read article <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </Link>
                 ))}

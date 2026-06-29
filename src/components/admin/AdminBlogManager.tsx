@@ -7,6 +7,7 @@ import {
   Sparkles, Globe, Laptop, Smartphone, Check, AlertTriangle,
   XCircle, Image, Info, Loader2,
 } from 'lucide-react';
+import { blogPosts } from '@/lib/blog';
 
 const AdminTinyMCEEditor = dynamic(() => import('./AdminTinyMCEEditor'), { ssr: false });
 
@@ -191,83 +192,23 @@ const runSEOChecks = (
   return { checks, score };
 };
 
-const INITIAL_POSTS: BlogPost[] = [
-  {
-    id: '1',
-    title: 'How Cloud Computing is Transforming Kenyan SMEs',
-    author: 'Brian Murutu',
-    category: 'Cloud',
-    date: '2026-06-28',
-    status: 'Published',
-    tags: 'cloud, SME, Kenya, AWS',
-    content: '<p>Cloud computing has become a game-changer for small and medium enterprises across Kenya. By shifting processing power and storage to remote web services, companies cut server costs and scale on demand.</p>',
-    slug: 'how-cloud-computing-transforms-kenyan-smes',
-    metaTitle: 'Cloud Computing Benefits for Kenyan SMEs | YagwaTech',
-    metaDescription: 'Learn how Kenyan small and medium enterprises are adopting cloud systems to reduce operational costs, boost security, and scale computing power.',
-    focusKeyword: 'cloud computing',
-    featuredImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    id: '2',
-    title: 'Cybersecurity Threats Facing East African Businesses in 2026',
-    author: 'Grace Njeri',
-    category: 'Security',
-    date: '2026-06-25',
-    status: 'Published',
-    tags: 'cybersecurity, Africa, threats, ransomware',
-    content: '<p>East African businesses are increasingly becoming targets of sophisticated cyber attacks. With the rapid digitization, ransomware incidents have doubled since last year.</p>',
-    slug: 'cybersecurity-threats-facing-east-african-businesses-in-2026',
-    metaTitle: '2026 Cybersecurity Threats in East Africa | YagwaTech',
-    metaDescription: 'Ransomware, phishing, and data breaches are rising in East Africa. Discover key cybersecurity tactics to shield your enterprise systems.',
-    focusKeyword: 'cybersecurity',
-    featuredImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    id: '3',
-    title: 'The Rise of Mobile-First Development in Kenya',
-    author: 'James Otieno',
-    category: 'Technology',
-    date: '2026-06-22',
-    status: 'Draft',
-    tags: 'mobile, development, Kenya, UX',
-    content: '<p>With over 60% of internet traffic coming from mobile devices in Kenya, developers are shifting focus towards native-feeling web and mobile applications.</p>',
-    slug: 'rise-of-mobile-first-development-in-kenya',
-    metaTitle: 'Mobile-First Development Trends in Kenya | YagwaTech',
-    metaDescription: 'Kenyan internet traffic is overwhelmingly mobile. Explore mobile-first design principles, responsive web apps, and native development trends.',
-    focusKeyword: 'mobile-first',
-    featuredImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    id: '4',
-    title: 'Building Scalable APIs for Africa\'s Growing Fintech Sector',
-    author: 'Amina Wanjiku',
-    category: 'Business',
-    date: '2026-06-18',
-    status: 'Published',
-    tags: 'API, fintech, M-Pesa, scalability',
-    content: '<p>The African fintech sector is booming, with Kenya leading innovation through M-Pesa integrations and open API protocols.</p>',
-    slug: 'building-scalable-apis-for-african-fintech',
-    metaTitle: 'Fintech API Integration and Scalability | YagwaTech',
-    metaDescription: 'A technical guide on designing high-throughput, secure, and developer-friendly APIs for M-Pesa payments and African financial systems.',
-    focusKeyword: 'fintech',
-    featuredImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    id: '5',
-    title: 'AI and Machine Learning Adoption Trends in East Africa',
-    author: 'David Mwangi',
-    category: 'Innovation',
-    date: '2026-06-14',
-    status: 'Published',
-    tags: 'AI, machine learning, East Africa, innovation',
-    content: '<p>Artificial Intelligence is gradually reshaping industries across East Africa, from smart farming to clinical diagnosis assistants.</p>',
-    slug: 'ai-and-machine-learning-adoption-trends-in-east-africa',
-    metaTitle: 'Artificial Intelligence Trends in East Africa | YagwaTech',
-    metaDescription: 'From automated agricultural insights to digital health assistants, discover how machine learning technologies are deployed in Kenya and beyond.',
-    focusKeyword: 'artificial intelligence',
-    featuredImage: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=600&auto=format&fit=crop',
-  },
-];
+const INITIAL_POSTS: BlogPost[] = blogPosts.map((post, index) => ({
+  id: post.id || (index + 1).toString(),
+  title: post.title,
+  author: post.author,
+  category: post.category,
+  date: post.date,
+  status: 'Published',
+  tags: post.tags || post.category.toLowerCase(),
+  content: Array.isArray(post.content)
+    ? post.content.map((p) => `<p>${p}</p>`).join('')
+    : post.content,
+  slug: post.slug,
+  metaTitle: post.metaTitle || post.title,
+  metaDescription: post.metaDescription || '',
+  focusKeyword: post.focusKeyword || '',
+  featuredImage: post.featuredImage || '',
+}));
 
 const CATEGORIES = ['Technology', 'Business', 'Security', 'Cloud', 'Innovation'];
 
