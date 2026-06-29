@@ -51,7 +51,7 @@ export default function Footer() {
 
       <div className="container-wrap py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 group" aria-label="Yagwa Tech Solutions home">
               <div className="rounded-lg bg-white px-2 py-1 shadow transition-transform group-hover:scale-105">
                 <Image

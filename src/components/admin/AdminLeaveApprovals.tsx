@@ -22,7 +22,7 @@ interface LeaveRequest {
 
 const INITIAL_LEAVES: LeaveRequest[] = [
   { id: '1', employee: 'Amina Wanjiku', department: 'Design', avatar: 'AW', type: 'Annual Leave', startDate: '2026-07-02', endDate: '2026-07-06', days: 5, reason: 'Family vacation to Mombasa for school break.', status: 'Pending', notes: '' },
-  { id: '2', employee: 'Kevin Kimani', department: 'Engineering', avatar: 'KK', type: 'Sick Leave', startDate: '2026-06-30', endDate: '2026-07-01', days: 2, reason: 'Flu and doctor's recommendation for rest.', status: 'Pending', notes: '' },
+  { id: '2', employee: 'Kevin Kimani', department: 'Engineering', avatar: 'KK', type: 'Sick Leave', startDate: '2026-06-30', endDate: '2026-07-01', days: 2, reason: 'Flu and doctor\'s recommendation for rest.', status: 'Pending', notes: '' },
   { id: '3', employee: 'Faith Akinyi', department: 'Operations', avatar: 'FA', type: 'Emergency Leave', startDate: '2026-06-29', endDate: '2026-06-29', days: 1, reason: 'Family emergency requiring immediate attention.', status: 'Pending', notes: '' },
   { id: '4', employee: 'Lucy Adhiambo', department: 'Sales', avatar: 'LA', type: 'Annual Leave', startDate: '2026-07-10', endDate: '2026-07-17', days: 8, reason: 'Pre-planned vacation leave. All handover docs ready.', status: 'Approved', notes: 'Approved. Ensure handover with James before departure.' },
   { id: '5', employee: 'Patrick Ochieng', department: 'Engineering', avatar: 'PO', type: 'Study Leave', startDate: '2026-07-14', endDate: '2026-07-18', days: 5, reason: 'AWS Cloud Practitioner certification exam preparation.', status: 'Approved', notes: 'Excellent initiative. Approved with full pay.' },

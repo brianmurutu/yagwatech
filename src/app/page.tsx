@@ -80,7 +80,7 @@ export default function HomePage() {
       />
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-brand-blueDark py-20 lg:py-28 min-h-[88vh] flex items-center">
+      <section className="relative overflow-hidden bg-brand-blueDark py-14 sm:py-20 lg:py-28 min-h-[85vh] sm:min-h-[88vh] flex items-center">
         {/* Hero background image */}
         <div className="absolute inset-0">
           <Image
@@ -117,11 +117,11 @@ export default function HomePage() {
               </AnimatedSection>
 
               <AnimatedSection delay={100}>
-                <h1 className="mt-6 text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight text-balance">
+                <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight text-balance">
                   Build.{" "}
                   <span className="text-brand-orange">Secure.</span>{" "}
                   Scale.
-                  <span className="block mt-1 text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/85">
+                  <span className="block mt-1 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold text-white/85">
                     With Yagwa Tech Solutions.
                   </span>
                 </h1>
@@ -136,16 +136,16 @@ export default function HomePage() {
               </AnimatedSection>
 
               <AnimatedSection delay={300}>
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link
                     href="/get-quote"
-                    className="inline-flex items-center gap-2 rounded-md bg-brand-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-orangeLight transition-all hover:-translate-y-0.5 shadow-lg shadow-brand-orange/30"
+                    className="inline-flex items-center justify-center gap-2 rounded-md bg-brand-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-orangeLight transition-all hover:-translate-y-0.5 shadow-lg shadow-brand-orange/30 w-full sm:w-auto"
                   >
                     Get a free quote <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     href="/portfolio"
-                    className="inline-flex items-center gap-2 rounded-md border border-white/40 px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition-all hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center gap-2 rounded-md border border-white/40 px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition-all hover:-translate-y-0.5 w-full sm:w-auto"
                   >
                     View our work
                   </Link>
@@ -153,7 +153,7 @@ export default function HomePage() {
               </AnimatedSection>
 
               <AnimatedSection delay={400}>
-                <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-white/10 pt-8 stagger">
+                <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 border-t border-white/10 pt-8 stagger">
                   {stats.map((stat) => (
                     <div key={stat.label} className="reveal visible">
                       <AnimatedCounter
@@ -236,7 +236,7 @@ export default function HomePage() {
       {/* ── Trusted by & Partners Marquee ────────────────────────────── */}
       <section className="border-b border-black/5 bg-ink-50/30 py-8 overflow-hidden">
         <div className="container-wrap grid lg:grid-cols-[180px_1fr] gap-6 items-center">
-          <div className="shrink-0 lg:border-r border-black/10 pr-4">
+          <div className="shrink-0 lg:border-r border-black/10 pr-4 hidden lg:block">
             <h4 className="text-xs font-bold uppercase tracking-widest text-ink-500">Trusted by</h4>
             <p className="mt-0.5 text-[11px] text-ink-400">Leading enterprises in Kenya</p>
           </div>
@@ -256,7 +256,7 @@ export default function HomePage() {
         </div>
 
         <div className="container-wrap grid lg:grid-cols-[180px_1fr] gap-6 items-center mt-6 border-t border-black/5 pt-6">
-          <div className="shrink-0 lg:border-r border-black/10 pr-4">
+          <div className="shrink-0 lg:border-r border-black/10 pr-4 hidden lg:block">
             <h4 className="text-xs font-bold uppercase tracking-widest text-ink-500">Our Partners</h4>
             <p className="mt-0.5 text-[11px] text-ink-400">Global cloud & infrastructure</p>
           </div>
@@ -277,11 +277,11 @@ export default function HomePage() {
       </section>
 
       {/* ── About ─────────────────────────────────────────────────────── */}
-      <section className="py-20 lg:py-24">
+      <section className="py-14 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <AnimatedSection type="scale">
-              <div className="relative h-[420px] rounded-2xl overflow-hidden shadow-2xl shadow-brand-blue/20">
+              <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] rounded-2xl overflow-hidden shadow-2xl shadow-brand-blue/20">
                 <Image
                   src="/images/about-office.png"
                   alt="Yagwa Tech Solutions office in Nairobi, Kenya — modern workspace with African professionals"
@@ -354,7 +354,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Services ──────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
+      <section className="bg-white py-14 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <AnimatedSection>
             <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
@@ -400,27 +400,27 @@ export default function HomePage() {
       </section>
 
       {/* ── Stats bar ─────────────────────────────────────────────────── */}
-      <div className="bg-brand-blueDark py-14">
-        <div className="container-wrap grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-brand-blueDark py-12 sm:py-14">
+        <div className="container-wrap grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-4">
           {stats.map((stat, i) => (
             <div
               key={stat.label}
               className={`text-center ${
-                i !== stats.length - 1 ? "lg:border-r border-white/10" : ""
+                i !== stats.length - 1 ? "sm:border-r border-white/10" : ""
               }`}
             >
               <AnimatedCounter
                 value={stat.value}
-                className="text-3xl lg:text-4xl font-bold text-brand-orange"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-orange"
               />
-              <div className="mt-1 text-sm text-white/65">{stat.label}</div>
+              <div className="mt-1 text-xs sm:text-sm text-white/65">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Process ───────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
+      <section className="bg-white py-14 sm:py-20 lg:py-24">
         <div className="container-wrap text-center">
           <AnimatedSection>
             <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
@@ -462,7 +462,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Portfolio (3 projects only) ────────────────────────────────── */}
-      <section className="py-20 lg:py-24">
+      <section className="py-14 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <div className="flex items-end justify-between flex-wrap gap-4">
             <AnimatedSection>
@@ -528,7 +528,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Testimonials ──────────────────────────────────────────────── */}
-      <section className="py-20 lg:py-24">
+      <section className="py-14 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <AnimatedSection>
             <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
@@ -580,7 +580,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Blog ──────────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
+      <section className="bg-white py-14 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <AnimatedSection>
             <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">
@@ -644,7 +644,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-brand-orange to-brand-orangeDark py-16 lg:py-20 text-center relative overflow-hidden">
+      <section className="bg-gradient-to-br from-brand-orange to-brand-orangeDark py-12 sm:py-16 lg:py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="hero-orb absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white" />
           <div className="hero-orb absolute -left-8 bottom-0 h-48 w-48 rounded-full bg-white" style={{ animationDelay: "2s" }} />
@@ -658,16 +658,16 @@ export default function HomePage() {
               Let&apos;s build something great together. Our team is ready to bring your vision
               to life.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
               <Link
                 href="/get-quote"
-                className="rounded-md bg-white px-7 py-3.5 text-sm font-bold text-brand-orange hover:bg-white/90 transition-all hover:-translate-y-0.5 shadow-lg"
+                className="rounded-md bg-white px-7 py-3.5 text-sm font-bold text-brand-orange hover:bg-white/90 transition-all hover:-translate-y-0.5 shadow-lg w-full sm:w-auto text-center justify-center flex items-center"
               >
                 Get a free quote
               </Link>
               <Link
                 href="/contact"
-                className="rounded-md border-2 border-white/60 px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/15 transition-all hover:-translate-y-0.5"
+                className="rounded-md border-2 border-white/60 px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/15 transition-all hover:-translate-y-0.5 w-full sm:w-auto text-center justify-center flex items-center"
               >
                 Schedule a call
               </Link>
