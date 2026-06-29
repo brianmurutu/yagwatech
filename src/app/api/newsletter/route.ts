@@ -41,6 +41,19 @@ export async function POST(request: Request) {
 
     // Use Resend Audiences if a valid (non-placeholder) audience ID is set
     if (audienceId && isValidUuid(audienceId)) {
+      // Check if the contact is already subscribed
+      const { data: existingContact } = await resend.contacts.get({
+        email,
+        audienceId,
+      });
+
+      if (existingContact) {
+        return NextResponse.json(
+          { error: "You are already subscribed to our newsletter." },
+          { status: 400 }
+        );
+      }
+
       const { error: contactError } = await resend.contacts.create({
         email,
         audienceId,
