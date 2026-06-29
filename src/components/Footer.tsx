@@ -27,6 +27,8 @@ const serviceLinks = [
   { href: "/services/cybersecurity-compliance", label: "Cybersecurity" },
   { href: "/services/uiux-design-digital-branding", label: "UI/UX and branding" },
   { href: "/services/digital-marketing-seo", label: "Digital marketing" },
+  { href: "/services/automation-workflow-engineering", label: "Business automation" },
+  { href: "/services/e-commerce-cms-solutions", label: "E-commerce & CMS" },
   { href: "/services/business-it-consulting", label: "IT consulting" },
 ];
 
@@ -160,7 +162,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-wrap py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/40">
-            Copyright {new Date().getFullYear()} {site.name}. All rights reserved.
+            Copyright © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="text-xs text-white/40 hover:text-white/70 transition-colors">
