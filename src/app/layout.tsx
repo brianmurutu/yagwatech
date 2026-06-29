@@ -37,7 +37,6 @@ export const metadata: Metadata = {
   authors: [{ name: site.name, url: site.url }],
   creator: site.name,
   publisher: site.name,
-  alternates: { canonical: site.url },
   openGraph: {
     title: `${site.name} | IT Services and Digital Solutions in Kenya`,
     description: site.description,

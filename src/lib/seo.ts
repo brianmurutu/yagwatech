@@ -14,7 +14,7 @@ export function buildMetadata({
   image?: string;
   keywords?: string[];
 }): Metadata {
-  const url = `${site.url}${path}`;
+  const url = `${site.url}${path === "/" ? "" : path}`;
   const ogImage = image ?? `${site.url}/og-image.png`;
 
   return {
