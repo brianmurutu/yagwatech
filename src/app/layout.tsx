@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import { site } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -80,6 +81,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-R9VQ3LQRX1";
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -179,6 +182,18 @@ export default function RootLayout({
         <Footer />
         <WhatsAppFab />
         <Analytics />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}');
+          `}
+        </Script>
       </body>
     </html>
   );
