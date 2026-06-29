@@ -23,6 +23,18 @@ export const newsletterSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
 });
 
+export const jobApplicationSchema = z.object({
+  jobId: z.string().min(1, "Job ID is required"),
+  jobTitle: z.string().min(1, "Job Title is required"),
+  name: z.string().min(2, "Please enter your name").max(100),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(5, "Please enter your phone number").max(30),
+  linkedin: z.string().url("Please enter a valid LinkedIn URL").or(z.literal("")),
+  portfolio: z.string().url("Please enter a valid Portfolio/GitHub URL").or(z.literal("")),
+  intro: z.string().min(20, "Please introduce yourself in at least 20 characters").max(3000),
+});
+
 export type ContactInput = z.infer<typeof contactSchema>;
 export type QuoteInput = z.infer<typeof quoteSchema>;
 export type NewsletterInput = z.infer<typeof newsletterSchema>;
+export type JobApplicationInput = z.infer<typeof jobApplicationSchema>;
