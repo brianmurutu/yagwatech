@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { projects, portfolioCategories } from "@/lib/projects";
 
 const projectImages: Record<string, string> = {
+  "ai-trainer-academy": "/images/portfolio-development.png",
   "rusinga-digital-empowerment-initiative": "/images/portfolio-community.png",
   "business-matching": "/images/portfolio-branding.png",
   "assets-for-technology": "/images/portfolio-development.png",

@@ -13,6 +13,25 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "ai-trainer-academy",
+    title: "AI Trainer Academy",
+    categories: ["Development", "Branding"],
+    client: "AI Trainer Academy",
+    year: "2026",
+    summary:
+      "A global training and certification platform for AI professionals, featuring interactive course modules, automated grading, and study assistance.",
+    challenge:
+      "The client needed to establish a premier certification body for AI trainers, requiring a secure, responsive learning hub that could deliver course materials and scale to thousands of simultaneous users globally.",
+    solution:
+      "We built a robust Next.js application integrated with modern payment pathways, high-performance course content delivery, and interactive evaluation modules.",
+    results: [
+      "Successful global platform launch at ai-trainer-academy.top",
+      "Over 99.9% uptime with global CDN caching and performance optimizations",
+      "Dramatically streamlined student registration and automated testing workflows",
+    ],
+    services: ["Software and Systems Development", "UI/UX Design and Digital Branding"],
+  },
+  {
     slug: "rusinga-digital-empowerment-initiative",
     title: "Rusinga Digital Empowerment Initiative (RDEI)",
     categories: ["Community Empowerment"],

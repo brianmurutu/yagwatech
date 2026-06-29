@@ -39,6 +39,7 @@ export const metadata = buildMetadata({
 
 // Per-project images — only the first 3 shown on homepage
 const projectImages: Record<string, string> = {
+  "ai-trainer-academy": "/images/portfolio-development.png",
   "rusinga-digital-empowerment-initiative": "/images/portfolio-community.png",
   "business-matching": "/images/portfolio-branding.png",
   "assets-for-technology": "/images/portfolio-development.png",
