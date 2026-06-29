@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Plus, Search, Edit2, Trash2, ArrowLeft, Save, Send, Tag, BookOpen,
   Sparkles, Globe, Laptop, Smartphone, Check, AlertTriangle,
-  XCircle, Image, Info,
+  XCircle, Image, Info, Loader2,
 } from 'lucide-react';
 
 const AdminTinyMCEEditor = dynamic(() => import('./AdminTinyMCEEditor'), { ssr: false });
@@ -299,6 +299,64 @@ export default function AdminBlogManager() {
   const [seoTab, setSeoTab] = useState<'meta' | 'checklist' | 'social'>('meta');
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [socialPlatform, setSocialPlatform] = useState<'fb' | 'x'>('fb');
+
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File is too large. Max size is 5MB.', 'error');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const data = await response.json();
+      setFormData(prev => ({ ...prev, featuredImage: data.url }));
+      showToast('Featured image uploaded successfully!');
+    } catch (err: any) {
+      console.error('Image upload failed, falling back to local base64:', err);
+      
+      // Fallback to Base64
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFormData(prev => ({ ...prev, featuredImage: event.target!.result as string }));
+          showToast('Uploaded offline as Base64 (Server upload not available)', 'success');
+        } else {
+          showToast('Failed to process image file.', 'error');
+        }
+      };
+      reader.onerror = () => {
+        showToast('Error reading image file.', 'error');
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploading(false);
+      // Reset input value so same file can be uploaded again if removed
+      if (e.target) {
+        e.target.value = '';
+      }
+    }
+  };
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -982,8 +1040,43 @@ export default function AdminBlogManager() {
 
               {/* Featured Image upload placeholder card */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
-                <h3 className="text-sm font-bold text-ink-900">Featured Image</h3>
-                {formData.featuredImage ? (
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-ink-900">Featured Image</h3>
+                  {!formData.featuredImage && !isUploading && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const mockImages = [
+                          'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop',
+                          'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop',
+                          'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop',
+                          'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop'
+                        ];
+                        const randomImage = mockImages[Math.floor(Math.random() * mockImages.length)];
+                        setFormData(p => ({ ...p, featuredImage: randomImage }));
+                      }}
+                      className="text-[10px] text-brand-orange hover:text-brand-orangeDark font-bold transition-colors"
+                    >
+                      Use Demo Image
+                    </button>
+                  )}
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+
+                {isUploading ? (
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center bg-gray-50/50 flex flex-col items-center justify-center min-h-[144px]">
+                    <Loader2 className="w-8 h-8 text-brand-blue animate-spin mb-2" />
+                    <p className="text-xs font-semibold text-ink-900">Uploading image...</p>
+                    <p className="text-[10px] text-ink-400 mt-1">Please wait</p>
+                  </div>
+                ) : formData.featuredImage ? (
                   <div className="space-y-3">
                     <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
                       <img
@@ -1004,16 +1097,7 @@ export default function AdminBlogManager() {
                 ) : (
                   <div
                     className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-brand-blue/50 hover:bg-blue-50/20 transition-all cursor-pointer group"
-                    onClick={() => {
-                      const mockImages = [
-                        'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop'
-                      ];
-                      const randomImage = mockImages[Math.floor(Math.random() * mockImages.length)];
-                      setFormData(p => ({ ...p, featuredImage: randomImage }));
-                    }}
+                    onClick={() => fileInputRef.current?.click()}
                   >
                     <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center mx-auto mb-2 border border-gray-100 group-hover:bg-blue-50 transition-all">
                       <Plus className="w-5 h-5 text-ink-400 group-hover:text-brand-blue" />
