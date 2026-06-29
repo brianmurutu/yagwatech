@@ -12,7 +12,7 @@ export default function RotatingGlobe() {
       {/* Main Globe SVG */}
       <svg
         viewBox="0 0 100 100"
-        className="w-full h-full overflow-visible drop-shadow-[0_0_25px_rgba(11,61,145,0.25)]"
+        className="w-full h-full overflow-visible drop-shadow-[0_0_25px_rgba(11,61,145,0.25)] relative z-10"
       >
         <defs>
           {/* Radial Gradient for 3D Sphere Depth */}
@@ -161,6 +161,65 @@ export default function RotatingGlobe() {
           <text x="28.5" y="37" fill="#ffffff" fillOpacity="0.5" fontSize="1.8" fontFamily="Inter, sans-serif">New York</text>
         </g>
       </svg>
+
+      {/* Floating Tech Domain Pills (emerge from the center in 3D paths) */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 pointer-events-none select-none z-20">
+        {/* Tag 1: AI */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-tr">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-orange animate-pulse" />
+            AI & Automation
+          </span>
+        </div>
+
+        {/* Tag 2: Cybersecurity */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-tl" style={{ animationDelay: '1.5s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-purple animate-pulse" />
+            Cybersecurity
+          </span>
+        </div>
+
+        {/* Tag 3: Cloud Solutions */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-ml" style={{ animationDelay: '3s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+            Cloud Solutions
+          </span>
+        </div>
+
+        {/* Tag 4: Software Dev */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-br" style={{ animationDelay: '4.5s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+            Software Dev
+          </span>
+        </div>
+
+        {/* Tag 5: IoT Systems */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-bl" style={{ animationDelay: '6s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse" />
+            IoT Systems
+          </span>
+        </div>
+
+        {/* Tag 6: Data Analytics */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-mr" style={{ animationDelay: '2.2s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            Data Analytics
+          </span>
+        </div>
+
+        {/* Tag 7: ERP Systems */}
+        <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap animate-emerge-tr" style={{ animationDelay: '4s' }}>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+            ERP Systems
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
