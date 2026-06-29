@@ -1,10 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Building2, ArrowRight, Check } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import { projects, getProjectBySlug } from "@/lib/projects";
 import { buildMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
+
+const projectImages: Record<string, string> = {
+  "ai-trainer-academy": "/images/portfolio-development.png",
+  "rusinga-digital-empowerment-initiative": "/images/portfolio-community.png",
+  "business-matching": "/images/portfolio-branding.png",
+  "assets-for-technology": "/images/portfolio-development.png",
+  "merger-acquisition": "/images/portfolio-secure.png",
+  "startup-funding": "/images/portfolio-finance.png",
+};
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -48,8 +58,16 @@ export default function ProjectDetailPage({
 
       <section className="py-16 lg:py-20">
         <div className="container-wrap">
-          <div className="h-64 lg:h-80 rounded-2xl bg-gradient-to-br from-brand-blue to-brand-blueDark flex items-center justify-center mb-12">
-            <Building2 className="h-16 w-16 text-white/15" />
+          <div className="relative h-64 lg:h-96 rounded-2xl overflow-hidden mb-12 shadow-lg">
+            <Image
+              src={projectImages[project.slug] ?? "/images/portfolio-development.png"}
+              alt={`${project.title} — Yagwa Tech Solutions project`}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-blueDark/40 to-transparent" />
           </div>
 
           <div className="grid lg:grid-cols-3 gap-12">
