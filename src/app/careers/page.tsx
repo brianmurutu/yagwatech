@@ -149,7 +149,7 @@ export default function CareersPage() {
         eyebrow="Join our team"
         title="Build the future of digital solutions with us"
         description="We are looking for builders, designers, and problem solvers in Nairobi who want to deliver high-quality technology solutions across Kenya."
-        breadcrumbs={[{ label: "Careers" }]}
+        breadcrumbs={[{ label: "Careers", href: "/careers" }]}
       />
 
       {/* ── Open Positions Section ───────────────────────────────────────── */}

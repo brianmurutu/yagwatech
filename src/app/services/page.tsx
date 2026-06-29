@@ -20,7 +20,7 @@ export default function ServicesPage() {
         eyebrow="What we do"
         title="IT and digital solutions built around your business"
         description="From custom software to cybersecurity and digital marketing, explore the services we offer to help your business grow, adapt, and succeed."
-        breadcrumbs={[{ label: "Services" }]}
+        breadcrumbs={[{ label: "Services", href: "/services" }]}
       />
 
       <section className="py-20 lg:py-24">

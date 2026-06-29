@@ -40,7 +40,10 @@ export default function ProjectDetailPage({
         eyebrow={project.categories.join(" / ")}
         title={project.title}
         description={project.summary}
-        breadcrumbs={[{ label: "Portfolio", href: "/portfolio" }, { label: project.title }]}
+        breadcrumbs={[
+          { label: "Portfolio", href: "/portfolio" },
+          { label: project.title, href: `/portfolio/${project.slug}` },
+        ]}
       />
 
       <section className="py-16 lg:py-20">

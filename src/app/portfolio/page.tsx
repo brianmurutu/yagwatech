@@ -16,7 +16,7 @@ export default function PortfolioPage() {
         eyebrow="Our work"
         title="Projects that drive transformation across Kenya"
         description="From scalable enterprise technology to community centered digital literacy programs, explore the work behind our client partnerships."
-        breadcrumbs={[{ label: "Portfolio" }]}
+        breadcrumbs={[{ label: "Portfolio", href: "/portfolio" }]}
       />
 
       <section className="py-20 lg:py-24">

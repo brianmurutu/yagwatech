@@ -61,7 +61,10 @@ export default function BlogPostPage({
       <PageHero
         eyebrow={post.category}
         title={post.title}
-        breadcrumbs={[{ label: "Blog", href: "/blog" }, { label: post.title }]}
+        breadcrumbs={[
+          { label: "Blog", href: "/blog" },
+          { label: post.title, href: `/blog/${post.slug}` },
+        ]}
       />
 
       <section className="py-16 lg:py-20">

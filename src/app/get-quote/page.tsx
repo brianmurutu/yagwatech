@@ -17,7 +17,7 @@ export default function GetQuotePage() {
         eyebrow="Free quote"
         title="Tell us about your project"
         description="Share a few details below and our team will get back to you within one business day with guidance and a written quote."
-        breadcrumbs={[{ label: "Get a quote" }]}
+        breadcrumbs={[{ label: "Get a quote", href: "/get-quote" }]}
       />
 
       <section className="py-20 lg:py-24">

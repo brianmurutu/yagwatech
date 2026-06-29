@@ -15,7 +15,7 @@ export default function TermsPage() {
         eyebrow="Legal"
         title="Terms and conditions"
         description="Last updated June 2026. Please read these terms carefully before using our website or engaging our services."
-        breadcrumbs={[{ label: "Terms and conditions" }]}
+        breadcrumbs={[{ label: "Terms and conditions", href: "/terms-conditions" }]}
       />
 
       <section className="py-16 lg:py-20">

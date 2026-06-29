@@ -76,7 +76,10 @@ export default function ServiceDetailPage({
         eyebrow="Service"
         title={service.name}
         description={service.heroIntro}
-        breadcrumbs={[{ label: "Services", href: "/services" }, { label: service.shortName }]}
+        breadcrumbs={[
+          { label: "Services", href: "/services" },
+          { label: service.shortName, href: `/services/${service.slug}` },
+        ]}
       />
 
       <section className="py-16 lg:py-20">

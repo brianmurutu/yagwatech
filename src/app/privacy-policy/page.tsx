@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
         eyebrow="Legal"
         title="Privacy policy"
         description="Last updated June 2026. This policy explains how we handle information you share with us."
-        breadcrumbs={[{ label: "Privacy policy" }]}
+        breadcrumbs={[{ label: "Privacy policy", href: "/privacy-policy" }]}
       />
 
       <section className="py-16 lg:py-20">

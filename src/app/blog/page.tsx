@@ -44,7 +44,7 @@ export default function BlogIndexPage() {
         eyebrow="Insights"
         title="Tech, business, and digital transformation, explained plainly"
         description="Practical articles written for business owners and teams navigating technology decisions in Kenya and beyond."
-        breadcrumbs={[{ label: "Blog" }]}
+        breadcrumbs={[{ label: "Blog", href: "/blog" }]}
       />
 
       <section className="py-20 lg:py-24">

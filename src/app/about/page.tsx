@@ -28,7 +28,7 @@ export default function AboutPage() {
         eyebrow="Who we are"
         title="A digital solutions agency built on reliability and collaboration"
         description="We help businesses across Kenya turn ideas into impact through technology that is secure, efficient, and built to last."
-        breadcrumbs={[{ label: "About us" }]}
+        breadcrumbs={[{ label: "About us", href: "/about" }]}
       />
 
       {/* ── Our Story ─────────────────────────────────────────────────── */}

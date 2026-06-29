@@ -19,7 +19,7 @@ export default function ContactPage() {
         eyebrow="Get in touch"
         title="Let&apos;s talk about your project"
         description="Whether you have a clear brief or just an idea you are exploring, our team is ready to help you figure out the right next step."
-        breadcrumbs={[{ label: "Contact us" }]}
+        breadcrumbs={[{ label: "Contact us", href: "/contact" }]}
       />
 
       <section className="py-20 lg:py-24">

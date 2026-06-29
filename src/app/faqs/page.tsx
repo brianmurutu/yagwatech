@@ -32,7 +32,7 @@ export default function FaqsPage() {
         eyebrow="Support"
         title="Frequently asked questions"
         description="Answers to the questions we hear most often about pricing, process, and working with our team."
-        breadcrumbs={[{ label: "FAQs" }]}
+        breadcrumbs={[{ label: "FAQs", href: "/faqs" }]}
       />
 
       <section className="py-20 lg:py-24">

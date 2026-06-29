@@ -69,7 +69,7 @@ export default function PricingPage() {
         eyebrow="Investment"
         title="Pricing that scales with your project"
         description="Every project is different, so these are starting ranges. We provide a firm, written quote once we understand your exact requirements."
-        breadcrumbs={[{ label: "Pricing" }]}
+        breadcrumbs={[{ label: "Pricing", href: "/pricing" }]}
       />
 
       <section className="py-20 lg:py-24">
