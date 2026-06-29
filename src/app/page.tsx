@@ -17,6 +17,7 @@ import { testimonials } from "@/lib/team";
 import { getRecentPosts } from "@/lib/blog";
 import { getServiceIcon } from "@/lib/icons";
 import HomeBlogSection from "@/components/home/HomeBlogSection";
+import RotatingGlobe from "@/components/RotatingGlobe";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
@@ -159,60 +160,10 @@ export default function HomePage() {
               </AnimatedSection>
             </div>
 
-            {/* Right: floating tech badge panel */}
+            {/* Right: rotating digital network globe */}
             <AnimatedSection type="scale" delay={200}>
-              <div className="hidden lg:flex flex-col gap-4 items-end">
-                {/* Logo card */}
-                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 shadow-2xl w-72">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-orange font-bold text-white shadow text-sm shrink-0">
-                      YT
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">YagwaTech</div>
-                      <div className="text-xs text-white/60">Karen, Nairobi</div>
-                      <div className="mt-1 flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-3 w-3 fill-brand-orange text-brand-orange" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    {["Software Dev", "Cloud", "Security", "Design"].map((tag) => (
-                      <span key={tag} className="rounded-full bg-brand-orange/20 px-2.5 py-1 text-[11px] font-medium text-brand-orange text-center">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Live indicator */}
-                <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/15 p-4 shadow-xl w-64">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
-                    </span>
-                    <span className="text-xs font-semibold text-white">Available for projects</span>
-                  </div>
-                  <p className="mt-1.5 text-[11px] text-white/55">
-                    150+ projects completed across East Africa
-                  </p>
-                </div>
-
-                {/* Services pill stack */}
-                <div className="flex flex-wrap gap-2 justify-end max-w-xs">
-                  {["IT Consulting", "AI & Automation", "Digital Marketing", "ERP Systems"].map((s, i) => (
-                    <span
-                      key={s}
-                      className="rounded-full border border-white/20 bg-white/8 px-3 py-1 text-[11px] text-white/70"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex justify-center lg:justify-end items-center w-full">
+                <RotatingGlobe />
               </div>
             </AnimatedSection>
           </div>

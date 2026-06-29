@@ -372,3 +372,30 @@ html {
   font-size: inherit;
 }
 
+/* Globe spinning & translation animations */
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes spinReverseSlow {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+@keyframes globeTranslation {
+  from { transform: translateX(0px); }
+  to   { transform: translateX(-40px); } /* Translates by exactly one repeat pattern width */
+}
+
+.animate-spin-slow {
+  animation: spinSlow 30s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spinReverseSlow 25s linear infinite;
+}
+
+.animate-globe-translation {
+  animation: globeTranslation 15s linear infinite;
+}
