@@ -49,12 +49,12 @@ export function getBrandedEmailHtml(contentHtml: string, options: EmailWrapperOp
           <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #FFFFFF; border-radius: 12px; border: 1px solid #EEF1F7; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
             <!-- Header -->
             <tr>
-              <td style="padding: 24px 32px; border-bottom: 3px solid #F47B20; background-color: #FFFFFF;">
+              <td style="padding: 24px 32px; border-bottom: 3px solid #F47B20; background-color: #FFFFFF; text-align: center;">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td align="left" valign="middle">
-                      <a href="${site.url}" target="_blank">
-                        <img src="${logoUrl}" alt="${site.name}" height="40" style="height: 40px; width: auto; display: block; border: 0; outline: none;" />
+                    <td align="center" valign="middle">
+                      <a href="${site.url}" target="_blank" style="display: inline-block;">
+                        <img src="${logoUrl}" alt="${site.name}" height="80" style="height: 80px; width: auto; display: block; margin: 0 auto; border: 0; outline: none;" />
                       </a>
                     </td>
                   </tr>
