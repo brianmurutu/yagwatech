@@ -1,30 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, X, User, Calendar, AlertTriangle } from 'lucide-react';
 
 type Priority = 'High' | 'Medium' | 'Low';
 type Column = 'Backlog' | 'In Progress' | 'Review' | 'Done';
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
   assignee: string;
   priority: Priority;
   dueDate: string;
   column: Column;
   tags: string[];
+  client?: string;
+  budget?: string;
+  description?: string;
+  status?: string;
+  deadline?: string;
 }
 
 const initialProjects: Project[] = [
-  { id: 1, title: 'Client Onboarding Portal', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '2024-08-15', column: 'Backlog', tags: ['Web', 'Portal'] },
-  { id: 2, title: 'Mobile App Redesign', assignee: 'Dennis Mutua', priority: 'Low', dueDate: '2024-09-01', column: 'Backlog', tags: ['Mobile', 'UI/UX'] },
-  { id: 3, title: 'ERP Integration for KCB', assignee: 'David Kamau', priority: 'High', dueDate: '2024-07-30', column: 'In Progress', tags: ['Enterprise', 'API'] },
-  { id: 4, title: 'Cybersecurity Audit', assignee: 'Peter Njoroge', priority: 'High', dueDate: '2024-07-20', column: 'In Progress', tags: ['Security'] },
-  { id: 5, title: 'Website Optimization', assignee: 'Amina Ochieng', priority: 'Medium', dueDate: '2024-07-25', column: 'In Progress', tags: ['Performance', 'SEO'] },
-  { id: 6, title: 'Digital Marketing Campaign', assignee: 'Grace Wanjiku', priority: 'Medium', dueDate: '2024-07-18', column: 'Review', tags: ['Marketing'] },
-  { id: 7, title: 'Cloud Migration Phase 1', assignee: 'James Odhiambo', priority: 'High', dueDate: '2024-06-30', column: 'Done', tags: ['Cloud', 'AWS'] },
-  { id: 8, title: 'Staff Training LMS', assignee: 'Lydia Mwangi', priority: 'Low', dueDate: '2024-06-15', column: 'Done', tags: ['Training'] },
+  { id: '1', title: 'Client Onboarding Portal', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '2024-08-15', column: 'Backlog', tags: ['Web', 'Portal'] },
+  { id: '2', title: 'Mobile App Redesign', assignee: 'Dennis Mutua', priority: 'Low', dueDate: '2024-09-01', column: 'Backlog', tags: ['Mobile', 'UI/UX'] },
+  { id: '3', title: 'ERP Integration for KCB', assignee: 'David Kamau', priority: 'High', dueDate: '2024-07-30', column: 'In Progress', tags: ['Enterprise', 'API'] },
+  { id: '4', title: 'Cybersecurity Audit', assignee: 'Peter Njoroge', priority: 'High', dueDate: '2024-07-20', column: 'In Progress', tags: ['Security'] },
+  { id: '5', title: 'Website Optimization', assignee: 'Amina Ochieng', priority: 'Medium', dueDate: '2024-07-25', column: 'In Progress', tags: ['Performance', 'SEO'] },
+  { id: '6', title: 'Digital Marketing Campaign', assignee: 'Grace Wanjiku', priority: 'Medium', dueDate: '2024-07-18', column: 'Review', tags: ['Marketing'] },
+  { id: '7', title: 'Cloud Migration Phase 1', assignee: 'James Odhiambo', priority: 'High', dueDate: '2024-06-30', column: 'Done', tags: ['Cloud', 'AWS'] },
+  { id: '8', title: 'Staff Training LMS', assignee: 'Lydia Mwangi', priority: 'Low', dueDate: '2024-06-15', column: 'Done', tags: ['Training'] },
 ];
 
 const columns: Column[] = ['Backlog', 'In Progress', 'Review', 'Done'];
@@ -43,7 +48,7 @@ const columnStyle: Record<Column, { header: string; dot: string }> = {
 };
 
 export default function PortalProjects() {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     title: '',
@@ -53,15 +58,81 @@ export default function PortalProjects() {
     column: 'Backlog' as Column,
   });
 
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_projects');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as any[];
+        const mapped = parsed.map((p) => ({
+          ...p,
+          id: p.id.toString(),
+          column: p.column || p.status || 'Backlog',
+          status: p.status || p.column || 'Backlog',
+          dueDate: p.dueDate || p.deadline || new Date().toISOString().split('T')[0],
+          deadline: p.deadline || p.dueDate || new Date().toISOString().split('T')[0],
+          tags: p.tags || [],
+        }));
+        setProjects(mapped);
+      } catch (e) {
+        console.error('Failed to load projects:', e);
+      }
+    } else {
+      const formatted = initialProjects.map((p) => ({
+        ...p,
+        id: p.id.toString(),
+        column: p.column,
+        status: p.column,
+        dueDate: p.dueDate,
+        deadline: p.dueDate,
+        client: 'Client Name',
+        budget: 'KSh 500,000',
+        description: 'Mock project description.',
+      }));
+      setProjects(formatted);
+      localStorage.setItem('yagwa_projects', JSON.stringify(formatted));
+    }
+  }, []);
+
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
-    setProjects((prev) => [
-      ...prev,
-      { ...form, id: Date.now(), tags: [] },
-    ]);
+
+    const newProject: Project = {
+      id: Date.now().toString(),
+      title: form.title,
+      assignee: form.assignee || 'Unassigned',
+      priority: form.priority,
+      dueDate: form.dueDate || new Date().toISOString().split('T')[0],
+      column: form.column,
+      status: form.column,
+      deadline: form.dueDate || new Date().toISOString().split('T')[0],
+      tags: [],
+      client: 'YagwaTech Internal',
+      budget: 'KSh 0',
+      description: 'Project created via employee portal.',
+    };
+
+    const updated = [...projects, newProject];
+    setProjects(updated);
+    localStorage.setItem('yagwa_projects', JSON.stringify(updated));
     setForm({ title: '', assignee: '', priority: 'Medium', dueDate: '', column: 'Backlog' });
     setShowModal(false);
+  };
+
+  const cycleColumn = (id: string) => {
+    const nextCol: Record<Column, Column> = {
+      'Backlog': 'In Progress',
+      'In Progress': 'Review',
+      'Review': 'Done',
+      'Done': 'Backlog'
+    };
+    const updated = projects.map((p) => {
+      if (p.id.toString() !== id.toString()) return p;
+      const next = nextCol[p.column];
+      return { ...p, column: next, status: next };
+    });
+    setProjects(updated);
+    localStorage.setItem('yagwa_projects', JSON.stringify(updated));
   };
 
   const isOverdue = (date: string) => new Date(date) < new Date();
@@ -123,7 +194,7 @@ export default function PortalProjects() {
                         </span>
                       </div>
 
-                      {p.tags.length > 0 && (
+                      {p.tags && p.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mb-3">
                           {p.tags.map((tag) => (
                             <span key={tag} className="text-[9px] font-medium bg-[#0B3D91]/8 text-[#0B3D91] px-2 py-0.5 rounded-full">
@@ -142,11 +213,16 @@ export default function PortalProjects() {
                           </div>
                           <span className="text-[10px] text-[#5A6680] truncate max-w-[80px]">{p.assignee}</span>
                         </div>
-                        <div className={`flex items-center gap-1 text-[10px] ${isOverdue(p.dueDate) && col !== 'Done' ? 'text-red-500' : 'text-[#5A6680]'}`}>
-                          {isOverdue(p.dueDate) && col !== 'Done' && <AlertTriangle className="w-2.5 h-2.5" />}
-                          <Calendar className="w-2.5 h-2.5" />
-                          {new Date(p.dueDate).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })}
-                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cycleColumn(p.id.toString());
+                          }}
+                          className="text-[10px] text-[#0B3D91] hover:text-[#1A56C4] font-semibold flex items-center gap-0.5"
+                          title="Move project to next stage"
+                        >
+                          Move →
+                        </button>
                       </div>
                     </div>
                   ))

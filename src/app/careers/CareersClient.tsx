@@ -335,7 +335,7 @@ export default function CareersClient() {
             </div>
             <h2 className="text-2xl font-bold text-ink-900">Don't see a role that fits?</h2>
             <p className="mt-4 text-[15px] leading-relaxed text-ink-400">
-              We are always on the lookout for talented engineers, designers, project managers, and digital marketers. If you are passionate about what you do, send us an open speculative application and let us know how you can make a difference.
+              We are always on the lookout for talented engineers, designers, project managers, and digital marketers. If you are passionate about what you do, send us an open speculative application and let us know how you can make a difference. You can also send your CV and portfolio directly to <a href="mailto:careers@yagwatech.com" className="text-brand-blue font-semibold hover:underline">careers@yagwatech.com</a>.
             </p>
             <button
               onClick={() => handleApplyClick({

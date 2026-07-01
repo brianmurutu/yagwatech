@@ -170,7 +170,7 @@ export default function PortalPage() {
   }
 
   const moduleMap: Record<Module, React.ReactNode> = {
-    dashboard: <PortalDashboard setActiveModule={setActiveModule} />,
+    dashboard: <PortalDashboard setActiveModule={(m) => setActiveModule(m as Module)} />,
     projects: <PortalProjects />,
     tasks: <PortalTasks />,
     team: <PortalTeam />,

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Users, FileText, Clock, Briefcase, Plus, UserPlus, BarChart2, Settings, CheckCircle, XCircle } from 'lucide-react';
 
 type AdminModule =
@@ -16,25 +17,6 @@ interface AdminDashboardProps {
   onNavigate: (module: AdminModule) => void;
 }
 
-const stats = [
-  { label: 'Total Employees', value: '12', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', change: '+2 this month' },
-  { label: 'Published Posts', value: '18', icon: FileText, color: 'text-green-600', bg: 'bg-green-50', change: '+3 this week' },
-  { label: 'Pending Leaves', value: '3', icon: Clock, color: 'text-orange-500', bg: 'bg-orange-50', change: '2 urgent' },
-  { label: 'Active Projects', value: '8', icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50', change: '3 due soon' },
-];
-
-const recentPosts = [
-  { title: 'How Cloud Computing is Transforming Kenyan SMEs', author: 'Brian Murutu', date: '28 Jun 2026', status: 'Published' },
-  { title: 'Cybersecurity Threats Facing East African Businesses in 2026', author: 'Grace Njeri', date: '25 Jun 2026', status: 'Published' },
-  { title: 'The Rise of Mobile-First Development in Kenya', author: 'James Otieno', date: '22 Jun 2026', status: 'Draft' },
-];
-
-const pendingLeaves = [
-  { name: 'Amina Wanjiku', type: 'Annual Leave', days: 5, from: '2 Jul', to: '6 Jul' },
-  { name: 'Kevin Kimani', type: 'Sick Leave', days: 2, from: '30 Jun', to: '1 Jul' },
-  { name: 'Faith Akinyi', type: 'Emergency Leave', days: 1, from: '29 Jun', to: '29 Jun' },
-];
-
 const quickActions = [
   { label: 'New Blog Post', icon: Plus, module: 'blog' as AdminModule, color: 'bg-brand-blue hover:bg-brand-blueLight' },
   { label: 'Add Employee', icon: UserPlus, module: 'employees' as AdminModule, color: 'bg-green-600 hover:bg-green-700' },
@@ -43,6 +25,110 @@ const quickActions = [
 ];
 
 export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
+  const [totalEmployees, setTotalEmployees] = useState(12);
+  const [publishedPostsCount, setPublishedPostsCount] = useState(18);
+  const [pendingLeavesCount, setPendingLeavesCount] = useState(3);
+  const [activeProjectsCount, setActiveProjectsCount] = useState(8);
+
+  const [postsList, setPostsList] = useState<any[]>([]);
+  const [leavesList, setLeavesList] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Employees
+    const emp = localStorage.getItem('yagwa_employees');
+    if (emp) {
+      try {
+        const parsed = JSON.parse(emp);
+        setTotalEmployees(parsed.length);
+      } catch (e) { console.error(e); }
+    }
+
+    // 2. Blog Posts
+    const blog = localStorage.getItem('yagwa_blog_posts');
+    if (blog) {
+      try {
+        const parsed = JSON.parse(blog) as any[];
+        const published = parsed.filter(p => p.status === 'Published');
+        setPublishedPostsCount(published.length);
+        setPostsList(parsed.slice(0, 3));
+      } catch (e) { console.error(e); }
+    } else {
+      setPostsList([
+        { title: 'How Cloud Computing is Transforming Kenyan SMEs', author: 'Brian Murutu', date: '28 Jun 2026', status: 'Published' },
+        { title: 'Cybersecurity Threats Facing East African Businesses in 2026', author: 'Grace Njeri', date: '25 Jun 2026', status: 'Published' },
+        { title: 'The Rise of Mobile-First Development in Kenya', author: 'James Otieno', date: '22 Jun 2026', status: 'Draft' },
+      ]);
+    }
+
+    // 3. Leaves
+    const leaves = localStorage.getItem('yagwa_leaves');
+    if (leaves) {
+      try {
+        const parsed = JSON.parse(leaves) as any[];
+        const pending = parsed.filter(l => l.status === 'Pending');
+        setPendingLeavesCount(pending.length);
+        
+        const mapped = pending.map(l => ({
+          id: l.id,
+          name: l.employee,
+          type: l.type,
+          days: l.days,
+          from: l.startDate,
+          to: l.endDate
+        }));
+        setLeavesList(mapped.slice(0, 3));
+      } catch (e) { console.error(e); }
+    } else {
+      setLeavesList([
+        { id: '1', name: 'Amina Wanjiku', type: 'Annual Leave', days: 5, from: '2 Jul', to: '6 Jul' },
+        { id: '2', name: 'Kevin Kimani', type: 'Sick Leave', days: 2, from: '30 Jun', to: '1 Jul' },
+        { id: '3', name: 'Faith Akinyi', type: 'Emergency Leave', days: 1, from: '29 Jun', to: '29 Jun' },
+      ]);
+    }
+
+    // 4. Projects
+    const projects = localStorage.getItem('yagwa_projects');
+    if (projects) {
+      try {
+        const parsed = JSON.parse(projects) as any[];
+        const active = parsed.filter(p => p.status === 'In Progress' || p.status === 'Backlog' || p.status === 'Review');
+        setActiveProjectsCount(active.length);
+      } catch (e) { console.error(e); }
+    }
+  }, []);
+
+  const handleAction = (id: string, action: 'Approved' | 'Rejected') => {
+    const leaves = localStorage.getItem('yagwa_leaves');
+    if (leaves) {
+      try {
+        const parsed = JSON.parse(leaves) as any[];
+        const updated = parsed.map(l => l.id.toString() === id.toString() ? { ...l, status: action } : l);
+        localStorage.setItem('yagwa_leaves', JSON.stringify(updated));
+        
+        const pending = updated.filter(l => l.status === 'Pending');
+        setPendingLeavesCount(pending.length);
+        const mapped = pending.map(l => ({
+          id: l.id,
+          name: l.employee,
+          type: l.type,
+          days: l.days,
+          from: l.startDate,
+          to: l.endDate
+        }));
+        setLeavesList(mapped.slice(0, 3));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const stats = [
+    { label: 'Total Employees', value: totalEmployees.toString(), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', change: 'Live team size' },
+    { label: 'Published Posts', value: publishedPostsCount.toString(), icon: FileText, color: 'text-green-600', bg: 'bg-green-50', change: 'Insights articles' },
+    { label: 'Pending Leaves', value: pendingLeavesCount.toString(), icon: Clock, color: 'text-[#F47B20]', bg: 'bg-orange-50', change: `${pendingLeavesCount} active review${pendingLeavesCount !== 1 ? 's' : ''}` },
+    { label: 'Active Projects', value: activeProjectsCount.toString(), icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50', change: 'Kanban boards' },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -97,7 +183,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
             </button>
           </div>
           <div className="divide-y divide-gray-50">
-            {recentPosts.map((post) => (
+            {postsList.map((post) => (
               <div key={post.title} className="px-5 py-3.5 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -116,6 +202,11 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                 </div>
               </div>
             ))}
+            {postsList.length === 0 && (
+              <div className="p-5 text-center text-xs text-ink-400">
+                No blog posts found.
+              </div>
+            )}
           </div>
         </div>
 
@@ -131,8 +222,8 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
             </button>
           </div>
           <div className="divide-y divide-gray-50">
-            {pendingLeaves.map((leave) => (
-              <div key={leave.name} className="px-5 py-3.5 hover:bg-gray-50 transition-colors">
+            {leavesList.map((leave) => (
+              <div key={leave.id} className="px-5 py-3.5 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-ink-900">{leave.name}</p>
@@ -141,16 +232,29 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     </p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
-                    <button className="p-1.5 bg-green-100 hover:bg-green-200 rounded-lg text-green-700 transition-colors">
+                    <button
+                      onClick={() => handleAction(leave.id, 'Approved')}
+                      className="p-1.5 bg-green-100 hover:bg-green-200 rounded-lg text-green-700 transition-colors"
+                      title="Approve Leave"
+                    >
                       <CheckCircle className="w-4 h-4" />
                     </button>
-                    <button className="p-1.5 bg-red-100 hover:bg-red-200 rounded-lg text-red-600 transition-colors">
+                    <button
+                      onClick={() => handleAction(leave.id, 'Rejected')}
+                      className="p-1.5 bg-red-100 hover:bg-red-200 rounded-lg text-red-600 transition-colors"
+                      title="Reject Leave"
+                    >
                       <XCircle className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
             ))}
+            {leavesList.length === 0 && (
+              <div className="p-5 text-center text-xs text-ink-400">
+                No pending leave requests.
+              </div>
+            )}
           </div>
         </div>
       </div>

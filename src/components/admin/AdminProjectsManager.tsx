@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Briefcase, User, Calendar, DollarSign, Filter, Search } from 'lucide-react';
 
 interface Project {
@@ -29,7 +29,7 @@ const INITIAL_PROJECTS: Project[] = [
 const TEAM_MEMBERS = ['James Otieno', 'Amina Wanjiku', 'David Mwangi', 'Faith Akinyi', 'Kevin Kimani', 'Samuel Karanja', 'Grace Njeri', 'Brian Murutu'];
 
 export default function AdminProjectsManager() {
-  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +46,35 @@ export default function AdminProjectsManager() {
     budget: '',
     description: '',
   });
+
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_projects');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as any[];
+        const mapped = parsed.map((p) => ({
+          ...p,
+          id: p.id.toString(),
+          status: p.status || p.column || 'Backlog',
+          column: p.column || p.status || 'Backlog',
+          deadline: p.deadline || p.dueDate || new Date().toISOString().split('T')[0],
+          dueDate: p.dueDate || p.deadline || new Date().toISOString().split('T')[0],
+        }));
+        setProjects(mapped);
+      } catch (e) {
+        console.error('Failed to parse projects:', e);
+      }
+    } else {
+      const formatted = INITIAL_PROJECTS.map((p) => ({
+        ...p,
+        column: p.status,
+        dueDate: p.deadline,
+        tags: [],
+      }));
+      setProjects(formatted);
+      localStorage.setItem('yagwa_projects', JSON.stringify(formatted));
+    }
+  }, []);
 
   const showToast = (message: string) => {
     setToast(message);
@@ -84,24 +113,42 @@ export default function AdminProjectsManager() {
 
   const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      setProjects(projects.filter(p => p.id !== id));
+      const updated = projects.filter(p => p.id !== id);
+      setProjects(updated);
+      localStorage.setItem('yagwa_projects', JSON.stringify(updated));
       showToast('Project deleted successfully');
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let updated: Project[];
     if (editingProject) {
-      setProjects(projects.map(p => p.id === editingProject.id ? { ...p, ...formData } : p));
+      updated = projects.map(p => {
+        if (p.id === editingProject.id) {
+          return {
+            ...p,
+            ...formData,
+            column: formData.status,
+            dueDate: formData.deadline,
+          };
+        }
+        return p;
+      });
       showToast('Project updated successfully');
     } else {
       const newProject: Project = {
-        id: (projects.length + 1).toString(),
+        id: Date.now().toString(),
         ...formData,
-      };
-      setProjects([...projects, newProject]);
+        column: formData.status,
+        dueDate: formData.deadline,
+        tags: [],
+      } as any;
+      updated = [...projects, newProject];
       showToast('Project created successfully');
     }
+    setProjects(updated);
+    localStorage.setItem('yagwa_projects', JSON.stringify(updated));
     setShowModal(false);
   };
 

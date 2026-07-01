@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CheckCircle, XCircle, Clock, MessageSquare, Filter } from 'lucide-react';
 
 type LeaveStatus = 'Pending' | 'Approved' | 'Rejected';
-type LeaveType = 'Annual Leave' | 'Sick Leave' | 'Emergency Leave' | 'Maternity Leave' | 'Paternity Leave' | 'Study Leave';
+type LeaveType = 'Annual' | 'Sick' | 'Emergency' | 'Personal' | 'Study' | 'Annual Leave' | 'Sick Leave' | 'Emergency Leave' | 'Maternity Leave' | 'Paternity Leave' | 'Study Leave';
 
 interface LeaveRequest {
   id: string;
@@ -21,17 +21,21 @@ interface LeaveRequest {
 }
 
 const INITIAL_LEAVES: LeaveRequest[] = [
-  { id: '1', employee: 'Amina Wanjiku', department: 'Design', avatar: 'AW', type: 'Annual Leave', startDate: '2026-07-02', endDate: '2026-07-06', days: 5, reason: 'Family vacation to Mombasa for school break.', status: 'Pending', notes: '' },
-  { id: '2', employee: 'Kevin Kimani', department: 'Engineering', avatar: 'KK', type: 'Sick Leave', startDate: '2026-06-30', endDate: '2026-07-01', days: 2, reason: 'Flu and doctor\'s recommendation for rest.', status: 'Pending', notes: '' },
-  { id: '3', employee: 'Faith Akinyi', department: 'Operations', avatar: 'FA', type: 'Emergency Leave', startDate: '2026-06-29', endDate: '2026-06-29', days: 1, reason: 'Family emergency requiring immediate attention.', status: 'Pending', notes: '' },
-  { id: '4', employee: 'Lucy Adhiambo', department: 'Sales', avatar: 'LA', type: 'Annual Leave', startDate: '2026-07-10', endDate: '2026-07-17', days: 8, reason: 'Pre-planned vacation leave. All handover docs ready.', status: 'Approved', notes: 'Approved. Ensure handover with James before departure.' },
-  { id: '5', employee: 'Patrick Ochieng', department: 'Engineering', avatar: 'PO', type: 'Study Leave', startDate: '2026-07-14', endDate: '2026-07-18', days: 5, reason: 'AWS Cloud Practitioner certification exam preparation.', status: 'Approved', notes: 'Excellent initiative. Approved with full pay.' },
-  { id: '6', employee: 'David Mwangi', department: 'Marketing', avatar: 'DM', type: 'Sick Leave', startDate: '2026-06-20', endDate: '2026-06-21', days: 2, reason: 'Medical procedure follow-up.', status: 'Rejected', notes: 'Rejected — insufficient sick leave balance. Please apply for unpaid leave.' },
+  { id: '1', employee: 'Amina Wanjiku', department: 'Design', avatar: 'AW', type: 'Annual', startDate: '2026-07-02', endDate: '2026-07-06', days: 5, reason: 'Family vacation to Mombasa for school break.', status: 'Pending', notes: '' },
+  { id: '2', employee: 'Kevin Kimani', department: 'Engineering', avatar: 'KK', type: 'Sick', startDate: '2026-06-30', endDate: '2026-07-01', days: 2, reason: 'Flu and doctor\'s recommendation for rest.', status: 'Pending', notes: '' },
+  { id: '3', employee: 'Faith Akinyi', department: 'Operations', avatar: 'FA', type: 'Emergency', startDate: '2026-06-29', endDate: '2026-06-29', days: 1, reason: 'Family emergency requiring immediate attention.', status: 'Pending', notes: '' },
+  { id: '4', employee: 'Lucy Adhiambo', department: 'Sales', avatar: 'LA', type: 'Annual', startDate: '2026-07-10', endDate: '2026-07-17', days: 8, reason: 'Pre-planned vacation leave. All handover docs ready.', status: 'Approved', notes: 'Approved. Ensure handover with James before departure.' },
+  { id: '5', employee: 'Patrick Ochieng', department: 'Engineering', avatar: 'PO', type: 'Study', startDate: '2026-07-14', endDate: '2026-07-18', days: 5, reason: 'AWS Cloud Practitioner certification exam preparation.', status: 'Approved', notes: 'Excellent initiative. Approved with full pay.' },
+  { id: '6', employee: 'David Mwangi', department: 'Marketing', avatar: 'DM', type: 'Sick', startDate: '2026-06-20', endDate: '2026-06-21', days: 2, reason: 'Medical procedure follow-up.', status: 'Rejected', notes: 'Rejected — insufficient sick leave balance. Please apply for unpaid leave.' },
+  { id: '7', employee: 'Admin User', department: 'Management', avatar: 'AD', type: 'Annual', startDate: '2026-05-10', endDate: '2026-05-15', days: 5, reason: 'Annual family holiday.', status: 'Approved', notes: 'Enjoy your holiday!' },
+  { id: '8', employee: 'Admin User', department: 'Management', avatar: 'AD', type: 'Sick', startDate: '2026-04-12', endDate: '2026-04-13', days: 2, reason: 'Dental surgery.', status: 'Approved', notes: 'Get well soon.' },
+  { id: '9', employee: 'Admin User', department: 'Management', avatar: 'AD', type: 'Personal', startDate: '2026-06-05', endDate: '2026-06-05', days: 1, reason: 'Personal errand.', status: 'Rejected', notes: 'Rejected due to critical project deadline.' },
 ];
 
 const avatarColors: Record<string, string> = {
   AW: 'bg-orange-500', KK: 'bg-indigo-500', FA: 'bg-teal-500',
   LA: 'bg-pink-500', PO: 'bg-purple-500', DM: 'bg-green-500',
+  AD: 'bg-blue-600',
 };
 
 const statusConfig: Record<LeaveStatus, { label: string; badge: string; icon: React.ReactNode }> = {
@@ -40,11 +44,27 @@ const statusConfig: Record<LeaveStatus, { label: string; badge: string; icon: Re
   Rejected: { label: 'Rejected', badge: 'bg-red-100 text-red-600', icon: <XCircle className="w-3.5 h-3.5" /> },
 };
 
+import { useEffect } from 'react';
+
 export default function AdminLeaveApprovals() {
-  const [leaves, setLeaves] = useState<LeaveRequest[]>(INITIAL_LEAVES);
+  const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [filter, setFilter] = useState<'All' | LeaveStatus>('All');
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_leaves');
+    if (saved) {
+      try {
+        setLeaves(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse leaves:', e);
+      }
+    } else {
+      setLeaves(INITIAL_LEAVES);
+      localStorage.setItem('yagwa_leaves', JSON.stringify(INITIAL_LEAVES));
+    }
+  }, []);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -52,11 +72,11 @@ export default function AdminLeaveApprovals() {
   };
 
   const handleAction = (id: string, action: 'Approved' | 'Rejected') => {
-    setLeaves((prev) =>
-      prev.map((l) =>
-        l.id === id ? { ...l, status: action, notes: notes[id] || l.notes } : l,
-      ),
+    const updated = leaves.map((l) =>
+      l.id === id ? { ...l, status: action, notes: notes[id] || l.notes } : l,
     );
+    setLeaves(updated);
+    localStorage.setItem('yagwa_leaves', JSON.stringify(updated));
     showToast(`Leave request ${action.toLowerCase()} successfully`);
   };
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Briefcase,
   CheckCircle,
@@ -15,37 +16,6 @@ import {
 interface Props {
   setActiveModule: (m: string) => void;
 }
-
-const stats = [
-  {
-    label: 'Active Projects',
-    value: '8',
-    change: '+2 this month',
-    Icon: Briefcase,
-    color: 'blue',
-  },
-  {
-    label: 'Pending Tasks',
-    value: '15',
-    change: '5 due today',
-    Icon: CheckCircle,
-    color: 'orange',
-  },
-  {
-    label: 'Team Members',
-    value: '12',
-    change: '1 on leave',
-    Icon: Users,
-    color: 'green',
-  },
-  {
-    label: 'Leaves Pending',
-    value: '3',
-    change: 'Awaiting approval',
-    Icon: Calendar,
-    color: 'purple',
-  },
-];
 
 const colorMap: Record<string, { bg: string; text: string; ring: string }> = {
   blue: { bg: 'bg-[#0B3D91]/10', text: 'text-[#0B3D91]', ring: 'ring-[#0B3D91]/20' },
@@ -107,12 +77,108 @@ const quickActions = [
 ];
 
 export default function PortalDashboard({ setActiveModule }: Props) {
+  const [activeProjectsCount, setActiveProjectsCount] = useState(8);
+  const [pendingTasksCount, setPendingTasksCount] = useState(15);
+  const [teamMembersCount, setTeamMembersCount] = useState(12);
+  const [pendingLeavesCount, setPendingLeavesCount] = useState(3);
+
+  const [hoursPercentage, setHoursPercentage] = useState(95);
+  const [tasksPercentage, setTasksPercentage] = useState(73);
+
+  useEffect(() => {
+    // 1. Projects
+    const projects = localStorage.getItem('yagwa_projects');
+    if (projects) {
+      try {
+        const parsed = JSON.parse(projects) as any[];
+        const active = parsed.filter(p => p.status === 'In Progress' || p.status === 'Backlog' || p.status === 'Review');
+        setActiveProjectsCount(active.length);
+      } catch (e) { console.error(e); }
+    }
+
+    // 2. Tasks
+    const tasks = localStorage.getItem('yagwa_tasks');
+    if (tasks) {
+      try {
+        const parsed = JSON.parse(tasks) as any[];
+        const pending = parsed.filter(t => t.status !== 'Done');
+        const done = parsed.filter(t => t.status === 'Done');
+        setPendingTasksCount(pending.length);
+        if (parsed.length > 0) {
+          setTasksPercentage(Math.round((done.length / parsed.length) * 100));
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // 3. Team Members
+    const emp = localStorage.getItem('yagwa_employees');
+    if (emp) {
+      try {
+        const parsed = JSON.parse(emp);
+        setTeamMembersCount(parsed.length);
+      } catch (e) { console.error(e); }
+    }
+
+    // 4. Leaves Pending for Admin User (mock employee)
+    const leaves = localStorage.getItem('yagwa_leaves');
+    if (leaves) {
+      try {
+        const parsed = JSON.parse(leaves) as any[];
+        const userPending = parsed.filter(l => l.employee === 'Admin User' && l.status === 'Pending');
+        setPendingLeavesCount(userPending.length);
+      } catch (e) { console.error(e); }
+    }
+
+    // 5. Attendance Hours progress
+    const att = localStorage.getItem('yagwa_attendance');
+    if (att) {
+      try {
+        const parsed = JSON.parse(att);
+        if (parsed.log && parsed.log.length > 0) {
+          const presentDays = parsed.log.filter((d: any) => d.status === 'Present').length;
+          setHoursPercentage(Math.min(100, Math.round((presentDays / 5) * 100)));
+        }
+      } catch (e) { console.error(e); }
+    }
+  }, []);
+
+  const stats = [
+    {
+      label: 'Active Projects',
+      value: activeProjectsCount.toString(),
+      change: 'Ongoing kanban files',
+      Icon: Briefcase,
+      color: 'blue',
+    },
+    {
+      label: 'Pending Tasks',
+      value: pendingTasksCount.toString(),
+      change: 'Awaiting completion',
+      Icon: CheckCircle,
+      color: 'orange',
+    },
+    {
+      label: 'Team Members',
+      value: teamMembersCount.toString(),
+      change: 'Corporate directory',
+      Icon: Users,
+      color: 'green',
+    },
+    {
+      label: 'Leaves Pending',
+      value: pendingLeavesCount.toString(),
+      change: 'My pending requests',
+      Icon: Calendar,
+      color: 'purple',
+    },
+  ];
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome banner */}
       <div className="bg-gradient-to-r from-[#07255A] to-[#1A56C4] rounded-2xl p-6 text-white flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">Good afternoon, Admin! 👋</h3>
+          <h3 className="text-xl font-bold">Good afternoon, Admin User! 👋</h3>
           <p className="text-white/65 text-sm mt-1">
             Here's what's happening at YagwaTech today.
           </p>
@@ -195,8 +261,8 @@ export default function PortalDashboard({ setActiveModule }: Props) {
             <p className="text-xs text-[#5A6680] font-medium mb-3 uppercase tracking-wide">This Week</p>
             <div className="space-y-2">
               {[
-                { label: 'Tasks completed', value: '11', bar: 73 },
-                { label: 'Hours logged', value: '38h', bar: 95 },
+                { label: 'Tasks completed', value: `${tasksPercentage}%`, bar: tasksPercentage },
+                { label: 'Hours logged', value: `${hoursPercentage}%`, bar: hoursPercentage },
                 { label: 'Meetings attended', value: '6', bar: 60 },
               ].map(({ label, value, bar }) => (
                 <div key={label} className="space-y-1">

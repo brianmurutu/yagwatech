@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pin, Plus, X, Bell, Megaphone, AlertTriangle, Info, CheckCircle } from 'lucide-react';
 
 type Category = 'General' | 'HR' | 'Technical' | 'Event' | 'Urgent';
@@ -72,33 +72,49 @@ const initialAnnouncements: Announcement[] = [
 ];
 
 export default function PortalAnnouncements() {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', body: '', category: 'General' as Category });
 
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_announcements');
+    if (saved) {
+      try {
+        setAnnouncements(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load announcements:', e);
+      }
+    } else {
+      setAnnouncements(initialAnnouncements);
+      localStorage.setItem('yagwa_announcements', JSON.stringify(initialAnnouncements));
+    }
+  }, []);
+
   const togglePin = (id: number) => {
-    setAnnouncements((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, pinned: !a.pinned } : a))
-    );
+    const updated = announcements.map((a) => (a.id === id ? { ...a, pinned: !a.pinned } : a));
+    setAnnouncements(updated);
+    localStorage.setItem('yagwa_announcements', JSON.stringify(updated));
   };
 
   const deleteAnnouncement = (id: number) => {
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+    const updated = announcements.filter((a) => a.id !== id);
+    setAnnouncements(updated);
+    localStorage.setItem('yagwa_announcements', JSON.stringify(updated));
   };
 
   const handlePost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim() || !form.body.trim()) return;
-    setAnnouncements((prev) => [
-      {
-        id: Date.now(),
-        ...form,
-        author: 'Admin User',
-        date: new Date().toISOString().split('T')[0],
-        pinned: false,
-      },
-      ...prev,
-    ]);
+    const newAnnouncement: Announcement = {
+      id: Date.now(),
+      ...form,
+      author: 'Admin User',
+      date: new Date().toISOString().split('T')[0],
+      pinned: false,
+    };
+    const updated = [newAnnouncement, ...announcements];
+    setAnnouncements(updated);
+    localStorage.setItem('yagwa_announcements', JSON.stringify(updated));
     setForm({ title: '', body: '', category: 'General' });
     setShowForm(false);
   };

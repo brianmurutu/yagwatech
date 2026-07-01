@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     // Send candidate application notification to Yagwa Tech admin team
     const { error: notifyError } = await resend.emails.send({
       from: FROM_ADDRESS,
-      to: site.adminEmails,
+      to: site.careersEmails,
       replyTo: email,
       subject: `[Job Application] ${jobTitle} — ${name}`,
       html: getBrandedEmailHtml(

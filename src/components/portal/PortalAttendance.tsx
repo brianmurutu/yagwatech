@@ -40,6 +40,24 @@ export default function PortalAttendance() {
     const tick = setInterval(() => {
       setTime(new Date());
     }, 1000);
+
+    // Load state from localStorage
+    const saved = localStorage.getItem('yagwa_attendance');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setClockedIn(parsed.clockedIn || false);
+        if (parsed.clockInTime) {
+          setClockInTime(new Date(parsed.clockInTime));
+        }
+        if (parsed.log) {
+          setLog(parsed.log);
+        }
+      } catch (e) {
+        console.error('Failed to load attendance:', e);
+      }
+    }
+
     return () => clearInterval(tick);
   }, []);
 
@@ -55,14 +73,64 @@ export default function PortalAttendance() {
     return () => clearInterval(interval);
   }, [clockedIn, clockInTime]);
 
+  const saveState = (isClockedIn: boolean, inTime: Date | null, currentLog: DayLog[]) => {
+    localStorage.setItem(
+      'yagwa_attendance',
+      JSON.stringify({
+        clockedIn: isClockedIn,
+        clockInTime: inTime ? inTime.toISOString() : null,
+        log: currentLog,
+      })
+    );
+  };
+
   const handleClockIn = () => {
     const now = new Date();
     setClockedIn(true);
     setClockInTime(now);
+
+    const todayStr = now.toISOString().split('T')[0];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = days[now.getDay()];
+    const timeStr = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+    let updatedLog = [...log];
+    const index = log.findIndex((d) => d.date === todayStr);
+    if (index >= 0) {
+      updatedLog[index] = { ...updatedLog[index], clockIn: timeStr, status: 'Present' };
+    } else {
+      updatedLog = [
+        { day: dayName, date: todayStr, clockIn: timeStr, clockOut: '—', hours: '0h 0m', status: 'Present' },
+        ...log,
+      ];
+    }
+    setLog(updatedLog);
+    saveState(true, now, updatedLog);
   };
 
   const handleClockOut = () => {
+    const now = new Date();
     setClockedIn(false);
+
+    const todayStr = now.toISOString().split('T')[0];
+    const timeStr = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+    let updatedLog = [...log];
+    const index = log.findIndex((d) => d.date === todayStr);
+    if (index >= 0 && clockInTime) {
+      const diff = Math.floor((now.getTime() - clockInTime.getTime()) / 1000);
+      const h = Math.floor(diff / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      updatedLog[index] = {
+        ...updatedLog[index],
+        clockOut: timeStr,
+        hours: `${h}h ${m}m`,
+      };
+    }
+    setLog(updatedLog);
+    saveState(false, null, updatedLog);
+    setClockInTime(null);
+    setTodayElapsed('0h 0m');
   };
 
   const totalWeekHours = log

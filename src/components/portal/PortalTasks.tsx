@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, CheckCircle2, Circle, Clock, AlertCircle, Filter, Trash2 } from 'lucide-react';
 
 type Priority = 'High' | 'Medium' | 'Low';
@@ -45,34 +45,52 @@ const statusColor: Record<Status, string> = {
 };
 
 export default function PortalTasks() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Status | 'All'>('All');
   const [newTask, setNewTask] = useState({ title: '', priority: 'Medium' as Priority, dueDate: '', project: '' });
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('yagwa_tasks');
+    if (saved) {
+      try {
+        setTasks(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load tasks:', e);
+      }
+    } else {
+      setTasks(initialTasks);
+      localStorage.setItem('yagwa_tasks', JSON.stringify(initialTasks));
+    }
+  }, []);
 
   const filtered = filter === 'All' ? tasks : tasks.filter((t) => t.status === filter);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTask.title.trim()) return;
-    setTasks((prev) => [...prev, { ...newTask, id: Date.now(), status: 'Todo' }]);
+    const updated = [...tasks, { ...newTask, id: Date.now(), status: 'Todo' as Status }];
+    setTasks(updated);
+    localStorage.setItem('yagwa_tasks', JSON.stringify(updated));
     setNewTask({ title: '', priority: 'Medium', dueDate: '', project: '' });
     setShowForm(false);
   };
 
   const toggleStatus = (id: number) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== id) return t;
-        const cycle: Status[] = ['Todo', 'In Progress', 'Done'];
-        const next = cycle[(cycle.indexOf(t.status) + 1) % cycle.length];
-        return { ...t, status: next };
-      })
-    );
+    const updated = tasks.map((t) => {
+      if (t.id !== id) return t;
+      const cycle: Status[] = ['Todo', 'In Progress', 'Done'];
+      const next = cycle[(cycle.indexOf(t.status) + 1) % cycle.length];
+      return { ...t, status: next };
+    });
+    setTasks(updated);
+    localStorage.setItem('yagwa_tasks', JSON.stringify(updated));
   };
 
   const deleteTask = (id: number) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+    const updated = tasks.filter((t) => t.id !== id);
+    setTasks(updated);
+    localStorage.setItem('yagwa_tasks', JSON.stringify(updated));
   };
 
   const counts: Record<Status | 'All', number> = {
