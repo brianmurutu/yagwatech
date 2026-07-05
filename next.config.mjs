@@ -18,15 +18,47 @@ const nextConfig = {
   },
   // Security headers
   async headers() {
+    // Content-Security-Policy — only allow trusted origins for each resource type
+    const csp = [
+      "default-src 'self'",
+      // Scripts: self + Google Analytics + Vercel Analytics + inline (for JSON-LD & gtag)
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+      // Styles: self + Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      // Fonts: self + Google Fonts CDN
+      "font-src 'self' https://fonts.gstatic.com",
+      // Images: self + data URIs + Google Analytics + Unsplash (portfolio images)
+      "img-src 'self' data: blob: https://www.google-analytics.com https://images.unsplash.com https://res.cloudinary.com",
+      // Connections: self + analytics endpoints
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com",
+      // Frames: disallow embedding by default
+      "frame-src 'none'",
+      "frame-ancestors 'self'",
+      // Objects / base
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
     return [
       {
         source: "/(.*)",
         headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "X-XSS-Protection", value: "1; mode=block" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Existing headers (kept)
+          { key: "X-Content-Type-Options",    value: "nosniff" },
+          { key: "X-Frame-Options",           value: "SAMEORIGIN" },
+          { key: "X-XSS-Protection",          value: "1; mode=block" },
+          { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
+          // New: HSTS — force HTTPS for 1 year (only set on production via Vercel)
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          // New: Content Security Policy
+          { key: "Content-Security-Policy",   value: csp },
+          // New: Cross-origin isolation
+          { key: "Cross-Origin-Opener-Policy",   value: "same-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+          { key: "X-DNS-Prefetch-Control",       value: "on" },
         ],
       },
       // Cache static images aggressively

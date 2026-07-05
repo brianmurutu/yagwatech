@@ -3,10 +3,21 @@ import { Resend } from "resend";
 import { contactSchema } from "@/lib/validation";
 import { site } from "@/lib/site";
 import { getBrandedEmailHtml } from "@/lib/emailTemplate";
+import { formLimiter, getClientIp, rateLimitResponse } from "@/lib/rateLimit";
+import { validateOrigin } from "@/lib/csrf";
 
 const FROM_ADDRESS = `${site.name} <${site.email}>`;
 
 export async function POST(request: Request) {
+  // ── CSRF origin check ────────────────────────────────────────────────────
+  const originErr = validateOrigin(request);
+  if (originErr) return originErr;
+
+  // ── Rate limit ───────────────────────────────────────────────────────────
+  const ip = getClientIp(request);
+  const rl = formLimiter.check(ip);
+  if (!rl.allowed) return rateLimitResponse(rl);
+
   try {
     const body = await request.json();
     const parsed = contactSchema.safeParse(body);

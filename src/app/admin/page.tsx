@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminBlogManager from '@/components/admin/AdminBlogManager';
@@ -10,7 +10,7 @@ import AdminLeaveApprovals from '@/components/admin/AdminLeaveApprovals';
 import AdminProjectsManager from '@/components/admin/AdminProjectsManager';
 import AdminMediaLibrary from '@/components/admin/AdminMediaLibrary';
 import AdminSettings from '@/components/admin/AdminSettings';
-import { Eye, EyeOff, Shield, LogIn } from 'lucide-react';
+import { Eye, EyeOff, Shield, LogIn, AlertTriangle } from 'lucide-react';
 
 type AdminModule =
   | 'dashboard'
@@ -22,8 +22,9 @@ type AdminModule =
   | 'media'
   | 'settings';
 
-const ADMIN_USERNAME = 'superadmin';
-const ADMIN_PASSWORD = 'yagwa@admin2024';
+// ── No credentials stored in the client. Authentication is handled
+//    entirely by the /api/admin/login endpoint which reads from env vars
+//    and responds with a signed HttpOnly session cookie. ──────────────────────
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,30 +36,60 @@ export default function AdminPage() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [activeModule, setActiveModule] = useState<AdminModule>('dashboard');
 
-  useEffect(() => {
-    const auth = localStorage.getItem('admin_auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
+  /** Verify session against the server (cookie is HttpOnly — we ask the API) */
+  const checkSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/session', { method: 'GET', credentials: 'include' });
+      setIsAuthenticated(res.ok);
+    } catch {
+      setIsAuthenticated(false);
+    } finally {
+      setIsCheckingAuth(false);
     }
-    setIsCheckingAuth(false);
   }, []);
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
     setLoginError('');
-    await new Promise((r) => setTimeout(r, 600));
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      localStorage.setItem('admin_auth', 'true');
-      setIsAuthenticated(true);
-    } else {
-      setLoginError('Invalid credentials. Please check your username and password.');
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setIsAuthenticated(true);
+        setUsername('');
+        setPassword('');
+      } else if (res.status === 429) {
+        setLoginError('Too many login attempts. Please wait 15 minutes before trying again.');
+      } else {
+        // Generic error — do NOT tell the user which field was wrong
+        setLoginError('Invalid credentials. Please check your username and password.');
+      }
+    } catch {
+      setLoginError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoggingIn(false);
     }
-    setIsLoggingIn(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_auth');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
+    } catch {
+      // Best-effort
+    }
     setIsAuthenticated(false);
     setUsername('');
     setPassword('');
@@ -120,6 +151,7 @@ export default function AdminPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -127,8 +159,9 @@ export default function AdminPage() {
               </div>
 
               {loginError && (
-                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-                  {loginError}
+                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{loginError}</span>
                 </div>
               )}
 
@@ -161,24 +194,15 @@ export default function AdminPage() {
 
   const renderModule = () => {
     switch (activeModule) {
-      case 'dashboard':
-        return <AdminDashboard onNavigate={setActiveModule} />;
-      case 'blog':
-        return <AdminBlogManager />;
-      case 'content':
-        return <AdminContentManager />;
-      case 'employees':
-        return <AdminEmployeeManager />;
-      case 'leaves':
-        return <AdminLeaveApprovals />;
-      case 'projects':
-        return <AdminProjectsManager />;
-      case 'media':
-        return <AdminMediaLibrary />;
-      case 'settings':
-        return <AdminSettings />;
-      default:
-        return <AdminDashboard onNavigate={setActiveModule} />;
+      case 'dashboard':  return <AdminDashboard onNavigate={setActiveModule} />;
+      case 'blog':       return <AdminBlogManager />;
+      case 'content':    return <AdminContentManager />;
+      case 'employees':  return <AdminEmployeeManager />;
+      case 'leaves':     return <AdminLeaveApprovals />;
+      case 'projects':   return <AdminProjectsManager />;
+      case 'media':      return <AdminMediaLibrary />;
+      case 'settings':   return <AdminSettings />;
+      default:           return <AdminDashboard onNavigate={setActiveModule} />;
     }
   };
 
