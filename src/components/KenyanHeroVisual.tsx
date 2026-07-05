@@ -45,88 +45,64 @@ const slides = [
 
 const AUTO_DURATION = 4500;
 
-/* ─── Maasai shield + spears SVG ─────────────────────────────────────── */
-function MaasaiShield() {
-  return (
-    <svg
-      viewBox="0 0 80 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full animate-shield-float"
-      aria-hidden="true"
-    >
-      {/* Shield body */}
-      <path
-        d="M40 4C62 4 74 24 74 50C74 76 56 93 40 97C24 93 6 76 6 50C6 24 18 4 40 4Z"
-        fill="#1a3a1a"
-        stroke="rgba(255,255,255,0.6)"
-        strokeWidth="1.5"
-      />
-      {/* Top red zone */}
-      <path d="M40 4C54 4 65 16 70 30L10 30C15 16 26 4 40 4Z" fill="#B22222" />
-      {/* Bottom red zone */}
-      <path d="M10 70C15 84 26 93 40 97C54 93 65 84 70 70H10Z" fill="#B22222" />
-      {/* White separators */}
-      <rect x="10" y="30" width="60" height="6" fill="white" opacity="0.9" />
-      <rect x="10" y="64" width="60" height="6" fill="white" opacity="0.9" />
-      {/* Green mid zone */}
-      <rect x="10" y="36" width="60" height="28" fill="#006600" />
-      {/* Inner shield oval */}
-      <ellipse cx="40" cy="50" rx="13" ry="20" fill="#111" stroke="rgba(255,255,255,0.4)" strokeWidth="0.8" />
-      <ellipse cx="40" cy="50" rx="8" ry="13" fill="#B22222" />
-      {/* Centre vertical bar */}
-      <rect x="38.5" y="30" width="3" height="40" fill="white" opacity="0.6" />
-      {/* Horizontal chevrons */}
-      <path d="M28 44L40 40L52 44" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.7" />
-      <path d="M28 56L40 60L52 56" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.7" />
-      {/* Spears */}
-      <line x1="27" y1="0" x2="27" y2="100" stroke="#C8A820" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="53" y1="0" x2="53" y2="100" stroke="#C8A820" strokeWidth="2.5" strokeLinecap="round" />
-      {/* Spear tips */}
-      <polygon points="27,0 22,13 32,13" fill="#C8A820" />
-      <polygon points="53,0 48,13 58,13" fill="#C8A820" />
-      {/* Spear butts */}
-      <polygon points="27,100 23,90 31,90" fill="#C8A820" />
-      <polygon points="53,100 49,90 57,90" fill="#C8A820" />
-    </svg>
-  );
-}
+/**
+ * Simplified Kenya outline path in a 300×360 viewBox.
+ * Clockwise from the NW corner (Lokichoggio/Sudan border),
+ * preserving the key recognisable features:
+ *   - NE protrusion toward Mandera (Somalia/Ethiopia)
+ *   - SE coast line down to Mombasa
+ *   - Straight Tanzania southern border
+ *   - Lake Victoria indent on the SW
+ *   - Uganda/Sudan border back up the west side
+ */
+const KENYA_PATH = `
+  M 55,58
+  L 68,32
+  L 95,14
+  L 130,8
+  L 165,12
+  L 196,28
+  L 228,22
+  L 256,52
+  L 264,82
+  L 260,118
+  L 252,155
+  L 246,192
+  L 238,225
+  L 228,256
+  L 212,278
+  L 190,294
+  L 162,300
+  L 134,296
+  L 106,286
+  L 82,274
+  L 62,258
+  L 48,240
+  L 52,222
+  L 42,208
+  L 36,182
+  L 30,152
+  L 28,120
+  L 32,90
+  L 45,70
+  Z
+`;
 
-/* ─── Kenyan flag stripe bar ─────────────────────────────────────────── */
-function FlagBar({ flip = false }: { flip?: boolean }) {
-  const order = flip
-    ? ["#006600", "rgba(255,255,255,0.8)", "#BB0000", "rgba(255,255,255,0.8)", "#111111"]
-    : ["#111111", "rgba(255,255,255,0.8)", "#BB0000", "rgba(255,255,255,0.8)", "#006600"];
-  return (
-    <div className="flex h-2.5 w-full" aria-hidden="true">
-      {order.map((c, i) =>
-        i % 2 === 1 ? (
-          <div key={i} style={{ width: "2px", background: c, flexShrink: 0 }} />
-        ) : (
-          <div key={i} style={{ flex: 1, background: c }} />
-        )
-      )}
-    </div>
-  );
-}
-
-/* ─── Vertical flag side strip ───────────────────────────────────────── */
-function FlagStripe({ className }: { className?: string }) {
-  return (
-    <div className={`flex flex-col gap-0 ${className ?? ""}`} aria-hidden="true">
-      <div className="flex-1 rounded-full" style={{ background: "#111111" }} />
-      <div style={{ height: "2px", background: "rgba(255,255,255,0.7)" }} />
-      <div className="flex-1 rounded-full" style={{ background: "#BB0000" }} />
-      <div style={{ height: "2px", background: "rgba(255,255,255,0.7)" }} />
-      <div className="flex-1 rounded-full" style={{ background: "#006600" }} />
-    </div>
-  );
-}
+/* ─── City dots ──────────────────────────────────────────────────────── */
+const cities = [
+  { name: "Nairobi", x: 148, y: 220, primary: true },
+  { name: "Mombasa", x: 210, y: 270 },
+  { name: "Kisumu", x: 70, y: 220 },
+  { name: "Nakuru", x: 110, y: 200 },
+  { name: "Eldoret", x: 80, y: 175 },
+  { name: "Garissa", x: 210, y: 175 },
+  { name: "Meru", x: 175, y: 195 },
+];
 
 /* ─── Main component ─────────────────────────────────────────────────── */
 export default function KenyanHeroVisual() {
   const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
+  const [exiting, setExiting] = useState<number | null>(null);
   const [direction, setDirection] = useState<"next" | "prev">("next");
   const [progressKey, setProgressKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -136,7 +112,8 @@ export default function KenyanHeroVisual() {
       if (idx === current) return;
       if (timerRef.current) clearTimeout(timerRef.current);
       setDirection(dir);
-      setPrev(current);
+      setExiting(current);
+      setTimeout(() => setExiting(null), 450);
       setCurrent(idx);
       setProgressKey((k) => k + 1);
     },
@@ -152,7 +129,6 @@ export default function KenyanHeroVisual() {
     [current, goTo]
   );
 
-  /* Auto-advance */
   useEffect(() => {
     timerRef.current = setTimeout(next, AUTO_DURATION);
     return () => {
@@ -160,225 +136,352 @@ export default function KenyanHeroVisual() {
     };
   }, [next]);
 
-  /* Clear exiting slide after transition */
-  useEffect(() => {
-    if (prev === null) return;
-    const t = setTimeout(() => setPrev(null), 420);
-    return () => clearTimeout(t);
-  }, [prev]);
-
   const slide = slides[current];
-  const prevSlideData = prev !== null ? slides[prev] : null;
+  const exitSlide = exiting !== null ? slides[exiting] : null;
 
   return (
-    <div className="relative w-full flex items-center justify-center select-none">
-      <div className="relative w-full max-w-[500px]">
+    <div className="relative w-full flex flex-col items-center justify-center select-none gap-4">
 
-        {/* Side flag strips */}
-        <FlagStripe className="absolute -left-3 top-10 bottom-10 w-2 rounded-full overflow-hidden shadow-md" />
-        <FlagStripe className="absolute -right-3 top-10 bottom-10 w-2 rounded-full overflow-hidden shadow-md" />
+      {/* ── Kenya map SVG container ── */}
+      <div className="relative w-full max-w-[340px]">
+        <svg
+          viewBox="0 0 300 360"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-auto drop-shadow-[0_8px_40px_rgba(0,0,0,0.7)]"
+          aria-label="Kenya map showing Yagwa Tech services"
+          role="img"
+        >
+          <defs>
+            {/* Clip path = Kenya map silhouette */}
+            <clipPath id="kenya-clip">
+              <path d={KENYA_PATH} />
+            </clipPath>
 
-        {/* ── Main card ── */}
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-white/10">
+            {/* Animated flag gradient border */}
+            <linearGradient id="flagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#111111" />
+              <stop offset="33%" stopColor="#BB0000" />
+              <stop offset="66%" stopColor="#006600" />
+              <stop offset="100%" stopColor="#111111" />
+              <animateTransform
+                attributeName="gradientTransform"
+                type="rotate"
+                from="0 150 180"
+                to="360 150 180"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+            </linearGradient>
 
-          {/* Top flag bar */}
-          <FlagBar />
+            {/* Glow filter */}
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
 
-          {/* Slide viewport */}
-          <div className="relative aspect-[16/10] overflow-hidden bg-[#0b1f3a]">
+            {/* City pulse filter */}
+            <filter id="cityGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-            {/* Exiting slide */}
-            {prevSlideData && (
-              <div
-                key={`prev-${prev}`}
-                className={
-                  direction === "next"
-                    ? "absolute inset-0 animate-slide-out-prev"
-                    : "absolute inset-0 animate-slide-out-next"
-                }
-                style={
-                  {
-                    "--slide-out-prev": "translateX(-100%) scale(0.96)",
-                    "--slide-out-next": "translateX(100%) scale(0.96)",
-                  } as React.CSSProperties
-                }
-              >
-                <Image
-                  src={prevSlideData.img}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 90vw, 500px"
-                  aria-hidden="true"
-                />
-              </div>
-            )}
+          {/* ── Shadow / deep background ── */}
+          <path
+            d={KENYA_PATH}
+            fill="rgba(0,0,0,0.5)"
+            transform="translate(4,6)"
+            opacity="0.6"
+          />
 
-            {/* Entering slide */}
-            <div
-              key={`curr-${current}`}
-              className={
-                direction === "next"
-                  ? "absolute inset-0 animate-slide-in-next"
-                  : "absolute inset-0 animate-slide-in-prev"
-              }
+          {/* ── Exiting slide (clip to Kenya) ── */}
+          {exitSlide && (
+            <g clipPath="url(#kenya-clip)">
+              <image
+                href={exitSlide.img}
+                x="-20"
+                y="-20"
+                width="340"
+                height="400"
+                preserveAspectRatio="xMidYMid slice"
+                style={{
+                  animation: `kenyanSlideOut-${direction} 0.45s cubic-bezier(0.4,0,0.6,1) forwards`,
+                }}
+              />
+            </g>
+          )}
+
+          {/* ── Current slide image (clip to Kenya) ── */}
+          <g clipPath="url(#kenya-clip)" key={current}>
+            <image
+              href={slide.img}
+              x="-20"
+              y="-20"
+              width="340"
+              height="400"
+              preserveAspectRatio="xMidYMid slice"
+              style={{
+                animation: `kenyanSlideIn-${direction} 0.45s cubic-bezier(0.22,1,0.36,1) forwards`,
+              }}
+            />
+            {/* Dark overlay for readability */}
+            <path
+              d={KENYA_PATH}
+              fill="url(#imgOverlay)"
+            />
+          </g>
+
+          {/* Image dark overlay gradient definition */}
+          <defs>
+            <radialGradient id="imgOverlay" cx="50%" cy="65%" r="70%">
+              <stop offset="0%" stopColor="transparent" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.55)" />
+            </radialGradient>
+          </defs>
+
+          {/* ── Animated flag-coloured border ── */}
+          <path
+            d={KENYA_PATH}
+            fill="none"
+            stroke="url(#flagGrad)"
+            strokeWidth="3"
+            filter="url(#glow)"
+            opacity="0.9"
+          />
+
+          {/* ── Inner thin white border ── */}
+          <path
+            d={KENYA_PATH}
+            fill="none"
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="1"
+          />
+
+          {/* ── Auto-progress arc drawn along the border ── */}
+          <path
+            key={`progress-${progressKey}`}
+            d={KENYA_PATH}
+            fill="none"
+            stroke="#F47B20"
+            strokeWidth="3"
+            strokeLinecap="round"
+            pathLength="1000"
+            strokeDasharray="1000"
+            strokeDashoffset="1000"
+            opacity="0.9"
+          >
+            <animate
+              attributeName="stroke-dashoffset"
+              from="1000"
+              to="0"
+              dur={`${AUTO_DURATION}ms`}
+              fill="freeze"
+            />
+          </path>
+
+          {/* ── City dots ── */}
+          {cities.map((city) => (
+            <g key={city.name} filter="url(#cityGlow)">
+              {city.primary ? (
+                <>
+                  {/* Nairobi - pulsing star */}
+                  <circle cx={city.x} cy={city.y} r="10" fill={`${slide.color}33`}>
+                    <animate attributeName="r" values="8;14;8" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx={city.x} cy={city.y} r="5" fill={slide.color} opacity="0.95" />
+                  <circle cx={city.x} cy={city.y} r="3" fill="white" opacity="0.9" />
+                </>
+              ) : (
+                <>
+                  <circle cx={city.x} cy={city.y} r="3.5" fill="white" opacity="0.5" />
+                  <circle cx={city.x} cy={city.y} r="1.8" fill={slide.color} opacity="0.8" />
+                </>
+              )}
+            </g>
+          ))}
+
+          {/* ── Nairobi label ── */}
+          <text
+            x={cities[0].x + 8}
+            y={cities[0].y + 4}
+            fill="white"
+            fontSize="9"
+            fontFamily="Inter, system-ui, sans-serif"
+            fontWeight="600"
+            opacity="0.9"
+            style={{ textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}
+          >
+            Nairobi
+          </text>
+
+          {/* ── Mombasa label ── */}
+          <text
+            x={cities[1].x + 7}
+            y={cities[1].y + 3}
+            fill="white"
+            fontSize="7.5"
+            fontFamily="Inter, system-ui, sans-serif"
+            opacity="0.75"
+          >
+            Mombasa
+          </text>
+
+          {/* ── Kisumu label ── */}
+          <text
+            x={cities[2].x - 40}
+            y={cities[2].y + 3}
+            fill="white"
+            fontSize="7.5"
+            fontFamily="Inter, system-ui, sans-serif"
+            opacity="0.75"
+          >
+            Kisumu
+          </text>
+
+          {/* ── Service tag inside map ── */}
+          <g>
+            <rect
+              x="88"
+              y="252"
+              width="100"
+              height="18"
+              rx="9"
+              fill={slide.color}
+              opacity="0.88"
+            />
+            <text
+              x="138"
+              y="264"
+              textAnchor="middle"
+              fill="white"
+              fontSize="7.5"
+              fontFamily="Inter, system-ui, sans-serif"
+              fontWeight="700"
+              letterSpacing="0.5"
             >
-              <Image
-                src={slide.img}
-                alt={slide.label}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 90vw, 500px"
-                priority={current === 0}
-              />
-            </div>
+              {slide.tag.toUpperCase()}
+            </text>
+          </g>
+        </svg>
 
-            {/* Scrim */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
-
-            {/* Kenyan shield watermark */}
-            <div className="absolute top-3 right-3 w-[52px] h-[65px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)] pointer-events-none">
-              <MaasaiShield />
-            </div>
-
-            {/* Auto-progress bar */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10 pointer-events-none">
-              <div
-                key={progressKey}
-                className="h-full bg-brand-orange animate-slide-progress"
-                style={{ animationDuration: `${AUTO_DURATION}ms` }}
-              />
-            </div>
-
-            {/* Slide info overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between pointer-events-none">
-              <div>
-                <span
-                  className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white mb-1.5 backdrop-blur-sm"
-                  style={{ background: `${slide.color}cc` }}
-                >
-                  {slide.tag}
-                </span>
-                <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
-                  {slide.label}
-                </h3>
-              </div>
-              <span className="text-white/50 text-xs font-mono tabular-nums">
-                {String(current + 1).padStart(2, "0")}&thinsp;/&thinsp;{String(slides.length).padStart(2, "0")}
-              </span>
-            </div>
+        {/* ── Floating service label card ── */}
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
+          <div
+            key={current}
+            className="flex items-center gap-2 rounded-full px-4 py-1.5 backdrop-blur-md border border-white/15 shadow-lg animate-slide-in-next"
+            style={{ background: `${slide.color}CC` }}
+          >
+            <span className="text-white font-bold text-sm">{slide.label}</span>
           </div>
-
-          {/* Bottom flag bar (mirrored) */}
-          <FlagBar flip />
         </div>
 
-        {/* ── Controls row ── */}
-        <div className="mt-3.5 flex items-center justify-between px-0.5">
-
-          {/* Dot indicators */}
-          <div className="flex items-center gap-1.5">
-            {slides.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i, i > current ? "next" : "prev")}
-                aria-label={`Go to slide: ${s.label}`}
-                style={i === current ? { background: slide.color } : {}}
-                className={[
-                  "rounded-full transition-all duration-300",
-                  i === current
-                    ? "w-6 h-2 shadow-md"
-                    : "w-2 h-2 bg-white/25 hover:bg-white/55",
-                ].join(" ")}
-              />
-            ))}
+        {/* ── "Kenya & East Africa" badge – top right ── */}
+        <div className="absolute -top-3 -right-2 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10 shadow-md">
+          {/* Mini flag */}
+          <div className="flex h-3 w-5 rounded-[2px] overflow-hidden flex-shrink-0 shadow-sm">
+            <div className="flex-1 bg-black" />
+            <div className="flex-1 bg-[#BB0000]" />
+            <div className="flex-1 bg-[#006600]" />
           </div>
-
-          {/* Nav buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={prevSlide}
-              aria-label="Previous slide"
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/8 border border-white/15 text-white hover:bg-white/18 hover:scale-110 transition-all backdrop-blur-sm"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path d="M7.5 2L4 6l3.5 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              onClick={next}
-              aria-label="Next slide"
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/8 border border-white/15 text-white hover:bg-white/18 hover:scale-110 transition-all backdrop-blur-sm"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path d="M4.5 2L8 6l-3.5 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+          <span className="text-[10px] text-white/80 font-medium tracking-wide">Kenya</span>
         </div>
+      </div>
 
-        {/* ── Thumbnail strip ── */}
-        <div className="mt-2.5 grid grid-cols-6 gap-1.5">
+      {/* ── Controls ── */}
+      <div className="flex items-center justify-between w-full max-w-[340px] px-1">
+        {/* Dots */}
+        <div className="flex items-center gap-1.5">
           {slides.map((s, i) => (
             <button
               key={i}
               onClick={() => goTo(i, i > current ? "next" : "prev")}
-              aria-label={`View service: ${s.label}`}
+              aria-label={`Go to: ${s.label}`}
+              style={i === current ? { background: slide.color } : {}}
               className={[
-                "relative aspect-square rounded-lg overflow-hidden transition-all duration-300",
-                i === current
-                  ? "scale-105 shadow-lg"
-                  : "opacity-45 hover:opacity-75 hover:scale-105",
+                "rounded-full transition-all duration-300",
+                i === current ? "w-6 h-2 shadow-md" : "w-2 h-2 bg-white/25 hover:bg-white/55",
               ].join(" ")}
-              style={i === current ? { boxShadow: `0 4px 16px ${s.color}60` } : {}}
-            >
-              <Image
-                src={s.img}
-                alt={s.label}
-                fill
-                className="object-cover"
-                sizes="80px"
-              />
-              {i === current && (
-                <div
-                  className="absolute inset-0 border-2 rounded-lg pointer-events-none"
-                  style={{ borderColor: slide.color }}
-                />
-              )}
-            </button>
+            />
           ))}
         </div>
 
-        {/* ── "Proudly built in Kenya" badge ── */}
-        <div className="mt-4 flex items-center justify-center gap-2.5">
-          {/* Mini Kenyan flag */}
-          <div className="flex h-3.5 w-6 rounded-sm overflow-hidden shadow-sm flex-shrink-0 border border-white/10" aria-hidden="true">
-            <div className="flex-1" style={{ background: "#111111" }} />
-            <div className="flex-1" style={{ background: "#BB0000" }} />
-            <div className="flex-1" style={{ background: "#006600" }} />
-          </div>
-          <span className="text-[11px] text-white/45 tracking-wide">
-            Proudly serving{" "}
-            <span className="text-white/75 font-semibold">Kenya & East Africa</span>
-          </span>
+        {/* Prev / Next */}
+        <div className="flex gap-2">
+          <button
+            onClick={prevSlide}
+            aria-label="Previous slide"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/8 border border-white/15 text-white hover:bg-white/20 hover:scale-110 transition-all"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M7.5 2L4 6l3.5 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            onClick={next}
+            aria-label="Next slide"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/8 border border-white/15 text-white hover:bg-white/20 hover:scale-110 transition-all"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M4.5 2L8 6l-3.5 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Slide-out animation styles injected inline */}
+      {/* ── Thumbnail strip ── */}
+      <div className="grid grid-cols-6 gap-1.5 w-full max-w-[340px]">
+        {slides.map((s, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i, i > current ? "next" : "prev")}
+            aria-label={`View: ${s.label}`}
+            className={[
+              "relative aspect-square rounded-lg overflow-hidden transition-all duration-300",
+              i === current ? "scale-105 shadow-lg" : "opacity-40 hover:opacity-75 hover:scale-105",
+            ].join(" ")}
+            style={i === current ? { boxShadow: `0 4px 14px ${s.color}60` } : {}}
+          >
+            <Image
+              src={s.img}
+              alt={s.label}
+              fill
+              className="object-cover"
+              sizes="56px"
+            />
+            {i === current && (
+              <div
+                className="absolute inset-0 border-2 rounded-lg pointer-events-none"
+                style={{ borderColor: s.color }}
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Slide-animation styles */}
       <style>{`
-        @keyframes slideOutPrev {
-          from { opacity: 1; transform: translateX(0) scale(1); }
-          to   { opacity: 0; transform: translateX(-80px) scale(0.96); }
+        @keyframes kenyanSlideIn-next {
+          from { opacity: 0; transform: translateX(40px) scale(1.05); }
+          to   { opacity: 1; transform: translateX(0)    scale(1); }
         }
-        @keyframes slideOutNext {
-          from { opacity: 1; transform: translateX(0) scale(1); }
-          to   { opacity: 0; transform: translateX(80px) scale(0.96); }
+        @keyframes kenyanSlideIn-prev {
+          from { opacity: 0; transform: translateX(-40px) scale(1.05); }
+          to   { opacity: 1; transform: translateX(0)     scale(1); }
         }
-        .animate-slide-out-prev {
-          animation: slideOutPrev 0.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+        @keyframes kenyanSlideOut-next {
+          from { opacity: 1; transform: translateX(0)    scale(1); }
+          to   { opacity: 0; transform: translateX(-40px) scale(0.96); }
         }
-        .animate-slide-out-next {
-          animation: slideOutNext 0.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+        @keyframes kenyanSlideOut-prev {
+          from { opacity: 1; transform: translateX(0)   scale(1); }
+          to   { opacity: 0; transform: translateX(40px) scale(0.96); }
         }
       `}</style>
     </div>
