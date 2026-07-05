@@ -17,7 +17,7 @@ import { testimonials } from "@/lib/team";
 import { getRecentPosts } from "@/lib/blog";
 import { getServiceIcon } from "@/lib/icons";
 import HomeBlogSection from "@/components/home/HomeBlogSection";
-import RotatingGlobe from "@/components/RotatingGlobe";
+import KenyanHeroVisual from "@/components/KenyanHeroVisual";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
@@ -160,10 +160,10 @@ export default function HomePage() {
               </AnimatedSection>
             </div>
 
-            {/* Right: rotating digital network globe */}
+            {/* Right: Kenyan flag visual with service slider */}
             <AnimatedSection type="scale" delay={200}>
-              <div className="flex justify-center lg:justify-end items-center w-full">
-                <RotatingGlobe />
+              <div className="flex justify-center lg:justify-end items-center w-full py-4">
+                <KenyanHeroVisual />
               </div>
             </AnimatedSection>
           </div>

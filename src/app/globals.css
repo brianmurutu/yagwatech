@@ -207,6 +207,46 @@ html {
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
+
+  /* ── Kenyan hero visual slider ────────────────────────── */
+  .duration-350 {
+    transition-duration: 350ms;
+  }
+
+  /* Slide-in-next: enter from right */
+  @keyframes slideInNext {
+    from { opacity: 0; transform: translateX(32px) scale(1.04); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  /* Slide-in-prev: enter from left */
+  @keyframes slideInPrev {
+    from { opacity: 0; transform: translateX(-32px) scale(1.04); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  .animate-slide-in-next {
+    animation: slideInNext 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .animate-slide-in-prev {
+    animation: slideInPrev 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* Shield float */
+  @keyframes shieldFloat {
+    0%, 100% { transform: translateY(0px) rotate(-2deg); }
+    50%       { transform: translateY(-6px) rotate(2deg); }
+  }
+  .animate-shield-float {
+    animation: shieldFloat 4s ease-in-out infinite;
+  }
+
+  /* Progress bar for auto-slide */
+  @keyframes slideProgress {
+    from { width: 0%; }
+    to   { width: 100%; }
+  }
+  .animate-slide-progress {
+    animation: slideProgress 4.5s linear forwards;
+  }
 }
 
 /* ─── iOS Safe Area ─────────────────────────────────────────────────── */
