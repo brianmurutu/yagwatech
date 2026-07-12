@@ -226,6 +226,7 @@ export default function CareersClient() {
   const [errorMessage, setErrorMessage] = useState("");
 
   // ── Resume Analysis state ─────────────────────────────────────────────
+  const [showResumeModal, setShowResumeModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeStatus, setResumeStatus] = useState<
     "idle" | "uploading" | "success" | "error"
@@ -634,55 +635,127 @@ export default function CareersClient() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          AI CAREER READINESS CHECK
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section
-        id="ai-readiness"
-        className="py-20 lg:py-24 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #0B3D91 0%, #1556C6 50%, #1A3F8F 100%)",
-        }}
-      >
-        {/* Decorative blobs */}
-        <div
-          className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10 pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #F97316 0%, transparent 70%)",
-            transform: "translate(30%, -30%)",
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-10 pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #60A5FA 0%, transparent 70%)",
-            transform: "translate(-30%, 30%)",
-          }}
-        />
-
-        <div className="container-wrap relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+      {/* ── AI Careers Suite Banners ───────────────────────────────────────────── */}
+      <section className="py-20 lg:py-24 bg-ink-50/20">
+        <div className="container-wrap">
+          <div className="text-center max-w-2xl mx-auto mb-16">
             <AnimatedSection>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white/90 mb-5 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-brand-blue/20 bg-brand-blue/5 px-4 py-1.5 text-xs font-semibold text-brand-blue mb-5">
                 <Brain className="h-3.5 w-3.5 text-brand-orange" />
-                Powered by Gemini AI
+                AI Career Suite
               </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-white">
-                AI Career Readiness Check
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-white/70">
-                Upload your resume and get an instant AI-powered assessment — your
-                readiness score, strengths, improvement areas, and which Yagwa roles
-                you match best.
+              <h2 className="text-3xl font-bold text-ink-900">Elevate Your Career Readiness</h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-400">
+                Leverage our Google Gemini powered tools to audit your resume suitability or go through interactive mock interviews for our open roles.
               </p>
             </AnimatedSection>
           </div>
 
-          {/* Card */}
-          <div className="max-w-2xl mx-auto">
-            {resumeStatus !== "success" ? (
-              <AnimatedSection type="scale">
-                <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-8 shadow-2xl">
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Resume Auditor CTA Card */}
+            <AnimatedSection type="scale">
+              <div className="group h-full relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between p-8 text-white"
+                style={{
+                  background: "linear-gradient(135deg, #0B3D91 0%, #1556C6 100%)",
+                }}
+              >
+                {/* Background glow overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange/0 via-brand-orange/0 to-brand-orange/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                <div className="relative z-10 space-y-4">
+                  <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center text-brand-orange border border-white/10">
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold">AI Resume & Readiness Auditor</h3>
+                  <p className="text-xs text-white/85 leading-relaxed">
+                    Upload your PDF resume to receive an instant readiness score, highlighted strengths, key improvement areas, and recommended Yagwa Tech positions.
+                  </p>
+                </div>
+                
+                <div className="relative z-10 pt-8 flex items-center justify-between">
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-white/60">Takes 60 seconds</span>
+                  <button
+                    onClick={() => {
+                      setShowResumeModal(true);
+                      resetResume();
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-5 py-2.5 text-xs font-bold text-white hover:bg-brand-orangeLight transition-all shadow-md"
+                  >
+                    Analyze Resume <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </AnimatedSection>
+
+            {/* Practice Interview CTA Card */}
+            <AnimatedSection type="scale">
+              <div className="group h-full relative rounded-2xl bg-white border border-black/5 overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between p-8">
+                {/* Background glow overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-blue/0 via-brand-blue/0 to-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                <div className="relative z-10 space-y-4">
+                  <div className="h-12 w-12 rounded-xl bg-brand-blue/5 flex items-center justify-center text-brand-blue border border-brand-blue/10">
+                    <Mic className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-ink-900">AI-Powered Practice Interviews</h3>
+                  <p className="text-xs text-ink-400 leading-relaxed">
+                    Choose any open role at Yagwa Tech and undergo a dynamic 5-question mock interview. Receive instant evaluation and constructive guidance on your answers.
+                  </p>
+                </div>
+
+                <div className="relative z-10 pt-8 flex items-center justify-between">
+                  <span className="text-[11px] font-bold tracking-wider uppercase text-ink-400">5 Dynamic Questions</span>
+                  <button
+                    onClick={() => {
+                      setShowInterviewModal(true);
+                      setInterviewPhase("setup");
+                      setInterviewJobId("general");
+                      setInterviewError("");
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-5 py-2.5 text-xs font-bold text-white hover:bg-brand-blueLight transition-all shadow-md"
+                  >
+                    Start Practice <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Resume Auditor Modal ──────────────────────────────────────────────── */}
+      {showResumeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-black/5 overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-black/5 bg-gradient-to-r from-[#0B3D91] to-[#1556C6] flex items-center justify-between shrink-0">
+              <div>
+                <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider">
+                  AI Careers Hub
+                </p>
+                <h3 className="text-sm font-bold text-white leading-tight mt-0.5">
+                  AI Resume & Readiness Auditor
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowResumeModal(false);
+                  resetResume();
+                }}
+                className="rounded-lg p-1.5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {resumeStatus !== "success" ? (
+                <div className="space-y-6">
+                  <p className="text-xs text-ink-500 leading-relaxed">
+                    Upload your resume in PDF format to receive an instant analysis of your tech capabilities, strengths, and customized role matches.
+                  </p>
+                  
                   {/* Upload Zone */}
                   <div
                     onDragOver={(e) => {
@@ -694,10 +767,10 @@ export default function CareersClient() {
                     onClick={() => fileInputRef.current?.click()}
                     className={`relative rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-200 ${
                       isDragging
-                        ? "border-brand-orange bg-brand-orange/10 scale-[1.01]"
+                        ? "border-brand-orange bg-brand-orange/5 scale-[1.01]"
                         : resumeFile
-                        ? "border-green-400 bg-green-400/10"
-                        : "border-white/30 hover:border-white/60 hover:bg-white/5"
+                        ? "border-green-500 bg-green-50"
+                        : "border-black/10 hover:border-brand-blue/30 hover:bg-ink-50/30"
                     }`}
                   >
                     <input
@@ -713,12 +786,12 @@ export default function CareersClient() {
 
                     {resumeFile ? (
                       <div className="space-y-3">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-400/20 text-green-300">
-                          <FileText className="h-7 w-7" />
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+                          <FileText className="h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-white text-sm">{resumeFile.name}</p>
-                          <p className="text-xs text-white/60 mt-1">
+                          <p className="font-semibold text-ink-900 text-sm">{resumeFile.name}</p>
+                          <p className="text-xs text-ink-400 mt-1">
                             {(resumeFile.size / 1024).toFixed(0)} KB — PDF ready to analyze
                           </p>
                         </div>
@@ -727,24 +800,24 @@ export default function CareersClient() {
                             e.stopPropagation();
                             resetResume();
                           }}
-                          className="text-xs text-white/50 hover:text-white/80 underline transition-colors"
+                          className="text-xs text-brand-orange hover:text-brand-orangeLight underline transition-colors"
                         >
                           Remove & choose another
                         </button>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white/60">
-                          <Upload className="h-7 w-7" />
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink-50 text-ink-400">
+                          <Upload className="h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-white text-sm">
+                          <p className="font-semibold text-ink-900 text-sm">
                             {isDragging
                               ? "Drop your resume here"
                               : "Drag & drop your resume, or click to browse"}
                           </p>
-                          <p className="text-xs text-white/50 mt-1.5">
-                            PDF only · Max 5MB · Not stored — analyzed in memory
+                          <p className="text-xs text-ink-400 mt-1">
+                            PDF only · Max 5MB
                           </p>
                         </div>
                       </div>
@@ -753,8 +826,8 @@ export default function CareersClient() {
 
                   {/* Error message */}
                   {resumeError && (
-                    <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-500/20 border border-red-500/30 px-4 py-3 text-xs text-red-200">
-                      <AlertCircle className="h-4 w-4 shrink-0" />
+                    <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-100 px-4 py-3 text-xs text-red-700">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
                       {resumeError}
                     </div>
                   )}
@@ -763,10 +836,10 @@ export default function CareersClient() {
                   <button
                     onClick={handleResumeAnalysis}
                     disabled={!resumeFile || resumeStatus === "uploading"}
-                    className={`mt-6 w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold transition-all ${
+                    className={`w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold transition-all ${
                       !resumeFile || resumeStatus === "uploading"
-                        ? "bg-white/10 text-white/40 cursor-not-allowed"
-                        : "bg-brand-orange text-white hover:bg-brand-orangeLight shadow-lg shadow-brand-orange/30 hover:shadow-brand-orange/50 hover:scale-[1.01]"
+                        ? "bg-ink-100 text-ink-400 cursor-not-allowed"
+                        : "bg-brand-orange text-white hover:bg-brand-orangeLight shadow-lg shadow-brand-orange/30 hover:scale-[1.01]"
                     }`}
                   >
                     {resumeStatus === "uploading" ? (
@@ -782,49 +855,43 @@ export default function CareersClient() {
                       </>
                     )}
                   </button>
-
-                  <p className="mt-4 text-center text-[11px] text-white/40">
-                    Your resume is processed securely and never stored.
-                  </p>
                 </div>
-              </AnimatedSection>
-            ) : resumeAnalysis ? (
-              /* ── Analysis Results ─── */
-              <AnimatedSection type="scale">
-                <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-2xl overflow-hidden">
+              ) : resumeAnalysis ? (
+                /* Analysis Results inside Modal */
+                <div className="space-y-6">
                   {/* Results Header */}
-                  <div className="p-8 flex flex-col sm:flex-row items-center gap-6 border-b border-white/10">
-                    <ScoreRing score={resumeAnalysis.score} size={120} />
+                  <div className="bg-ink-50/50 rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 border border-black/5">
+                    <ScoreRing score={resumeAnalysis.score} size={100} strokeWidth={9} />
                     <div className="text-center sm:text-left flex-1">
                       <ReadinessBadge badge={resumeAnalysis.badge} />
-                      <p className="mt-3 text-sm leading-relaxed text-white/80">
+                      <p className="mt-3 text-xs leading-relaxed text-ink-500">
                         {resumeAnalysis.summary}
                       </p>
                     </div>
                   </div>
 
                   {/* Strengths & Improvements */}
-                  <div className="grid sm:grid-cols-2 gap-0">
-                    <div className="p-6 border-b sm:border-b-0 sm:border-r border-white/10">
-                      <h4 className="text-xs font-bold text-green-300 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="rounded-xl border border-black/5 p-5 bg-white">
+                      <h4 className="text-xs font-bold text-green-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                         <CheckCircle2 className="h-3.5 w-3.5" /> Strengths
                       </h4>
-                      <ul className="space-y-2.5">
+                      <ul className="space-y-2">
                         {resumeAnalysis.strengths.map((s, i) => (
-                          <li key={i} className="flex items-start gap-2 text-xs text-white/75 leading-relaxed">
-                            <span className="h-1.5 w-1.5 rounded-full bg-green-400 mt-1.5 shrink-0" />
+                          <li key={i} className="flex items-start gap-2 text-xs text-ink-500 leading-relaxed">
+                            <span className="h-1.5 w-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
                             {s}
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <div className="p-6">
-                      <h4 className="text-xs font-bold text-brand-orange uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                    <div className="rounded-xl border border-black/5 p-5 bg-white">
+                      <h4 className="text-xs font-bold text-brand-orange uppercase tracking-wider mb-3 flex items-center gap-1.5">
                         <Target className="h-3.5 w-3.5" /> Improvement Areas
                       </h4>
-                      <ul className="space-y-2.5">
+                      <ul className="space-y-2">
                         {resumeAnalysis.improvements.map((imp, i) => (
-                          <li key={i} className="flex items-start gap-2 text-xs text-white/75 leading-relaxed">
+                          <li key={i} className="flex items-start gap-2 text-xs text-ink-500 leading-relaxed">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-orange mt-1.5 shrink-0" />
                             {imp}
                           </li>
@@ -835,11 +902,11 @@ export default function CareersClient() {
 
                   {/* Role Match */}
                   {resumeAnalysis.matchedRoles.length > 0 && (
-                    <div className="p-6 border-t border-white/10 bg-white/5">
-                      <h4 className="text-xs font-bold text-white/60 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <Zap className="h-3.5 w-3.5 text-brand-orange" /> Best Role Match
+                    <div className="rounded-xl border border-brand-blue/15 bg-brand-blue/5 p-5">
+                      <h4 className="text-xs font-bold text-brand-blue uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <Zap className="h-3.5 w-3.5" /> Best Role Match
                       </h4>
-                      <p className="text-xs text-white/65 leading-relaxed mb-4">
+                      <p className="text-xs text-ink-500 leading-relaxed mb-4">
                         {resumeAnalysis.matchReason}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -849,7 +916,10 @@ export default function CareersClient() {
                           return (
                             <button
                               key={roleId}
-                              onClick={() => handleApplyClick(job)}
+                              onClick={() => {
+                                setShowResumeModal(false);
+                                handleApplyClick(job);
+                              }}
                               className="inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-4 py-2 text-xs font-bold text-white hover:bg-brand-orangeLight transition-all shadow-md hover:scale-[1.02]"
                             >
                               Apply: {job.title.split("(")[0].trim()}
@@ -860,113 +930,33 @@ export default function CareersClient() {
                       </div>
                     </div>
                   )}
-
-                  {/* Reset */}
-                  <div className="px-6 pb-6 text-center">
-                    <button
-                      onClick={resetResume}
-                      className="mt-2 inline-flex items-center gap-1.5 text-xs text-white/45 hover:text-white/70 transition-colors underline"
-                    >
-                      <RefreshCw className="h-3 w-3" /> Analyze a different resume
-                    </button>
-                  </div>
                 </div>
-              </AnimatedSection>
-            ) : null}
-          </div>
-        </div>
-      </section>
+              ) : null}
+            </div>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          AI MOCK INTERVIEW PRACTICE
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section id="mock-interview" className="py-20 lg:py-24 bg-ink-50/40">
-        <div className="container-wrap">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <AnimatedSection>
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-blue/20 bg-brand-blue/5 px-4 py-1.5 text-xs font-semibold text-brand-blue mb-5">
-                <Mic className="h-3.5 w-3.5" />
-                AI Playwright Interviews
-              </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-ink-900">
-                Practice with AI Mock Interviews
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-ink-400">
-                Pick a role, answer 5 AI-generated questions, and get instant
-                personalized feedback on each answer — so you walk into your real
-                interview ready and confident.
-              </p>
-            </AnimatedSection>
-          </div>
-
-          <AnimatedSection type="scale">
-            <div className="max-w-3xl mx-auto rounded-2xl border border-black/5 bg-white shadow-lg overflow-hidden">
-              {/* Role Selector */}
-              <div className="p-8 border-b border-black/5">
-                <p className="text-xs font-bold text-ink-400 uppercase tracking-wider mb-4">
-                  Choose the role you&apos;re practicing for
-                </p>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {[
-                    { id: "general", label: "General Tech Role", sub: "Mix of all disciplines" },
-                    ...jobPositions.map((j) => ({
-                      id: j.id,
-                      label: j.title.split("(")[0].trim(),
-                      sub: j.type,
-                    })),
-                  ].map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => setInterviewJobId(opt.id)}
-                      className={`text-left rounded-xl border p-4 transition-all ${
-                        interviewJobId === opt.id
-                          ? "border-brand-blue bg-brand-blue/5 shadow-sm"
-                          : "border-black/5 hover:border-black/15 hover:bg-ink-50/50"
-                      }`}
-                    >
-                      <p
-                        className={`text-sm font-bold leading-tight ${
-                          interviewJobId === opt.id ? "text-brand-blue" : "text-ink-900"
-                        }`}
-                      >
-                        {opt.label}
-                      </p>
-                      <p className="text-xs text-ink-400 mt-0.5">{opt.sub}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Start Button */}
-              <div className="p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-ink-900">
-                    Ready to start?
-                  </p>
-                  <p className="text-xs text-ink-400 mt-1">
-                    5 AI-tailored questions · Instant feedback · Takes ~10 minutes
-                  </p>
-                </div>
+            {/* Modal Footer */}
+            {resumeStatus === "success" && (
+              <div className="shrink-0 border-t border-black/5 bg-ink-50/50 px-6 py-4 flex items-center justify-between gap-3">
                 <button
-                  onClick={startInterview}
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-brand-blueLight transition-all shadow-lg shadow-brand-blue/25 hover:shadow-brand-blue/40 hover:scale-[1.02] whitespace-nowrap"
+                  onClick={() => {
+                    setShowResumeModal(false);
+                    resetResume();
+                  }}
+                  className="text-xs font-semibold text-ink-400 hover:text-ink-900 transition-colors"
                 >
-                  <Mic className="h-4 w-4" />
-                  Start Interview
-                  <ChevronRight className="h-4 w-4" />
+                  Close
+                </button>
+                <button
+                  onClick={resetResume}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-black/10 px-4 py-2 text-xs font-semibold text-ink-600 hover:bg-white transition-colors"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" /> Analyze another resume
                 </button>
               </div>
-
-              {interviewError && (
-                <div className="mx-8 mb-6 flex items-center gap-2 rounded-lg bg-red-50 border border-red-100 px-4 py-3 text-xs text-red-700">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
-                  {interviewError}
-                </div>
-              )}
-            </div>
-          </AnimatedSection>
+            )}
+          </div>
         </div>
-      </section>
+      )}
 
       {/* ── Interview Modal ──────────────────────────────────────────────────── */}
       {showInterviewModal && (
@@ -992,6 +982,63 @@ export default function CareersClient() {
 
             {/* Modal Body */}
             <div className="flex-1 overflow-y-auto p-6">
+              {/* Setup Phase */}
+              {interviewPhase === "setup" && (
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-xs font-bold text-ink-400 uppercase tracking-wider mb-3">
+                      Select which role you are practicing for:
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {[
+                        { id: "general", label: "General Tech Role", sub: "Mix of all disciplines" },
+                        ...jobPositions.map((j) => ({
+                          id: j.id,
+                          label: j.title.split("(")[0].trim(),
+                          sub: j.type,
+                        })),
+                      ].map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => setInterviewJobId(opt.id)}
+                          className={`text-left rounded-xl border p-4 transition-all ${
+                            interviewJobId === opt.id
+                              ? "border-brand-blue bg-brand-blue/5 shadow-sm"
+                              : "border-black/5 hover:border-black/15 hover:bg-ink-50/50"
+                          }`}
+                        >
+                          <p
+                            className={`text-sm font-bold leading-tight ${
+                              interviewJobId === opt.id ? "text-brand-blue" : "text-ink-900"
+                            }`}
+                          >
+                            {opt.label}
+                          </p>
+                          <p className="text-xs text-ink-400 mt-0.5">{opt.sub}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-black/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-ink-900">Ready to start?</p>
+                      <p className="text-xs text-ink-400 mt-1">
+                        5 AI-tailored questions · Instant feedback · Takes ~10 minutes
+                      </p>
+                    </div>
+                    <button
+                      onClick={startInterview}
+                      className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-7 py-3 text-sm font-bold text-white hover:bg-brand-blueLight transition-all shadow-md"
+                    >
+                      <Mic className="h-4 w-4" />
+                      Begin Interview
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Loading Questions */}
               {interviewPhase === "loading-q" && (
                 <div className="py-16 flex flex-col items-center gap-4 text-center">
