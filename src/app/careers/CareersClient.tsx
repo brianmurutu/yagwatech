@@ -332,8 +332,19 @@ export default function CareersClient() {
         method: "POST",
         body: fd,
       });
+      
+      if (!res.ok) {
+        let errorMsg = "Analysis failed";
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          errorMsg = `Server error (${res.status}): ${res.statusText || "Internal Server Error"}`;
+        }
+        throw new Error(errorMsg);
+      }
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Analysis failed");
       setResumeAnalysis(data.analysis);
       setResumeStatus("success");
     } catch (err) {
@@ -369,8 +380,17 @@ export default function CareersClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobId: interviewJobId, stage: "questions" }),
       });
+      if (!res.ok) {
+        let errorMsg = "Failed to generate questions";
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          errorMsg = `Server error (${res.status}): ${res.statusText || "Internal Server Error"}`;
+        }
+        throw new Error(errorMsg);
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to generate questions");
       setInterviewQuestions(data.questions);
       setInterviewPhase("answering");
     } catch (err) {
@@ -402,8 +422,17 @@ export default function CareersClient() {
             answers: newAnswers,
           }),
         });
+        if (!res.ok) {
+          let errorMsg = "Failed to evaluate answers";
+          try {
+            const data = await res.json();
+            errorMsg = data.error || errorMsg;
+          } catch {
+            errorMsg = `Server error (${res.status}): ${res.statusText || "Internal Server Error"}`;
+          }
+          throw new Error(errorMsg);
+        }
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to evaluate answers");
         setInterviewFeedback(data);
         setInterviewPhase("results");
       } catch (err) {

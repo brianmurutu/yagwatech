@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pdfParse = require("pdf-parse");
+// NOTE: pdf-parse v2.x reads test files at module initialisation time, which
+// crashes Next.js API routes if it is required at the top level.  We lazy-load
+// it inside the request handler so that any import-time error is caught by the
+// surrounding try/catch and returned as a proper JSON error response instead of
+// an HTML 500 page that the browser cannot parse as JSON.
 
 // Rate limiting: simple in-memory store (resets on cold start)
 const requestMap = new Map<string, { count: number; resetAt: number }>();
@@ -66,12 +69,20 @@ export async function POST(req: NextRequest) {
   }
 
   // Extract text from PDF
+  // pdf-parse is lazy-loaded here so that any import-time crash (a known issue
+  // with pdf-parse v2.x) is caught by this try/catch block and surfaces as a
+  // proper JSON error rather than an unhandled exception that makes Next.js
+  // return an HTML page the client cannot parse as JSON.
   let resumeText: string;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const pdf = require("pdf-parse");
     const buffer = Buffer.from(await file.arrayBuffer());
-    const parsed = await pdfParse(buffer);
+    const parser = new pdf.PDFParse({ data: buffer });
+    const parsed = await parser.getText();
     resumeText = parsed.text?.trim();
-  } catch {
+  } catch (error) {
+    console.error("PDF Parsing Error:", error);
     return NextResponse.json(
       { error: "Could not read the PDF. Please ensure it is not password-protected." },
       { status: 422 }
@@ -118,7 +129,7 @@ ${truncated}
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
     const result = await model.generateContent(prompt);
     const raw = result.response.text().trim();
 
