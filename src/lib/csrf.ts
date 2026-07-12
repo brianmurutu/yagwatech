@@ -48,7 +48,43 @@ export function validateOrigin(request: Request): Response | null {
     return null;
   }
 
-  if (!ALLOWED_ORIGINS.has(normalized) && normalized !== "") {
+  // 1. Check against process.env.NEXT_PUBLIC_SITE_URL or allowed localhost ports
+  if (ALLOWED_ORIGINS.has(normalized)) {
+    return null;
+  }
+
+  // 2. Dynamic check: Allow if the origin matches the request's own host.
+  // This is safe against CSRF because a CSRF attack would have a different Origin
+  // than the target site (Host).
+  const proto = request.headers.get("x-forwarded-proto") || "https";
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const host = request.headers.get("host");
+
+  if (forwardedHost) {
+    const reconstructed = `${proto}://${forwardedHost}`.replace(/\/$/, "");
+    if (normalized === reconstructed) {
+      return null;
+    }
+  }
+
+  if (host) {
+    const reconstructed = `${proto}://${host}`.replace(/\/$/, "");
+    if (normalized === reconstructed) {
+      return null;
+    }
+  }
+
+  // Check against request URL's origin
+  try {
+    const requestUrl = new URL(request.url);
+    if (normalized === requestUrl.origin) {
+      return null;
+    }
+  } catch (e) {
+    // Ignore URL parsing errors
+  }
+
+  if (normalized !== "") {
     return forbidden(`Origin not allowed: ${normalized}`);
   }
 
