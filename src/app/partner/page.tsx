@@ -159,7 +159,7 @@ export default function PartnerPage() {
             style={{ clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0.8% 100%)" }}
           >
             <img
-              src="https://images.unsplash.com/photo-1521791136368-1a8682707636?auto=format&fit=crop&w=1200&q=80"
+              src="https://images.unsplash.com/photo-1521790797524-b2497295b8a0?auto=format&fit=crop&w=1200&q=80"
               alt="Yagwa Tech Partnership Visual"
               className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-700"
             />
@@ -221,7 +221,7 @@ export default function PartnerPage() {
                   style={{ clipPath: "polygon(0 8%, 100% 0, 100% 100%, 0% 100%)" }}
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1521791136368-1a8682707636?auto=format&fit=crop&w=1000&q=80"
+                    src="https://images.unsplash.com/photo-1521790797524-b2497295b8a0?auto=format&fit=crop&w=1000&q=80"
                     alt="Yagwa Tech Partnership Visual"
                     className="object-cover w-full h-full"
                   />
