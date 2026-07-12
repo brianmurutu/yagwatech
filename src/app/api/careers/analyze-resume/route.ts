@@ -81,10 +81,17 @@ export async function POST(req: NextRequest) {
     const parser = new pdf.PDFParse({ data: buffer });
     const parsed = await parser.getText();
     resumeText = parsed.text?.trim();
-  } catch (error) {
+  } catch (error: any) {
     console.error("PDF Parsing Error:", error);
+    try {
+      const fs = require("fs");
+      const errInfo = `Error: ${error?.message || error}\nStack: ${error?.stack || ""}\nKeys: ${Object.keys(error || {})}\n`;
+      fs.writeFileSync("c:/Users/Night Hawk/OneDrive/Documents/GitHub/yagwatech/pdf_error.txt", errInfo);
+    } catch (e) {
+      console.error("Failed to write error log:", e);
+    }
     return NextResponse.json(
-      { error: "Could not read the PDF. Please ensure it is not password-protected." },
+      { error: `Could not read the PDF. Debug: ${error?.message || error}` },
       { status: 422 }
     );
   }
