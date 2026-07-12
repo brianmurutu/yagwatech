@@ -13,34 +13,38 @@ export const SafaricomLogo = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const KcbLogo = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 140 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    {/* KCB Green & Golden Shield Badge */}
-    <rect x="4" y="4" width="32" height="32" rx="6" fill="#00833F" />
-    {/* Lion silhouette key shape inside shield */}
-    <path d="M20 10C24 10 26 12 26 16C26 22 20 28 20 28C20 28 14 22 14 16C14 12 16 10 20 10Z" fill="#F9A825" />
-    <circle cx="20" cy="16" r="3" fill="#00833F" />
-    <text x="46" y="27" fill="currentColor" fontSize="23" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">KCB</text>
+export const SirBrianLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 190 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    {/* Dev / engineering icon */}
+    <rect x="4" y="6" width="28" height="28" rx="6" fill="#F47B20" />
+    <path d="M12 14L8 20L12 26M24 14L28 20L24 26" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M19 13L17 27" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
+    <text x="42" y="26" fill="currentColor" fontSize="16" fontWeight="bold" fontFamily="sans-serif" letterSpacing="0.2">Sir. Brian & Co.</text>
   </svg>
 );
 
-export const EquityLogo = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 140 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    {/* Equity Brown/Red House Icon */}
-    <path d="M6 14L20 4L34 14V34H6V14Z" fill="#A16B56" />
-    <rect x="13" y="18" width="14" height="16" fill="#ffffff" />
-    <path d="M6 14L20 4L34 14" stroke="#C62828" strokeWidth="3" strokeLinecap="round" />
-    <text x="44" y="26" fill="currentColor" fontSize="20" fontWeight="bold" fontFamily="sans-serif">EQUITY</text>
+export const TechlinkLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 190 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    {/* Virtualization server stack icon */}
+    <rect x="4" y="7" width="28" height="6" rx="1.5" fill="#8B2FC9" />
+    <rect x="4" y="17" width="28" height="6" rx="1.5" fill="#A855E8" />
+    <rect x="4" y="27" width="28" height="6" rx="1.5" fill="#0B3D91" />
+    <circle cx="8" cy="10" r="1.5" fill="#ffffff" />
+    <circle cx="8" cy="20" r="1.5" fill="#ffffff" />
+    <circle cx="8" cy="30" r="1.5" fill="#ffffff" />
+    <circle cx="28" cy="10" r="1.5" fill="#00FF66" />
+    <circle cx="28" cy="20" r="1.5" fill="#00FF66" />
+    <circle cx="28" cy="30" r="1.5" fill="#00FF66" />
+    <text x="42" y="26" fill="currentColor" fontSize="16" fontWeight="bold" fontFamily="sans-serif" letterSpacing="0.2">Techlink Systems</text>
   </svg>
 );
 
-export const CoopLogo = (props: React.SVGProps<SVGSVGElement>) => (
+export const PaystackLogo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    {/* Co-op Bank Green Bold Monogram */}
-    <rect x="4" y="8" width="40" height="24" rx="4" fill="#00A859" />
-    <text x="10" y="25" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="sans-serif" letterSpacing="0.5">CO-OP</text>
-    <text x="52" y="22" fill="currentColor" fontSize="14" fontWeight="bold" fontFamily="sans-serif">THE CO-OPERATIVE</text>
-    <text x="52" y="32" fill="currentColor" fontSize="10" fontWeight="medium" fontFamily="sans-serif" letterSpacing="0.8">BANK OF KENYA</text>
+    {/* Paystack inspired modern interlocking ovals/circles */}
+    <circle cx="18" cy="20" r="14" fill="#3EBB8C" />
+    <path d="M12 16H24M12 20H20M12 24H22" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
+    <text x="40" y="26" fill="currentColor" fontSize="18" fontWeight="bold" fontFamily="sans-serif" letterSpacing="-0.5">paystack</text>
   </svg>
 );
 

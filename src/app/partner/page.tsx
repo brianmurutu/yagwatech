@@ -289,7 +289,7 @@ export default function PartnerPage() {
               Showcasing Our Trust Ecosystem
             </h2>
             <p className="mt-4 text-base text-slate-600">
-              We take pride in our robust collaborative relationships with local telecommunication leaders, commercial banks, and international cloud infrastructure providers.
+              We take pride in our robust collaborative relationships with local telecommunication leaders, strategic development partners, payment integrators, and international cloud infrastructure providers.
             </p>
           </div>
 

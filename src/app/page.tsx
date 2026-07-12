@@ -23,9 +23,9 @@ import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import {
   SafaricomLogo,
-  KcbLogo,
-  EquityLogo,
-  CoopLogo,
+  SirBrianLogo,
+  TechlinkLogo,
+  PaystackLogo,
   AwsLogo,
   MicrosoftLogo,
   CiscoLogo,
@@ -180,14 +180,14 @@ export default function HomePage() {
           <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
             <div className="flex w-max gap-16 items-center animate-marquee">
               <SafaricomLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <KcbLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <EquityLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <CoopLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <SirBrianLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <TechlinkLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <PaystackLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
               {/* Duplicate for gapless infinite scrolling */}
               <SafaricomLogo className="h-7 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <KcbLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <EquityLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
-              <CoopLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <SirBrianLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <TechlinkLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
+              <PaystackLogo className="h-8 w-auto text-ink-400/80 hover:text-brand-blue transition-colors shrink-0" />
             </div>
           </div>
         </div>
