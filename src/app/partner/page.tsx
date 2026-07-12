@@ -181,8 +181,8 @@ export default function PartnerPage() {
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-[#F47B20] tracking-wide uppercase">
                 <Sparkles className="w-3.5 h-3.5" /> Collaborative Alliances
               </span>
-              <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight max-w-xl">
-                Forge the Future of Technology. <br/>
+              <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight max-w-xl">
+                Forge the Future of Technology. <br className="hidden sm:inline" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F47B20] to-orange-400">
                   Partner With Us.
                 </span>
@@ -236,10 +236,10 @@ export default function PartnerPage() {
       </section>
 
       {/* ── PARTNER BENEFITS VALUE GRID ──────────────────────────────── */}
-      <section className="py-16 bg-white border-b border-slate-100">
+      <section className="py-12 sm:py-16 bg-white border-b border-slate-100">
         <div className="container-wrap">
           <div className="grid md:grid-cols-3 gap-8">
-            <AnimatedSection type="scale" delay={100} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex gap-4">
+            <AnimatedSection type="scale" delay={100} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row gap-4 items-start">
               <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 text-brand-blue">
                 <Zap className="w-6 h-6" />
               </div>
@@ -251,7 +251,7 @@ export default function PartnerPage() {
               </div>
             </AnimatedSection>
 
-            <AnimatedSection type="scale" delay={200} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex gap-4">
+            <AnimatedSection type="scale" delay={200} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row gap-4 items-start">
               <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-orange-50 text-[#F47B20]">
                 <Layers className="w-6 h-6" />
               </div>
@@ -263,7 +263,7 @@ export default function PartnerPage() {
               </div>
             </AnimatedSection>
 
-            <AnimatedSection type="scale" delay={300} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex gap-4">
+            <AnimatedSection type="scale" delay={300} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row gap-4 items-start">
               <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600">
                 <ShieldCheck className="w-6 h-6" />
               </div>
@@ -338,10 +338,10 @@ export default function PartnerPage() {
                     )}
                   </div>
 
-                  <div className="px-6 pb-6 pt-2 border-t border-slate-50 bg-slate-50/40 flex justify-end">
+                  <div className="px-6 pb-6 pt-2 border-t border-slate-50 bg-slate-50/40 flex justify-center sm:justify-end">
                     <button
                       onClick={() => togglePartner(partner.id)}
-                      className="text-xs font-semibold text-brand-blue hover:text-brand-orange flex items-center gap-1 transition-colors"
+                      className="text-xs font-semibold text-brand-blue hover:text-brand-orange flex items-center gap-1 transition-colors w-full justify-center py-2.5 border border-slate-200 rounded-xl bg-white sm:w-auto sm:justify-start sm:py-0 sm:border-0 sm:bg-transparent"
                       aria-expanded={isExpanded}
                     >
                       {isExpanded ? (
@@ -519,7 +519,7 @@ export default function PartnerPage() {
                               value={formData.companyName}
                               onChange={handleChange}
                               placeholder="e.g. Acme Labs Ltd"
-                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 transition-all ${
                                 errors.companyName
                                   ? "border-red-300 focus:ring-red-200"
                                   : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
@@ -541,7 +541,7 @@ export default function PartnerPage() {
                               value={formData.contactName}
                               onChange={handleChange}
                               placeholder="e.g. John Doe"
-                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 transition-all ${
                                 errors.contactName
                                   ? "border-red-300 focus:ring-red-200"
                                   : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
@@ -565,7 +565,7 @@ export default function PartnerPage() {
                               value={formData.email}
                               onChange={handleChange}
                               placeholder="e.g. john@acmelabs.com"
-                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 transition-all ${
                                 errors.email
                                   ? "border-red-300 focus:ring-red-200"
                                   : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
@@ -587,7 +587,7 @@ export default function PartnerPage() {
                               value={formData.phone}
                               onChange={handleChange}
                               placeholder="e.g. +254 712 345 678"
-                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+                              className={`w-full pl-10 pr-4 py-3 border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 transition-all ${
                                 errors.phone
                                   ? "border-red-300 focus:ring-red-200"
                                   : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
@@ -611,7 +611,7 @@ export default function PartnerPage() {
                               value={formData.website}
                               onChange={handleChange}
                               placeholder="e.g. www.acmelabs.com"
-                              className={`w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all`}
+                              className={`w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all`}
                             />
                           </div>
                         </div>
@@ -619,11 +619,12 @@ export default function PartnerPage() {
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 mb-1">Partnership Category *</label>
                           <div className="relative">
+                            <Layers className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                             <select
                               name="partnershipType"
                               value={formData.partnershipType}
                               onChange={handleChange}
-                              className={`w-full px-4 py-3 bg-white border rounded-xl text-sm focus:outline-none focus:ring-2 appearance-none transition-all ${
+                              className={`w-full pl-10 pr-10 py-3 bg-white border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 appearance-none transition-all ${
                                 errors.partnershipType
                                   ? "border-red-300 focus:ring-red-200"
                                   : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
@@ -636,7 +637,7 @@ export default function PartnerPage() {
                                 </option>
                               ))}
                             </select>
-                            <div className="absolute right-3.5 top-4 pointer-events-none border-l-4 border-r-4 border-t-4 border-t-slate-400 border-l-transparent border-r-transparent" />
+                            <ChevronDown className="absolute right-3.5 top-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
                           </div>
                           {errors.partnershipType && (
                             <p className="mt-1 text-[11px] text-red-600 font-semibold">{errors.partnershipType}</p>
@@ -652,7 +653,7 @@ export default function PartnerPage() {
                           onChange={handleChange}
                           rows={4}
                           placeholder="Describe the scope of work, technical alignment, and integration objectives..."
-                          className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+                          className={`w-full px-4 py-3 border rounded-xl text-base md:text-sm focus:outline-none focus:ring-2 transition-all ${
                             errors.message
                               ? "border-red-300 focus:ring-red-200"
                               : "border-slate-200 focus:ring-brand-blue/20 focus:border-brand-blue"
