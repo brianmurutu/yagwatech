@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnimatedSection from "@/components/AnimatedSection";
 import { existingPartners, Partner } from "@/lib/partners";
@@ -202,12 +201,10 @@ export default function PartnerPage() {
                 <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-[#0B3D91] rounded-br-lg" />
 
                 {/* Actual image */}
-                <Image
-                  src="/images/partnership-hero.png"
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80"
                   alt="Yagwa Tech Partnership Visual"
-                  fill
-                  className="object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-700"
-                  priority
+                  className="object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-700 w-full h-full absolute inset-0"
                 />
 
                 {/* Tech overlay grid pattern */}
