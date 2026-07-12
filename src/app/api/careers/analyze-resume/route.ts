@@ -76,9 +76,11 @@ export async function POST(req: NextRequest) {
   let resumeText: string;
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require("pdf-parse/worker");
+    const worker = require("pdf-parse/worker");
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pdf = require("pdf-parse");
+    pdf.PDFParse.setWorker(worker.getData());
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const parser = new pdf.PDFParse({ data: buffer });
     const parsed = await parser.getText();
