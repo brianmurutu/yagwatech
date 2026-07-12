@@ -10,7 +10,7 @@ import { site } from "@/lib/site";
 import NewsletterForm from "@/components/NewsletterForm";
 
 const quickLinks = [
-  { href: "/", label: "Home" },
+  { href: "/partner", label: "Partner with us" },
   { href: "/about", label: "About us" },
   { href: "/services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
