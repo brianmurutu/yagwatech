@@ -4,6 +4,7 @@ const nextConfig = {
     webpackBuildWorker: false,
     workerThreads: false,
     cpus: 1,
+    serverComponentsExternalPackages: ["pdf-parse"],
   },
   typescript: {
     ignoreBuildErrors: true,
@@ -30,7 +31,7 @@ const nextConfig = {
       // Images: self + data URIs + Google Analytics + Unsplash (portfolio images)
       "img-src 'self' data: blob: https://www.google-analytics.com https://images.unsplash.com https://res.cloudinary.com",
       // Connections: self + analytics endpoints
-      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com",
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://generativelanguage.googleapis.com",
       // Frames: disallow embedding by default
       "frame-src 'none'",
       "frame-ancestors 'self'",
@@ -70,9 +71,13 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     if (config.cache && !dev) {
       config.cache = false;
+    }
+    // pdf-parse uses canvas which is a native module — mark as external
+    if (isServer) {
+      config.externals = [...(config.externals || []), { canvas: "canvas" }];
     }
     return config;
   },
