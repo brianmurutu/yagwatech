@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnimatedSection from "@/components/AnimatedSection";
 import { existingPartners, Partner } from "@/lib/partners";
@@ -139,7 +140,7 @@ export default function PartnerPage() {
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900">
       {/* ── BREATHTAKING HERO SECTION ────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#07255A] via-[#0B3D91] to-[#1A56C4] py-20 lg:py-28 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#07255A] via-[#0B3D91] to-[#1A56C4] py-16 sm:py-24 lg:py-28 text-white">
         {/* Dynamic Grid Background Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         
@@ -154,32 +155,63 @@ export default function PartnerPage() {
               { label: "Partner with us" },
             ]}
           />
-          <div className="mt-8 max-w-3xl">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-[#F47B20] tracking-wide uppercase">
-              <Sparkles className="w-3.5 h-3.5" /> Collaborative Alliances
-            </span>
-            <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
-              Forge the Future of Technology. <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F47B20] to-orange-400">
-                Partner With Us.
+          <div className="grid lg:grid-cols-12 gap-12 items-center mt-8">
+            <div className="lg:col-span-7">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-[#F47B20] tracking-wide uppercase">
+                <Sparkles className="w-3.5 h-3.5" /> Collaborative Alliances
               </span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-2xl">
-              We collaborate with global infrastructure giants, financial institutions, and innovative local enterprises to engineer premium systems that drive digitization across East Africa and beyond.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <a
-                href="#form-section"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#F47B20] to-orange-500 hover:from-orange-500 hover:to-[#F47B20] text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-orange-500/20 transform hover:-translate-y-0.5"
-              >
-                Become a Partner <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="#partners-section"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 text-white font-medium rounded-xl border border-white/10 transition-all duration-200"
-              >
-                View Existing Network
-              </a>
+              <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
+                Forge the Future of Technology. <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F47B20] to-orange-400">
+                  Partner With Us.
+                </span>
+              </h1>
+              <p className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-2xl">
+                We collaborate with global infrastructure giants, financial institutions, and innovative local enterprises to engineer premium systems that drive digitization across East Africa and beyond.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <a
+                  href="#form-section"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 w-full sm:w-auto bg-gradient-to-r from-[#F47B20] to-orange-500 hover:from-orange-500 hover:to-[#F47B20] text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-orange-500/20 transform hover:-translate-y-0.5"
+                >
+                  Become a Partner <ArrowRight className="w-4 h-4" />
+                </a>
+                <a
+                  href="#partners-section"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 w-full sm:w-auto bg-white/10 hover:bg-white/15 text-white font-medium rounded-xl border border-white/10 transition-all duration-200"
+                >
+                  View Existing Network
+                </a>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
+              {/* Artistic Frame for Image */}
+              <div className="relative group w-full max-w-[420px] aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/40 backdrop-blur-md">
+                {/* Glowing borders */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#F47B20]/20 to-[#0B3D91]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                {/* Outer glowing ring */}
+                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#F47B20] via-orange-400 to-[#0B3D91] opacity-30 blur-lg group-hover:opacity-50 transition-opacity duration-500 -z-10" />
+
+                {/* Animated tech accents */}
+                <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-[#F47B20] rounded-tl-lg" />
+                <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-[#F47B20] rounded-tr-lg" />
+                <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-[#0B3D91] rounded-bl-lg" />
+                <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-[#0B3D91] rounded-br-lg" />
+
+                {/* Actual image */}
+                <Image
+                  src="/images/partnership-hero.png"
+                  alt="Yagwa Tech Partnership Visual"
+                  fill
+                  className="object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-700"
+                  priority
+                />
+
+                {/* Tech overlay grid pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none rounded-3xl" />
+              </div>
             </div>
           </div>
         </div>
@@ -229,7 +261,7 @@ export default function PartnerPage() {
       </section>
 
       {/* ── PARTNERS SHOWCASE SECTION ────────────────────────────────── */}
-      <section id="partners-section" className="py-20 lg:py-24">
+      <section id="partners-section" className="py-12 sm:py-20 lg:py-24">
         <div className="container-wrap">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-[#F47B20] bg-orange-50 px-3 py-1 rounded-full">
@@ -253,7 +285,7 @@ export default function PartnerPage() {
                   type="scale"
                   delay={50 * index}
                   className={`bg-white rounded-2xl border transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-md ${
-                    isExpanded ? "ring-2 ring-brand-blue/50 border-transparent lg:col-span-2 lg:row-span-1" : "border-slate-200"
+                    isExpanded ? "ring-2 ring-brand-blue/50 border-transparent sm:col-span-2 lg:col-span-2 lg:row-span-1" : "border-slate-200"
                   }`}
                 >
                   <div className="p-6">
@@ -313,13 +345,13 @@ export default function PartnerPage() {
       </section>
 
       {/* ── PARTNERSHIP FORM SECTION ─────────────────────────────────── */}
-      <section id="form-section" className="py-20 lg:py-28 bg-slate-100 border-t border-slate-200">
+      <section id="form-section" className="py-12 sm:py-20 lg:py-28 bg-slate-100 border-t border-slate-200">
         <div className="container-wrap">
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-5 bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200">
               
               {/* Left Column Info Banner */}
-              <div className="md:col-span-2 bg-gradient-to-br from-[#07255A] to-[#0B3D91] text-white p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden">
+              <div className="md:col-span-2 bg-gradient-to-br from-[#07255A] to-[#0B3D91] text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden">
                 <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
                 <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-[#F47B20]/15 rounded-full blur-[60px] pointer-events-none" />
                 
@@ -363,7 +395,7 @@ export default function PartnerPage() {
               </div>
 
               {/* Right Column Form Block */}
-              <div className="md:col-span-3 p-8 lg:p-10 relative bg-white">
+              <div className="md:col-span-3 p-6 sm:p-8 lg:p-10 relative bg-white">
                 
                 {/* ── SUCCESS PANEL ────────────────────────────────────────── */}
                 {success ? (

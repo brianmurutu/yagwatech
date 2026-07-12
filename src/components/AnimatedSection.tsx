@@ -15,6 +15,7 @@ export default function AnimatedSection({
   delay = 0,
   type = "fade",
 }: AnimatedSectionProps) {
+  const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function AnimatedSection({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add("visible");
+          setIsVisible(true);
           observer.unobserve(el);
         }
       },
@@ -42,7 +43,7 @@ export default function AnimatedSection({
   const baseClass = type === "scale" ? "reveal-scale" : "reveal";
 
   return (
-    <div ref={ref} className={`${baseClass} ${className}`}>
+    <div ref={ref} className={`${baseClass} ${isVisible ? "visible" : ""} ${className}`}>
       {children}
     </div>
   );

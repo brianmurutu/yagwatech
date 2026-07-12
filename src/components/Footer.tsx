@@ -101,13 +101,23 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-medium text-white mb-4">Quick links</h4>
             <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/55 hover:text-brand-orange transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              {quickLinks.map((link) => {
+                const isPartner = link.href === "/partner";
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={
+                        isPartner
+                          ? "text-sm font-semibold text-brand-orange animate-attention hover:text-brand-orangeLight transition-all"
+                          : "text-sm text-white/55 hover:text-brand-orange transition-colors"
+                      }
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

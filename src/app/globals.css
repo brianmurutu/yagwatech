@@ -485,3 +485,22 @@ html {
 .animate-emerge-br { animation: emerge-br 8.2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
 .animate-emerge-bl { animation: emerge-bl 8.8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
 
+/* Pulse Attention Animation for Footer Partner Link */
+@keyframes pulseAttention {
+  0%, 100% {
+    transform: scale(1);
+    color: rgba(255, 255, 255, 0.55);
+  }
+  50% {
+    transform: scale(1.05);
+    color: #F47B20; /* brand orange */
+    text-shadow: 0 0 8px rgba(244, 123, 32, 0.4);
+  }
+}
+
+.animate-attention {
+  display: inline-block;
+  animation: pulseAttention 2.5s infinite ease-in-out;
+}
+
+
