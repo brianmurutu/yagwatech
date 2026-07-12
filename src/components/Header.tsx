@@ -23,7 +23,6 @@ const navLinks = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
-  { href: "/faqs", label: "FAQs" },
   { href: "/contact", label: "Contact us" },
 ];
 
