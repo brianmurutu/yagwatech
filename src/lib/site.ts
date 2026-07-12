@@ -10,6 +10,7 @@ export const site = {
   adminEmails: ["info@yagwatech.com", "yagwatechsolutions@gmail.com"],
   careersEmails: ["yagwatechsolutions@gmail.com", "careers@yagwatech.com"],
   supportEmail: "support@yagwatech.com",
+  calendly: process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/yagwatech/partnership-meeting",
   address: "Karen Professional Centre, Nairobi, Kenya",
   addressShort: "Karen, Nairobi, Kenya",
   mapsUrl: "https://maps.google.com/?q=Karen+Professional+Centre+Nairobi+Kenya",

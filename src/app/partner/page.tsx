@@ -23,7 +23,8 @@ import {
   ShieldCheck,
   Zap,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Calendar
 } from "lucide-react";
 
 export default function PartnerPage() {
@@ -444,6 +445,30 @@ export default function PartnerPage() {
                           </div>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Calendly Booking Card */}
+                    <div className="mt-6 w-full max-w-md bg-gradient-to-br from-brand-blue/5 to-amber-500/5 border border-brand-blue/10 rounded-2xl p-6 text-center shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-brand-blue/5 rounded-full blur-xl pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 w-20 h-20 bg-amber-500/5 rounded-full blur-lg pointer-events-none" />
+                      
+                      <div className="mx-auto w-12 h-12 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center mb-3.5 relative">
+                        <Calendar className="w-6 h-6" />
+                      </div>
+                      
+                      <h4 className="text-sm font-bold text-slate-900">Accelerate Your Partnership</h4>
+                      <p className="mt-1.5 text-xs text-slate-600 leading-relaxed">
+                        Book a 15-minute introductory meeting with our Steering Committee right away to align on technical & business synergies.
+                      </p>
+                      
+                      <a
+                        href={site.calendly}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-brand-blue hover:bg-[#072f6e] text-white font-bold rounded-xl text-xs transition-all hover:scale-[1.02] shadow-md shadow-brand-blue/15"
+                      >
+                        <Calendar className="w-4 h-4" /> Book Meeting on Calendly
+                      </a>
                     </div>
 
                     <button

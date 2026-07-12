@@ -21,21 +21,33 @@ const ALLOWED_ORIGINS = new Set([
  * Safe to call on every mutating API route (POST / PUT / DELETE).
  */
 export function validateOrigin(request: Request): Response | null {
-  // Skip in development if no env var is set
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!siteUrl && process.env.NODE_ENV === "development") return null;
+  // Always skip CSRF origin checks in development mode
+  if (process.env.NODE_ENV === "development") return null;
 
   const origin = request.headers.get("origin");
 
   // No Origin header — could be a direct server-to-server or curl call.
   // Reject to be safe (browsers always send Origin on cross-origin POSTs).
   if (!origin) {
-    // Allow in dev for ease of testing with curl / Postman
-    if (process.env.NODE_ENV === "development") return null;
     return forbidden("Missing origin header.");
   }
 
   const normalized = origin.replace(/\/$/, "");
+
+  // Allow localhost / loopback on any port for local testing
+  const isLocalhost = (urlStr: string) => {
+    try {
+      const url = new URL(urlStr);
+      return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    } catch {
+      return false;
+    }
+  };
+
+  if (isLocalhost(normalized)) {
+    return null;
+  }
+
   if (!ALLOWED_ORIGINS.has(normalized) && normalized !== "") {
     return forbidden(`Origin not allowed: ${normalized}`);
   }

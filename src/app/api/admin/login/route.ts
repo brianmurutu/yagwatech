@@ -19,7 +19,7 @@ function createSessionToken(): string {
 }
 
 /** Verify a session token — returns true if valid */
-export function verifySessionToken(token: string): boolean {
+function verifySessionToken(token: string): boolean {
   const dot = token.lastIndexOf(".");
   if (dot === -1) return false;
   const rand = token.slice(0, dot);

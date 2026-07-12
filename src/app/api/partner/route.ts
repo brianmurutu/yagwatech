@@ -118,6 +118,15 @@ export async function POST(request: Request) {
         <p style="color:#1A1A2E;font-size:15px;line-height:1.6;margin-bottom:16px;">
           Our partnership evaluation and strategy team will review your scope of interest and proposal details. We strive to evaluate all requests within <strong>2 to 3 business days</strong>. If there's a strong mutual alignment, one of our partnership lead managers will reach out to schedule an introductory discovery call.
         </p>
+        <div style="background:#EEF4FF;border-left:4px solid #0B3D91;padding:18px;border-radius:6px;margin:24px 0;">
+          <h3 style="margin:0 0 6px 0;color:#0B3D91;font-size:15px;font-weight:700;">Book an Introductory Alignment Call</h3>
+          <p style="margin:0 0 14px 0;color:#1A1A2E;font-size:13.5px;line-height:1.5;">
+            To expedite your proposal review, please schedule a brief 15-minute introductory meeting with our partnership committee.
+          </p>
+          <a href="${site.calendly}" target="_blank" style="display:inline-block;background-color:#0B3D91;color:#ffffff;text-decoration:none;padding:10px 18px;font-size:13px;font-weight:700;border-radius:6px;box-shadow:0 2px 4px rgba(11,61,145,0.15);">
+            Schedule meeting on Calendly
+          </a>
+        </div>
         <div style="background:#FFF8F2;border-left:4px solid #F47B20;padding:16px;border-radius:6px;margin:24px 0;">
           <p style="margin:0;font-size:13.5px;color:#C2611A;line-height:1.5;">
             <strong>What happens next?</strong><br/>
