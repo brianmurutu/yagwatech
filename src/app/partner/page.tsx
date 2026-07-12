@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnimatedSection from "@/components/AnimatedSection";
-import { existingPartners, Partner } from "@/lib/partners";
+import { existingPartners } from "@/lib/partners";
 import { partnerSchema } from "@/lib/validation";
 import { site } from "@/lib/site";
 import {
@@ -22,7 +21,6 @@ import {
   ShieldCheck,
   Zap,
   ArrowRight,
-  ExternalLink,
   Calendar
 } from "lucide-react";
 
@@ -121,7 +119,7 @@ export default function PartnerPage() {
       } else {
         setSubmitError(data.error || "An error occurred while submitting. Please try again.");
       }
-    } catch (err) {
+    } catch {
       setSubmitError("Failed to connect to the server. Please check your internet connection and try again.");
     } finally {
       setIsSubmitting(false);
@@ -140,7 +138,7 @@ export default function PartnerPage() {
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900">
       {/* ── BREATHTAKING HERO SECTION ────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#07255A] via-[#0B3D91] to-[#1A56C4] py-16 sm:py-24 lg:py-28 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#07255A] via-[#0B3D91] to-[#1A56C4] text-white lg:min-h-[620px] lg:flex lg:items-center">
         {/* Dynamic Grid Background Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         
@@ -148,7 +146,30 @@ export default function PartnerPage() {
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#F47B20]/25 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-10 right-10 w-80 h-80 bg-brand-orange/20 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="container-wrap relative z-10">
+        {/* Desktop Image - Edge-to-edge with diagonal slash split */}
+        <div className="hidden lg:block absolute top-0 bottom-0 right-0 left-[48%] xl:left-1/2 overflow-hidden z-0">
+          {/* Underlay glow / border backing */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-b from-[#F47B20] via-orange-500 to-[#0B3D91]"
+            style={{ clipPath: "polygon(14.2% 0, 100% 0, 100% 100%, 0% 100%)" }}
+          />
+          {/* Main image container */}
+          <div 
+            className="absolute inset-y-0 right-0 left-[3px]"
+            style={{ clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0.8% 100%)" }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80"
+              alt="Yagwa Tech Partnership Visual"
+              className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-700"
+            />
+            {/* Tech grid details */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#07255A]/50 via-transparent to-transparent pointer-events-none" />
+          </div>
+        </div>
+
+        <div className="container-wrap relative z-10 w-full py-16 sm:py-24 lg:py-28">
           <Breadcrumbs
             items={[
               { label: "Home", href: "/" },
@@ -156,17 +177,17 @@ export default function PartnerPage() {
             ]}
           />
           <div className="grid lg:grid-cols-12 gap-12 items-center mt-8">
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-6 xl:col-span-7">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-[#F47B20] tracking-wide uppercase">
                 <Sparkles className="w-3.5 h-3.5" /> Collaborative Alliances
               </span>
-              <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
+              <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight max-w-xl">
                 Forge the Future of Technology. <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F47B20] to-orange-400">
                   Partner With Us.
                 </span>
               </h1>
-              <p className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-2xl">
+              <p className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
                 We collaborate with global infrastructure giants, financial institutions, and innovative local enterprises to engineer premium systems that drive digitization across East Africa and beyond.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -185,30 +206,29 @@ export default function PartnerPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
-              {/* Artistic Frame for Image */}
-              <div className="relative group w-full max-w-[420px] aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900/40 backdrop-blur-md">
-                {/* Glowing borders */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#F47B20]/20 to-[#0B3D91]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                
-                {/* Outer glowing ring */}
-                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#F47B20] via-orange-400 to-[#0B3D91] opacity-30 blur-lg group-hover:opacity-50 transition-opacity duration-500 -z-10" />
-
-                {/* Animated tech accents */}
-                <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-[#F47B20] rounded-tl-lg" />
-                <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-[#F47B20] rounded-tr-lg" />
-                <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-[#0B3D91] rounded-bl-lg" />
-                <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-[#0B3D91] rounded-br-lg" />
-
-                {/* Actual image */}
-                <img
-                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80"
-                  alt="Yagwa Tech Partnership Visual"
-                  className="object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-700 w-full h-full absolute inset-0"
+            {/* Mobile Image - Full viewport width and diagonal top edge split */}
+            <div className="lg:hidden col-span-12 mt-4 relative">
+              {/* Outer container with negative margin to bleed to screen edges */}
+              <div className="w-[calc(100%+2.5rem)] -mx-5 sm:w-[calc(100%+3rem)] sm:-mx-6 relative aspect-[16/10] overflow-hidden">
+                {/* Diagonal glowing border underlay */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-r from-[#F47B20] to-orange-400"
+                  style={{ clipPath: "polygon(0 7.5%, 100% 0, 100% 100%, 0% 100%)" }}
                 />
-
-                {/* Tech overlay grid pattern */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none rounded-3xl" />
+                {/* Image wrapper */}
+                <div 
+                  className="absolute inset-x-0 bottom-0 top-[2px]"
+                  style={{ clipPath: "polygon(0 8%, 100% 0, 100% 100%, 0% 100%)" }}
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80"
+                    alt="Yagwa Tech Partnership Visual"
+                    className="object-cover w-full h-full"
+                  />
+                  {/* Tech grid and gradients */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                </div>
               </div>
             </div>
           </div>
