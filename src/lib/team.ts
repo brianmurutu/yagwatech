@@ -16,7 +16,7 @@ export const team: TeamMember[] = [
     initials: "PY",
     colorFrom: "#0B3D91",
     colorTo: "#1A56C4",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80",
+    avatarUrl: "/images/team_peter_yagwa.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/company/hi-techparks/" },
       { platform: "facebook", url: "https://www.facebook.com/HiTechParks/" },
@@ -30,7 +30,7 @@ export const team: TeamMember[] = [
     initials: "BM",
     colorFrom: "#F47B20",
     colorTo: "#D96A10",
-    avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&h=120&q=80",
+    avatarUrl: "/images/team_brian_murutu.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/in/sir-brian/" },
       { platform: "facebook", url: "https://www.facebook.com/sirbriandev" },
@@ -44,7 +44,7 @@ export const team: TeamMember[] = [
     initials: "PK",
     colorFrom: "#0B3D91",
     colorTo: "#07255A",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80",
+    avatarUrl: "/images/team_phineas_kirimi.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/company/" },
       { platform: "github", url: "https://github.com/yagwatech" },
@@ -72,7 +72,7 @@ export const team: TeamMember[] = [
     initials: "TM",
     colorFrom: "#0B3D91",
     colorTo: "#1A56C4",
-    avatarUrl: "/images/reviewer_samuel.jpg",
+    avatarUrl: "/images/team_timothy_mugendi.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/in/sir-brian/" },
       { platform: "facebook", url: "https://www.facebook.com/HiTechParks/" },
@@ -85,7 +85,7 @@ export const team: TeamMember[] = [
     initials: "IO",
     colorFrom: "#533AB7",
     colorTo: "#7F77DD",
-    avatarUrl: "/images/reviewer_david.jpg",
+    avatarUrl: "/images/team_isaac_odari.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/company/" },
       { platform: "facebook", url: "https://www.facebook.com/yagwatech/" },
