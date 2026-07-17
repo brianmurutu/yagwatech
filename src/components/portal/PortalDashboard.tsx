@@ -4,13 +4,11 @@ import { useState, useEffect } from 'react';
 import {
   Briefcase,
   CheckCircle,
-  Users,
-  Clock,
+  FolderOpen,
   ArrowRight,
   TrendingUp,
-  Calendar,
-  Star,
   Activity,
+  Database
 } from 'lucide-react';
 
 interface Props {
@@ -27,35 +25,21 @@ const colorMap: Record<string, { bg: string; text: string; ring: string }> = {
 const activity = [
   {
     type: 'task',
-    text: 'David Kamau completed task "API integration for KCB ERP"',
+    text: 'Completed task "ERP API integration for Equity Bank"',
     time: '10 min ago',
     icon: CheckCircle,
     color: 'text-green-500',
   },
   {
-    type: 'leave',
-    text: 'Grace Wanjiku\'s annual leave request approved (Jul 10–14)',
-    time: '1 hr ago',
-    icon: Calendar,
-    color: 'text-[#0B3D91]',
-  },
-  {
     type: 'project',
-    text: 'Project "Cloud Migration Phase 2" moved to In Progress',
+    text: 'Project "Mobile App Redesign" moved to In Progress',
     time: '2 hrs ago',
     icon: TrendingUp,
     color: 'text-[#F47B20]',
   },
   {
-    type: 'team',
-    text: 'New team member Amina Ochieng joined — Junior Developer',
-    time: 'Yesterday',
-    icon: Star,
-    color: 'text-purple-500',
-  },
-  {
     type: 'task',
-    text: 'Peter Njoroge submitted "Cybersecurity Audit Report v2" for review',
+    text: 'Submitted "Cybersecurity Audit Report" for final internal review',
     time: 'Yesterday',
     icon: Activity,
     color: 'text-amber-500',
@@ -70,20 +54,17 @@ const activity = [
 ];
 
 const quickActions = [
-  { label: 'New Task', module: 'tasks', Icon: CheckCircle, bg: 'bg-[#0B3D91]' },
-  { label: 'Request Leave', module: 'leave', Icon: Calendar, bg: 'bg-[#F47B20]' },
-  { label: 'View Projects', module: 'projects', Icon: Briefcase, bg: 'bg-emerald-600' },
-  { label: 'Check Attendance', module: 'attendance', Icon: Clock, bg: 'bg-purple-600' },
+  { label: 'View Kanban Projects', module: 'projects', Icon: Briefcase, bg: 'bg-emerald-600' },
+  { label: 'My Checklist Tasks', module: 'tasks', Icon: CheckCircle, bg: 'bg-[#0B3D91]' },
+  { label: 'Shared Documents', module: 'documents', Icon: FolderOpen, bg: 'bg-purple-600' },
 ];
 
 export default function PortalDashboard({ setActiveModule }: Props) {
-  const [activeProjectsCount, setActiveProjectsCount] = useState(8);
-  const [pendingTasksCount, setPendingTasksCount] = useState(15);
-  const [teamMembersCount, setTeamMembersCount] = useState(12);
-  const [pendingLeavesCount, setPendingLeavesCount] = useState(3);
-
-  const [hoursPercentage, setHoursPercentage] = useState(95);
-  const [tasksPercentage, setTasksPercentage] = useState(73);
+  const [activeProjectsCount, setActiveProjectsCount] = useState(4);
+  const [pendingTasksCount, setPendingTasksCount] = useState(8);
+  const [documentsCount, setDocumentsCount] = useState(5);
+  const [isSyncActive, setIsSyncActive] = useState(false);
+  const [tasksPercentage, setTasksPercentage] = useState(75);
 
   useEffect(() => {
     // 1. Projects
@@ -110,66 +91,43 @@ export default function PortalDashboard({ setActiveModule }: Props) {
       } catch (e) { console.error(e); }
     }
 
-    // 3. Team Members
-    const emp = localStorage.getItem('yagwa_employees');
-    if (emp) {
-      try {
-        const parsed = JSON.parse(emp);
-        setTeamMembersCount(parsed.length);
-      } catch (e) { console.error(e); }
-    }
-
-    // 4. Leaves Pending for Admin User (mock employee)
-    const leaves = localStorage.getItem('yagwa_leaves');
-    if (leaves) {
-      try {
-        const parsed = JSON.parse(leaves) as any[];
-        const userPending = parsed.filter(l => l.employee === 'Admin User' && l.status === 'Pending');
-        setPendingLeavesCount(userPending.length);
-      } catch (e) { console.error(e); }
-    }
-
-    // 5. Attendance Hours progress
-    const att = localStorage.getItem('yagwa_attendance');
-    if (att) {
-      try {
-        const parsed = JSON.parse(att);
-        if (parsed.log && parsed.log.length > 0) {
-          const presentDays = parsed.log.filter((d: any) => d.status === 'Present').length;
-          setHoursPercentage(Math.min(100, Math.round((presentDays / 5) * 100)));
-        }
-      } catch (e) { console.error(e); }
-    }
+    // 3. Sync status
+    fetch('/api/crm/status')
+      .then(res => res.json())
+      .then(data => {
+        setIsSyncActive(data.projects?.status === 'connected');
+      })
+      .catch(e => console.error(e));
   }, []);
 
   const stats = [
     {
       label: 'Active Projects',
       value: activeProjectsCount.toString(),
-      change: 'Ongoing kanban files',
+      change: 'Ongoing client deliverables',
       Icon: Briefcase,
       color: 'blue',
     },
     {
       label: 'Pending Tasks',
       value: pendingTasksCount.toString(),
-      change: 'Awaiting completion',
+      change: 'Awaiting checkbox completion',
       Icon: CheckCircle,
       color: 'orange',
     },
     {
-      label: 'Team Members',
-      value: teamMembersCount.toString(),
-      change: 'Corporate directory',
-      Icon: Users,
-      color: 'green',
+      label: 'Company Policies',
+      value: documentsCount.toString(),
+      change: 'Available resources',
+      Icon: FolderOpen,
+      color: 'purple',
     },
     {
-      label: 'Leaves Pending',
-      value: pendingLeavesCount.toString(),
-      change: 'My pending requests',
-      Icon: Calendar,
-      color: 'purple',
+      label: 'Zoho Sync Link',
+      value: isSyncActive ? 'Connected' : 'Sandbox',
+      change: isSyncActive ? 'API is fully operational' : 'Simulated local storage',
+      Icon: Database,
+      color: 'green',
     },
   ];
 
@@ -178,9 +136,9 @@ export default function PortalDashboard({ setActiveModule }: Props) {
       {/* Welcome banner */}
       <div className="bg-gradient-to-r from-[#07255A] to-[#1A56C4] rounded-2xl p-6 text-white flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">Good afternoon, Admin User! 👋</h3>
+          <h3 className="text-xl font-bold">Good afternoon, Team Member! 👋</h3>
           <p className="text-white/65 text-sm mt-1">
-            Here's what's happening at YagwaTech today.
+            Access Zoho Kanban, document repositories, and daily checklists in one workspace.
           </p>
         </div>
         <div className="hidden sm:flex flex-col items-end gap-1">
@@ -206,7 +164,7 @@ export default function PortalDashboard({ setActiveModule }: Props) {
                   <Icon className={`w-4.5 h-4.5 ${c.text}`} />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-[#1A1A2E]">{value}</div>
+              <div className="text-2xl font-bold text-[#1A1A2E]">{value}</div>
               <p className="text-xs text-[#5A6680] mt-1">{change}</p>
             </div>
           );
@@ -258,12 +216,11 @@ export default function PortalDashboard({ setActiveModule }: Props) {
 
           {/* Mini stats */}
           <div className="mt-5 pt-5 border-t border-gray-100">
-            <p className="text-xs text-[#5A6680] font-medium mb-3 uppercase tracking-wide">This Week</p>
+            <p className="text-xs text-[#5A6680] font-medium mb-3 uppercase tracking-wide">Tasks Completed Ratio</p>
             <div className="space-y-2">
               {[
                 { label: 'Tasks completed', value: `${tasksPercentage}%`, bar: tasksPercentage },
-                { label: 'Hours logged', value: `${hoursPercentage}%`, bar: hoursPercentage },
-                { label: 'Meetings attended', value: '6', bar: 60 },
+                { label: 'Zoho REST API status', value: isSyncActive ? '100%' : 'Mock', bar: isSyncActive ? 100 : 50 },
               ].map(({ label, value, bar }) => (
                 <div key={label} className="space-y-1">
                   <div className="flex justify-between text-xs">

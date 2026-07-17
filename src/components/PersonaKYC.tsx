@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShieldCheck, UserCheck, AlertTriangle, HelpCircle } from "lucide-react";
+import { ShieldCheck, ShieldAlert, AlertTriangle } from "lucide-react";
 
 interface PersonaKYCProps {
   referenceId: string; // Partner/Client Email or Account ID
@@ -11,51 +11,27 @@ interface PersonaKYCProps {
 
 export default function PersonaKYC({ referenceId, onSuccess, onFailed }: PersonaKYCProps) {
   const [templateId, setTemplateId] = useState<string | null>(null);
-  const [isSandbox, setIsSandbox] = useState(true);
-  const [inquiryId] = useState(() => `inq_${Math.random().toString(36).substring(2, 11)}`);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const tid = process.env.NEXT_PUBLIC_PERSONA_TEMPLATE_ID;
     if (tid) {
       setTemplateId(tid);
-      setIsSandbox(false);
     }
+    setLoading(false);
   }, []);
 
-  const handleSimulateVerification = async (approved: boolean) => {
-    console.log(`[Persona KYC Sandbox] Simulating verification: ${approved ? "APPROVED" : "FAILED"} for ref: ${referenceId}`);
-    
-    try {
-      // Fire post request to our KYC webhook backend to simulate the Persona Webhook!
-      const res = await fetch("/api/kyc/webhook", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event: approved ? "inquiry.approved" : "inquiry.failed",
-          payload: {
-            id: inquiryId,
-            referenceId: referenceId,
-            status: approved ? "approved" : "failed",
-          },
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        if (approved && onSuccess) onSuccess(inquiryId);
-        if (!approved && onFailed) onFailed(inquiryId);
-        alert(`Verification simulated: ${approved ? "APPROVED" : "FAILED"}. Sync complete!`);
-      } else {
-        alert(`Failed to simulate webhook: ${data.error}`);
-      }
-    } catch (e) {
-      console.error("KYC simulation call error:", e);
-      alert("Error sending mock webhook event.");
-    }
-  };
+  if (loading) {
+    return (
+      <div className="w-full p-8 text-center text-slate-500">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-brand-blue rounded-full animate-spin mx-auto mb-2" />
+        <p className="text-xs">Loading verification module...</p>
+      </div>
+    );
+  }
 
   // ── Render Live Persona Iframe ──
-  if (!isSandbox && templateId) {
+  if (templateId) {
     const personaUrl = `https://withpersona.com/iframe?inquiry-template-id=${templateId}&client-reference-id=${encodeURIComponent(
       referenceId
     )}&environment=sandbox`;
@@ -78,65 +54,30 @@ export default function PersonaKYC({ referenceId, onSuccess, onFailed }: Persona
     );
   }
 
-  // ── Render Breathtaking Interactive Sandbox Simulator ──
+  // ── Render Verification Gateway Offline message (When environment keys are not configured yet) ──
   return (
     <div className="w-full bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-md">
-      <div className="bg-gradient-to-r from-amber-500 to-brand-orange px-6 py-4 flex items-center justify-between text-white">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5" />
-          <span className="text-sm font-bold uppercase tracking-wider">KYC Sandbox Simulator</span>
-        </div>
-        <span className="text-[9px] font-bold bg-white/20 px-2 py-0.5 rounded-full uppercase">
-          No Keys Set
-        </span>
+      <div className="bg-[#07255A] px-6 py-4 flex items-center gap-2 text-white">
+        <ShieldAlert className="w-5 h-5 text-red-500" />
+        <span className="text-sm font-bold uppercase tracking-wider">Verification Service</span>
       </div>
 
-      <div className="p-6 space-y-6">
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex gap-3 text-slate-700">
-          <HelpCircle className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-          <div className="text-xs leading-relaxed">
-            <p className="font-bold text-slate-800">Persona KYC Demo Simulator</p>
-            <p className="mt-1">
-              Because `NEXT_PUBLIC_PERSONA_TEMPLATE_ID` is not defined in your environment variables, the system is showing this interactive sandbox.
-            </p>
-            <p className="mt-1 font-semibold text-brand-blue">
-              Target Profile: {referenceId}
-            </p>
-          </div>
+      <div className="p-8 space-y-4 text-center">
+        <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+          <AlertTriangle className="w-6 h-6" />
+        </div>
+        <div className="space-y-2 max-w-sm mx-auto">
+          <h3 className="text-sm font-bold text-slate-800">Verification Gateway Offline</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            The identity verification system is currently offline or undergoing maintenance. 
+          </p>
+          <p className="text-[11px] text-slate-400">
+            Please contact YagwaTech technical administration to activate the verification service template.
+          </p>
         </div>
 
-        <div className="border border-slate-100 rounded-2xl p-4 space-y-4">
-          <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest text-center">
-            Simulate Persona Webhook Actions
-          </h4>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handleSimulateVerification(true)}
-              className="flex flex-col items-center justify-center p-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all group hover:scale-[1.01]"
-            >
-              <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center mb-2 shadow-sm">
-                <UserCheck className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-emerald-800">Verify Account</span>
-              <span className="text-[9px] text-emerald-600 mt-1">Status: Approved</span>
-            </button>
-
-            <button
-              onClick={() => handleSimulateVerification(false)}
-              className="flex flex-col items-center justify-center p-4 bg-red-50 hover:bg-red-100 border border-red-200 rounded-2xl transition-all group hover:scale-[1.01]"
-            >
-              <div className="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center mb-2 shadow-sm">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-red-800">Decline Account</span>
-              <span className="text-[9px] text-red-600 mt-1">Status: Failed</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="text-center text-[10px] text-slate-400">
-          Inquiry Reference: <span className="font-mono bg-slate-100 px-1 py-0.5 rounded">{inquiryId}</span>
+        <div className="pt-4 border-t border-slate-100 text-[10px] text-slate-400">
+          Target Reference Account: <span className="font-mono bg-slate-50 px-1.5 py-0.5 rounded">{referenceId}</span>
         </div>
       </div>
     </div>

@@ -12,8 +12,8 @@ import {
   Check, 
   Info,
   Database,
-  Briefcase,
-  ShieldCheck
+  ShieldCheck,
+  MessageSquare
 } from 'lucide-react';
 import { site } from '@/lib/site';
 
@@ -47,6 +47,10 @@ export default function AdminSettings() {
     personaTemplateId: '',
     personaApiKey: '••••••••••••',
     personaWebhookSecret: '••••••••••••',
+    resendApiKey: '••••••••••••',
+    textSmsApiKey: '••••••••••••',
+    textSmsPartnerId: '',
+    textSmsShortcode: 'TextSMS',
   });
 
   useEffect(() => {
@@ -414,6 +418,55 @@ export default function AdminSettings() {
                         value={integrationSettings.personaWebhookSecret}
                         onChange={(e) => setIntegrationSettings({ ...integrationSettings, personaWebhookSecret: e.target.value })}
                         className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resend and TextSMS block */}
+                <div className="border border-slate-100 rounded-2xl p-4 bg-slate-50/50 space-y-4">
+                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <MessageSquare className="w-4 h-4 text-purple-600" /> Notifications & Messaging
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">Resend Mail API Key</label>
+                      <input
+                        type="password"
+                        value={integrationSettings.resendApiKey}
+                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, resendApiKey: e.target.value })}
+                        placeholder="re_XXXXXX..."
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none bg-white"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">TextSMS.co.ke API Key</label>
+                      <input
+                        type="password"
+                        value={integrationSettings.textSmsApiKey}
+                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, textSmsApiKey: e.target.value })}
+                        placeholder="API Key from textsms.co.ke"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">TextSMS Partner ID</label>
+                      <input
+                        type="text"
+                        value={integrationSettings.textSmsPartnerId}
+                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, textSmsPartnerId: e.target.value })}
+                        placeholder="e.g. 1042"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">TextSMS Sender ID / Shortcode</label>
+                      <input
+                        type="text"
+                        value={integrationSettings.textSmsShortcode}
+                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, textSmsShortcode: e.target.value })}
+                        placeholder="e.g. TextSMS"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none bg-white"
                       />
                     </div>
                   </div>

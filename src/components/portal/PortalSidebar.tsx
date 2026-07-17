@@ -1,13 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Kanban,
   CheckSquare,
-  Users,
-  Calendar,
-  Bell,
-  Clock,
   FolderOpen,
   LogOut,
   ChevronRight,
@@ -17,10 +14,6 @@ type Module =
   | 'dashboard'
   | 'projects'
   | 'tasks'
-  | 'team'
-  | 'leave'
-  | 'announcements'
-  | 'attendance'
   | 'documents';
 
 interface Props {
@@ -33,14 +26,27 @@ const navItems: { id: Module; label: string; Icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { id: 'projects', label: 'Projects', Icon: Kanban },
   { id: 'tasks', label: 'Tasks', Icon: CheckSquare },
-  { id: 'team', label: 'Team', Icon: Users },
-  { id: 'leave', label: 'Leave', Icon: Calendar },
-  { id: 'announcements', label: 'Announcements', Icon: Bell },
-  { id: 'attendance', label: 'Attendance', Icon: Clock },
   { id: 'documents', label: 'Documents', Icon: FolderOpen },
 ];
 
 export default function PortalSidebar({ activeModule, setActiveModule, onLogout }: Props) {
+  const [user, setUser] = useState({ name: 'Employee User', email: 'employee@yagwatech.com' });
+
+  useEffect(() => {
+    const saved = localStorage.getItem('employee_user');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setUser({
+          name: parsed.fullName || 'Employee User',
+          email: parsed.email || 'employee@yagwatech.com'
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
   return (
     <>
       {/* ── Desktop Sidebar ──────────────────────────────────────────── */}
@@ -89,11 +95,13 @@ export default function PortalSidebar({ activeModule, setActiveModule, onLogout 
         <div className="px-3 py-4 border-t border-white/10">
           <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 mb-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F47B20] to-[#1A56C4] flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xs font-bold">AD</span>
+              <span className="text-white text-xs font-bold">
+                {user.name.split(' ').map(n => n[0]).join('')}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white text-xs font-semibold truncate">Admin User</div>
-              <div className="text-white/40 text-[10px] truncate">admin@yagwatech.com</div>
+              <div className="text-white text-xs font-semibold truncate">{user.name}</div>
+              <div className="text-white/40 text-[10px] truncate">{user.email}</div>
             </div>
           </div>
           <button
@@ -108,7 +116,7 @@ export default function PortalSidebar({ activeModule, setActiveModule, onLogout 
 
       {/* ── Mobile Bottom Tab Bar ────────────────────────────────────── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#07255A] border-t border-white/10 flex items-center justify-around px-2 py-2 safe-bottom">
-        {navItems.slice(0, 6).map(({ id, label, Icon }) => {
+        {navItems.map(({ id, label, Icon }) => {
           const isActive = activeModule === id;
           return (
             <button

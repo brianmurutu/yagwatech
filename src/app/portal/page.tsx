@@ -1,31 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Lock, User, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, AlertCircle, Phone, FileText, Check } from 'lucide-react';
 import PortalSidebar from '@/components/portal/PortalSidebar';
 import PortalDashboard from '@/components/portal/PortalDashboard';
 import PortalProjects from '@/components/portal/PortalProjects';
 import PortalTasks from '@/components/portal/PortalTasks';
-import PortalTeam from '@/components/portal/PortalTeam';
-import PortalLeave from '@/components/portal/PortalLeave';
-import PortalAnnouncements from '@/components/portal/PortalAnnouncements';
-import PortalAttendance from '@/components/portal/PortalAttendance';
 import PortalDocuments from '@/components/portal/PortalDocuments';
 
 type Module =
   | 'dashboard'
   | 'projects'
   | 'tasks'
-  | 'team'
-  | 'leave'
-  | 'announcements'
-  | 'attendance'
   | 'documents';
 
 export default function PortalPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [activeModule, setActiveModule] = useState<Module>('dashboard');
+  const [isSignupMode, setIsSignupMode] = useState(false);
 
   // Login form state
   const [username, setUsername] = useState('');
@@ -33,6 +26,15 @@ export default function PortalPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Signup form state
+  const [signupName, setSignupName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPhone, setSignupPhone] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupConfirm, setSignupConfirm] = useState('');
+  const [signupError, setSignupError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   useEffect(() => {
     const auth = localStorage.getItem('portal_auth');
@@ -45,20 +47,80 @@ export default function PortalPage() {
     setIsSubmitting(true);
     setLoginError('');
 
-    // Simulate async check
-    await new Promise((r) => setTimeout(r, 600));
+    try {
+      const response = await fetch('/api/portal/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (username === 'employee' && password === 'yagwa2024') {
-      localStorage.setItem('portal_auth', 'true');
-      setIsAuthenticated(true);
-    } else {
-      setLoginError('Invalid credentials. Please try again.');
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem('portal_auth', 'true');
+        localStorage.setItem('employee_user', JSON.stringify(data.employee));
+        setIsAuthenticated(true);
+      } else {
+        setLoginError(data.error || 'Invalid credentials.');
+      }
+    } catch {
+      setLoginError('Server connectivity issue. Try again later.');
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSignupError('');
+
+    if (signupPassword !== signupConfirm) {
+      setSignupError('Passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/portal/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: signupName,
+          email: signupEmail,
+          phone: signupPhone,
+          password: signupPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSignupSuccess(true);
+        // Automatically switch back to login with pre-populated email
+        setUsername(signupEmail);
+        setTimeout(() => {
+          setIsSignupMode(false);
+          setSignupSuccess(false);
+          setSignupName('');
+          setSignupEmail('');
+          setSignupPhone('');
+          setSignupPassword('');
+          setSignupConfirm('');
+        }, 3000);
+      } else {
+        setSignupError(data.error || 'Failed to complete registration.');
+      }
+    } catch {
+      setSignupError('Failed to connect to the server.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('portal_auth');
+    localStorage.removeItem('employee_user');
     setIsAuthenticated(false);
     setUsername('');
     setPassword('');
@@ -86,83 +148,206 @@ export default function PortalPage() {
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-2xl shadow-black/30 overflow-hidden">
             {/* Header band */}
-            <div className="bg-[#07255A] px-8 py-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur mb-4">
-                <Lock className="w-8 h-8 text-[#F47B20]" />
+            <div className="bg-[#07255A] px-8 py-6 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 backdrop-blur mb-2">
+                <Lock className="w-6 h-6 text-[#F47B20]" />
               </div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">YagwaTech</h1>
-              <p className="text-white/60 text-sm mt-1">Employee Portal — Secure Access</p>
+              <h1 className="text-xl font-bold text-white tracking-tight">YagwaTech</h1>
+              <p className="text-white/65 text-xs mt-0.5">
+                {isSignupMode ? 'Create Employee Account' : 'Employee Portal — Secure Access'}
+              </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleLogin} className="px-8 py-8 space-y-5">
-              {loginError && (
-                <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-                  <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                  <p className="text-sm text-red-600">{loginError}</p>
-                </div>
-              )}
+            {/* Signup Form */}
+            {isSignupMode ? (
+              <form onSubmit={handleSignup} className="px-8 py-6 space-y-4">
+                {signupSuccess && (
+                  <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-250 rounded-xl px-4 py-3 text-emerald-800 text-xs">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div>
+                      <p className="font-bold">Registration Successful!</p>
+                      <p className="mt-0.5">Welcome notifications sent. Redirecting to login...</p>
+                    </div>
+                  </div>
+                )}
 
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-[#1A1A2E]">Username</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5A6680]" />
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
-                    required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm text-[#1A1A2E] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
-                  />
-                </div>
-              </div>
+                {signupError && (
+                  <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-xs text-red-600">
+                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                    <p>{signupError}</p>
+                  </div>
+                )}
 
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-[#1A1A2E]">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5A6680]" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl text-sm text-[#1A1A2E] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
-                  />
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-[#1A1A2E]">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      required
+                      value={signupName}
+                      onChange={(e) => setSignupName(e.target.value)}
+                      placeholder="e.g. Dennis Mutua"
+                      className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/15"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-[#1A1A2E]">Email Address</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="email"
+                      required
+                      value={signupEmail}
+                      onChange={(e) => setSignupEmail(e.target.value)}
+                      placeholder="e.g. employee@company.com"
+                      className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/15"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-[#1A1A2E]">Phone Number (For SMS)</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      required
+                      value={signupPhone}
+                      onChange={(e) => setSignupPhone(e.target.value)}
+                      placeholder="e.g. +254 712 345678"
+                      className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-[#1A1A2E]">Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-[#1A1A2E]">Confirm</label>
+                    <input
+                      type="password"
+                      required
+                      value={signupConfirm}
+                      onChange={(e) => setSignupConfirm(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-2.5 bg-[#F47B20] hover:bg-[#d46512] text-white font-semibold text-xs rounded-xl shadow-md disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Registering...' : 'Register Employee'}
+                </button>
+
+                <div className="text-center pt-2 text-xs">
+                  <span className="text-slate-500">Already have an account? </span>
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6680] hover:text-[#1A1A2E] transition-colors"
+                    onClick={() => {
+                      setIsSignupMode(false);
+                      setSignupError('');
+                    }}
+                    className="font-bold text-brand-blue hover:underline"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    Login
                   </button>
                 </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 bg-[#F47B20] hover:bg-[#F99A50] text-white font-semibold rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-[#F47B20]/30 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Signing in…
-                  </>
-                ) : (
-                  'Sign In to Portal'
+              </form>
+            ) : (
+              /* Login Form */
+              <form onSubmit={handleLogin} className="px-8 py-8 space-y-5">
+                {loginError && (
+                  <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-xs text-red-650">
+                    <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <p>{loginError}</p>
+                  </div>
                 )}
-              </button>
 
-              <p className="text-center text-xs text-[#5A6680]">
-                Demo: <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded">employee</span> / <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded">yagwa2024</span>
-              </p>
-            </form>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-[#1A1A2E]">Email or Username</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5A6680]" />
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm text-[#1A1A2E] placeholder-gray-400 focus:outline-none focus:ring-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-[#1A1A2E]">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5A6680]" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                      className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl text-sm text-[#1A1A2E] placeholder-gray-400 focus:outline-none focus:ring-2"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6680] hover:text-[#1A1A2E] transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-[#F47B20] hover:bg-[#d46512] text-white font-semibold rounded-xl transition-all shadow-md disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? 'Signing in…' : 'Sign In to Portal'}
+                </button>
+
+                <div className="text-center text-xs">
+                  <span className="text-slate-500">Need an account? </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSignupMode(true);
+                      setLoginError('');
+                    }}
+                    className="font-bold text-brand-blue hover:underline"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+
+                <p className="text-center text-[10px] text-[#5A6680]">
+                  Demo: <span className="font-mono bg-gray-100 px-1 py-0.5 rounded">employee</span> / <span className="font-mono bg-gray-100 px-1 py-0.5 rounded">yagwa2024</span>
+                </p>
+              </form>
+            )}
           </div>
 
           <p className="text-center text-white/30 text-xs mt-6">
-            © 2024 Yagwa Tech Solutions Ltd · Karen, Nairobi
+            © 2026 Yagwa Tech Solutions Ltd &middot; Karen, Nairobi
           </p>
         </div>
       </div>
@@ -173,10 +358,6 @@ export default function PortalPage() {
     dashboard: <PortalDashboard setActiveModule={(m) => setActiveModule(m as Module)} />,
     projects: <PortalProjects />,
     tasks: <PortalTasks />,
-    team: <PortalTeam />,
-    leave: <PortalLeave />,
-    announcements: <PortalAnnouncements />,
-    attendance: <PortalAttendance />,
     documents: <PortalDocuments />,
   };
 

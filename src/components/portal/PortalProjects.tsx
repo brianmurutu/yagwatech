@@ -89,7 +89,7 @@ export default function PortalProjects() {
               dueDate: p.dueDate,
               client: p.client || 'Client Name',
               budget: 'KSh 500,000',
-              description: 'Mock project description.',
+              description: 'Standard onboarding phase and project review.',
               tags: [],
             }));
             setProjects(formatted);
@@ -192,7 +192,7 @@ export default function PortalProjects() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold text-[#1A1A2E]">Project Kanban</h3>
-          <p className="text-sm text-[#5A6680]">{projects.length} total projects {isSyncActive ? '(Zoho Synced)' : '(Local Mock)'}</p>
+          <p className="text-sm text-[#5A6680]">{projects.length} total projects {isSyncActive ? '(Zoho Synced)' : '(Local Database)'}</p>
         </div>
         <button
           onClick={() => setShowModal(true)}

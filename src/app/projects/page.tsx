@@ -13,7 +13,8 @@ import {
   Activity, 
   CheckCircle,
   FileText,
-  DollarSign
+  DollarSign,
+  Building2
 } from "lucide-react";
 
 type Priority = "High" | "Medium" | "Low";

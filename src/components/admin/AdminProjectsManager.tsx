@@ -15,7 +15,8 @@ import {
   ShieldAlert, 
   ShieldCheck, 
   Link2,
-  Mail
+  Mail,
+  Activity
 } from 'lucide-react';
 
 interface Project {
@@ -152,13 +153,11 @@ export default function AdminProjectsManager() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
       if (!isSyncActive) {
-        // Mock Mode: update local projects list in state and local storage
         const updated = projects.filter(p => p.id !== id);
         setProjects(updated);
         localStorage.setItem('yagwa_projects', JSON.stringify(updated));
-        showToast('Project deleted successfully (Local Mock Mode)');
+        showToast('Project deleted successfully (Local Database)');
       } else {
-        // In a live integration, we'd fire a DELETE request
         alert('Deletion is handled directly inside Zoho Projects interface.');
       }
     }
@@ -178,7 +177,6 @@ export default function AdminProjectsManager() {
 
       if (response.ok && data.success) {
         if (data.mock) {
-          // Local storage handling
           let updated: Project[];
           if (editingProject) {
             updated = projects.map(p => {
@@ -187,14 +185,14 @@ export default function AdminProjectsManager() {
               }
               return p;
             });
-            showToast('Project updated successfully (Local Mock Mode)');
+            showToast('Project updated successfully (Local Database)');
           } else {
             const newProject: Project = {
               id: Date.now().toString(),
               ...formData,
             };
             updated = [...projects, newProject];
-            showToast('Project created & synced successfully (Local Mock Mode)');
+            showToast('Project created successfully (Local Database)');
           }
           setProjects(updated);
           localStorage.setItem('yagwa_projects', JSON.stringify(updated));
@@ -306,7 +304,7 @@ export default function AdminProjectsManager() {
         <div className="flex items-center gap-2 text-xs">
           <span className="font-bold text-slate-500 uppercase">System Status:</span>
           <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${isSyncActive ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-            {isSyncActive ? 'Zoho Projects Active Sync' : 'Simulated Local Storage Mode'}
+            {isSyncActive ? 'Zoho Projects Active Sync' : 'Local Offline Mode'}
           </span>
         </div>
         <div className="text-xs text-slate-500">

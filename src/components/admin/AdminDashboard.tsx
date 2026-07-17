@@ -1,7 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, FileText, Clock, Briefcase, Plus, UserPlus, BarChart2, Settings, CheckCircle, XCircle } from 'lucide-react';
+import { 
+  Users, 
+  FileText, 
+  Clock, 
+  Briefcase, 
+  Plus, 
+  UserPlus, 
+  BarChart2, 
+  Settings, 
+  CheckCircle, 
+  XCircle,
+  Database,
+  ShieldCheck
+} from 'lucide-react';
 
 type AdminModule =
   | 'dashboard'
@@ -16,13 +29,6 @@ type AdminModule =
 interface AdminDashboardProps {
   onNavigate: (module: AdminModule) => void;
 }
-
-const quickActions = [
-  { label: 'New Blog Post', icon: Plus, module: 'blog' as AdminModule, color: 'bg-brand-blue hover:bg-brand-blueLight' },
-  { label: 'Add Employee', icon: UserPlus, module: 'employees' as AdminModule, color: 'bg-green-600 hover:bg-green-700' },
-  { label: 'View Projects', icon: BarChart2, module: 'projects' as AdminModule, color: 'bg-purple-600 hover:bg-purple-700' },
-  { label: 'System Settings', icon: Settings, module: 'settings' as AdminModule, color: 'bg-gray-700 hover:bg-gray-800' },
-];
 
 export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
   const [totalEmployees, setTotalEmployees] = useState(12);
@@ -122,6 +128,15 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     }
   };
 
+  const quickActions = [
+    { label: 'New Blog Post', icon: Plus, click: () => onNavigate('blog'), color: 'bg-brand-blue hover:bg-brand-blue/90' },
+    { label: 'Add Employee', icon: UserPlus, click: () => onNavigate('employees'), color: 'bg-green-600 hover:bg-green-700' },
+    { label: 'View Projects', icon: BarChart2, click: () => onNavigate('projects'), color: 'bg-purple-600 hover:bg-purple-700' },
+    { label: 'System Settings', icon: Settings, click: () => onNavigate('settings'), color: 'bg-slate-700 hover:bg-slate-800' },
+    { label: 'CRM Leads Ingest', icon: Database, click: () => window.open('/crm', '_blank'), color: 'bg-amber-600 hover:bg-amber-700' },
+    { label: 'Client KYC Hub', icon: ShieldCheck, click: () => window.open('/kyc', '_blank'), color: 'bg-emerald-600 hover:bg-emerald-700' },
+  ];
+
   const stats = [
     { label: 'Total Employees', value: totalEmployees.toString(), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', change: 'Live team size' },
     { label: 'Published Posts', value: publishedPostsCount.toString(), icon: FileText, color: 'text-green-600', bg: 'bg-green-50', change: 'Insights articles' },
@@ -155,15 +170,15 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-        <h2 className="text-base font-bold text-ink-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <h2 className="text-base font-bold text-ink-900 mb-4">Quick Actions & Integrations</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
           {quickActions.map((a) => (
             <button
               key={a.label}
-              onClick={() => onNavigate(a.module)}
-              className={`${a.color} text-white flex flex-col items-center gap-2 py-4 px-3 rounded-xl transition-all duration-200 text-sm font-medium`}
+              onClick={a.click}
+              className={`${a.color} text-white flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl transition-all duration-200 text-xs font-semibold text-center h-24`}
             >
-              <a.icon className="w-5 h-5" />
+              <a.icon className="w-5 h-5 shrink-0" />
               {a.label}
             </button>
           ))}
