@@ -5,6 +5,7 @@ import { site } from "@/lib/site";
 import { getBrandedEmailHtml } from "@/lib/emailTemplate";
 import { formLimiter, getClientIp, rateLimitResponse } from "@/lib/rateLimit";
 import { validateOrigin } from "@/lib/csrf";
+import { createLeadInZohoCRM } from "@/lib/zoho";
 
 const FROM_ADDRESS = `${site.name} <${site.email}>`;
 
@@ -150,6 +151,20 @@ export async function POST(request: Request) {
         }
       ),
     });
+
+    // Create Lead in Zoho CRM
+    try {
+      await createLeadInZohoCRM({
+        name: contactName,
+        email,
+        phone: phone || undefined,
+        company: companyName,
+        description: `Partnership Category: ${partnershipType}\nWebsite: ${website || "Not provided"}\nProposal: ${message}`,
+        source: "Partner Application Form",
+      });
+    } catch (zohoError) {
+      console.error("Zoho CRM lead ingestion error for partner form:", zohoError);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

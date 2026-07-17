@@ -9,27 +9,24 @@ type Column = 'Backlog' | 'In Progress' | 'Review' | 'Done';
 interface Project {
   id: string;
   title: string;
+  client: string;
+  clientEmail?: string;
+  status: Column;
   assignee: string;
   priority: Priority;
   dueDate: string;
   column: Column;
   tags: string[];
-  client?: string;
   budget?: string;
   description?: string;
-  status?: string;
   deadline?: string;
 }
 
 const initialProjects: Project[] = [
-  { id: '1', title: 'Client Onboarding Portal', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '2024-08-15', column: 'Backlog', tags: ['Web', 'Portal'] },
-  { id: '2', title: 'Mobile App Redesign', assignee: 'Dennis Mutua', priority: 'Low', dueDate: '2024-09-01', column: 'Backlog', tags: ['Mobile', 'UI/UX'] },
-  { id: '3', title: 'ERP Integration for KCB', assignee: 'David Kamau', priority: 'High', dueDate: '2024-07-30', column: 'In Progress', tags: ['Enterprise', 'API'] },
-  { id: '4', title: 'Cybersecurity Audit', assignee: 'Peter Njoroge', priority: 'High', dueDate: '2024-07-20', column: 'In Progress', tags: ['Security'] },
-  { id: '5', title: 'Website Optimization', assignee: 'Amina Ochieng', priority: 'Medium', dueDate: '2024-07-25', column: 'In Progress', tags: ['Performance', 'SEO'] },
-  { id: '6', title: 'Digital Marketing Campaign', assignee: 'Grace Wanjiku', priority: 'Medium', dueDate: '2024-07-18', column: 'Review', tags: ['Marketing'] },
-  { id: '7', title: 'Cloud Migration Phase 1', assignee: 'James Odhiambo', priority: 'High', dueDate: '2024-06-30', column: 'Done', tags: ['Cloud', 'AWS'] },
-  { id: '8', title: 'Staff Training LMS', assignee: 'Lydia Mwangi', priority: 'Low', dueDate: '2024-06-15', column: 'Done', tags: ['Training'] },
+  { id: '1', title: 'Client Onboarding Portal', client: 'Safaricom PLC', status: 'Backlog', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '2026-08-15', column: 'Backlog', tags: ['Web', 'Portal'] },
+  { id: '2', title: 'Mobile App Redesign', client: 'KCB Bank Group', status: 'Backlog', assignee: 'Dennis Mutua', priority: 'Low', dueDate: '2026-09-01', column: 'Backlog', tags: ['Mobile', 'UI/UX'] },
+  { id: '3', title: 'ERP Integration for KCB', client: 'Equity Bank', status: 'In Progress', assignee: 'David Kamau', priority: 'High', dueDate: '2026-07-30', column: 'In Progress', tags: ['Enterprise', 'API'] },
+  { id: '4', title: 'Cybersecurity Audit', client: 'Co-operative Bank', status: 'In Progress', assignee: 'Peter Njoroge', priority: 'High', dueDate: '2026-07-20', column: 'In Progress', tags: ['Security'] },
 ];
 
 const columns: Column[] = ['Backlog', 'In Progress', 'Review', 'Done'];
@@ -50,92 +47,144 @@ const columnStyle: Record<Column, { header: string; dot: string }> = {
 export default function PortalProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [isSyncActive, setIsSyncActive] = useState(false);
   const [form, setForm] = useState({
     title: '',
-    assignee: '',
+    client: '',
+    assignee: 'Faith Njeri',
     priority: 'Medium' as Priority,
     dueDate: '',
     column: 'Backlog' as Column,
   });
 
-  useEffect(() => {
-    const saved = localStorage.getItem('yagwa_projects');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as any[];
-        const mapped = parsed.map((p) => ({
-          ...p,
-          id: p.id.toString(),
-          column: p.column || p.status || 'Backlog',
-          status: p.status || p.column || 'Backlog',
-          dueDate: p.dueDate || p.deadline || new Date().toISOString().split('T')[0],
-          deadline: p.deadline || p.dueDate || new Date().toISOString().split('T')[0],
-          tags: p.tags || [],
-        }));
-        setProjects(mapped);
-      } catch (e) {
-        console.error('Failed to load projects:', e);
+  const loadProjects = async () => {
+    try {
+      const configRes = await fetch('/api/crm/status');
+      const configData = await configRes.json();
+      const isLive = configData.projects?.status === 'connected';
+      setIsSyncActive(isLive);
+
+      const projectsRes = await fetch('/api/projects');
+      const projectsData = await projectsRes.json();
+
+      if (projectsData.success) {
+        if (projectsData.mock) {
+          // Local storage projects
+          const saved = localStorage.getItem('yagwa_projects');
+          if (saved) {
+            const parsed = JSON.parse(saved) as any[];
+            const mapped = parsed.map((p) => ({
+              ...p,
+              id: p.id.toString(),
+              column: p.status || p.column || 'Backlog',
+              status: p.status || p.column || 'Backlog',
+              dueDate: p.dueDate || p.deadline || new Date().toISOString().split('T')[0],
+              tags: p.tags || [],
+            }));
+            setProjects(mapped);
+          } else {
+            const formatted = initialProjects.map((p) => ({
+              ...p,
+              column: p.status,
+              dueDate: p.dueDate,
+              client: p.client || 'Client Name',
+              budget: 'KSh 500,000',
+              description: 'Mock project description.',
+              tags: [],
+            }));
+            setProjects(formatted);
+            localStorage.setItem('yagwa_projects', JSON.stringify(formatted));
+          }
+        } else {
+          // Live Zoho Projects
+          const mapped = (projectsData.projects || []).map((p: any) => ({
+            ...p,
+            column: p.status,
+            dueDate: p.deadline,
+            tags: [],
+          }));
+          setProjects(mapped);
+        }
       }
-    } else {
-      const formatted = initialProjects.map((p) => ({
-        ...p,
-        id: p.id.toString(),
-        column: p.column,
-        status: p.column,
-        dueDate: p.dueDate,
-        deadline: p.dueDate,
-        client: 'Client Name',
-        budget: 'KSh 500,000',
-        description: 'Mock project description.',
-      }));
-      setProjects(formatted);
-      localStorage.setItem('yagwa_projects', JSON.stringify(formatted));
+    } catch (e) {
+      console.error('Failed to load projects board:', e);
     }
+  };
+
+  useEffect(() => {
+    loadProjects();
   }, []);
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
 
-    const newProject: Project = {
-      id: Date.now().toString(),
-      title: form.title,
-      assignee: form.assignee || 'Unassigned',
-      priority: form.priority,
-      dueDate: form.dueDate || new Date().toISOString().split('T')[0],
-      column: form.column,
-      status: form.column,
-      deadline: form.dueDate || new Date().toISOString().split('T')[0],
-      tags: [],
-      client: 'YagwaTech Internal',
-      budget: 'KSh 0',
-      description: 'Project created via employee portal.',
-    };
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title,
+          client: form.client || 'YagwaTech Internal',
+          description: 'Project created via employee portal.',
+          assignee: form.assignee,
+          priority: form.priority,
+          deadline: form.dueDate || new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
+          budget: 'KSh 0',
+          status: form.column,
+        }),
+      });
 
-    const updated = [...projects, newProject];
-    setProjects(updated);
-    localStorage.setItem('yagwa_projects', JSON.stringify(updated));
-    setForm({ title: '', assignee: '', priority: 'Medium', dueDate: '', column: 'Backlog' });
-    setShowModal(false);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        if (data.mock) {
+          const newProject: Project = {
+            id: Date.now().toString(),
+            title: form.title,
+            client: form.client || 'YagwaTech Internal',
+            assignee: form.assignee || 'Unassigned',
+            priority: form.priority,
+            dueDate: form.dueDate || new Date().toISOString().split('T')[0],
+            column: form.column,
+            status: form.column,
+            tags: [],
+            description: 'Project created via employee portal.',
+          };
+          const updated = [...projects, newProject];
+          setProjects(updated);
+          localStorage.setItem('yagwa_projects', JSON.stringify(updated));
+        } else {
+          loadProjects();
+        }
+
+        setForm({ title: '', client: '', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '', column: 'Backlog' });
+        setShowModal(false);
+      }
+    } catch {
+      alert('Error creating project.');
+    }
   };
 
-  const cycleColumn = (id: string) => {
-    const nextCol: Record<Column, Column> = {
+  const cycleColumn = (id: string, current: Column) => {
+    const nextColMap: Record<Column, Column> = {
       'Backlog': 'In Progress',
       'In Progress': 'Review',
       'Review': 'Done',
       'Done': 'Backlog'
     };
+    const next = nextColMap[current];
+
     const updated = projects.map((p) => {
       if (p.id.toString() !== id.toString()) return p;
-      const next = nextCol[p.column];
       return { ...p, column: next, status: next };
     });
-    setProjects(updated);
-    localStorage.setItem('yagwa_projects', JSON.stringify(updated));
-  };
 
-  const isOverdue = (date: string) => new Date(date) < new Date();
+    setProjects(updated);
+    if (!isSyncActive) {
+      localStorage.setItem('yagwa_projects', JSON.stringify(updated));
+    }
+  };
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -143,7 +192,7 @@ export default function PortalProjects() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold text-[#1A1A2E]">Project Kanban</h3>
-          <p className="text-sm text-[#5A6680]">{projects.length} total projects</p>
+          <p className="text-sm text-[#5A6680]">{projects.length} total projects {isSyncActive ? '(Zoho Synced)' : '(Local Mock)'}</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -157,7 +206,7 @@ export default function PortalProjects() {
       {/* Kanban Board */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {columns.map((col) => {
-          const colProjects = projects.filter((p) => p.column === col);
+          const colProjects = projects.filter((p) => p.column === col || p.status === col);
           const { header, dot } = columnStyle[col];
           return (
             <div key={col} className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
@@ -194,15 +243,7 @@ export default function PortalProjects() {
                         </span>
                       </div>
 
-                      {p.tags && p.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {p.tags.map((tag) => (
-                            <span key={tag} className="text-[9px] font-medium bg-[#0B3D91]/8 text-[#0B3D91] px-2 py-0.5 rounded-full">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <p className="text-xs text-slate-400 line-clamp-1 mb-2">Client: {p.client}</p>
 
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div className="flex items-center gap-1.5">
@@ -216,7 +257,7 @@ export default function PortalProjects() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            cycleColumn(p.id.toString());
+                            cycleColumn(p.id, p.status || p.column);
                           }}
                           className="text-[10px] text-[#0B3D91] hover:text-[#1A56C4] font-semibold flex items-center gap-0.5"
                           title="Move project to next stage"
@@ -256,14 +297,25 @@ export default function PortalProjects() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Assignee</label>
+                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Client Company *</label>
                 <input
                   type="text"
-                  value={form.assignee}
-                  onChange={(e) => setForm({ ...form, assignee: e.target.value })}
-                  placeholder="e.g. Jane Muthoni"
+                  value={form.client}
+                  onChange={(e) => setForm({ ...form, client: e.target.value })}
+                  placeholder="e.g. Safaricom PLC"
+                  required
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Assignee</label>
+                <select
+                  value={form.assignee}
+                  onChange={(e) => setForm({ ...form, assignee: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
+                >
+                  {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -271,7 +323,7 @@ export default function PortalProjects() {
                   <select
                     value={form.priority}
                     onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all bg-white"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
                   >
                     <option>High</option>
                     <option>Medium</option>
@@ -283,7 +335,7 @@ export default function PortalProjects() {
                   <select
                     value={form.column}
                     onChange={(e) => setForm({ ...form, column: e.target.value as Column })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all bg-white"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
                   >
                     {columns.map((c) => <option key={c}>{c}</option>)}
                   </select>
@@ -295,7 +347,7 @@ export default function PortalProjects() {
                   type="date"
                   value={form.dueDate}
                   onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
                 />
               </div>
               <div className="flex gap-3 pt-2">
