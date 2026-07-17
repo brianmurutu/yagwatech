@@ -5,6 +5,7 @@ export type TeamMember = {
   initials: string;
   colorFrom: string;
   colorTo: string;
+  avatarUrl?: string;
   socials: { platform: string; url: string }[];
 };
 
@@ -15,10 +16,11 @@ export const team: TeamMember[] = [
     initials: "PY",
     colorFrom: "#0B3D91",
     colorTo: "#1A56C4",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/company/hi-techparks/" },
-      { platform: "twitter", url: "https://twitter.com/hitechparks" },
       { platform: "facebook", url: "https://www.facebook.com/HiTechParks/" },
+      { platform: "instagram", url: "https://www.instagram.com/yagwatech/" },
     ],
   },
   {
@@ -28,11 +30,11 @@ export const team: TeamMember[] = [
     initials: "BM",
     colorFrom: "#F47B20",
     colorTo: "#D96A10",
+    avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&h=120&q=80",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/in/sir-brian/" },
-      { platform: "instagram", url: "https://www.instagram.com/sir_brian_ke" },
       { platform: "facebook", url: "https://www.facebook.com/sirbriandev" },
-      { platform: "twitter", url: "https://www.twitter.com/sirbrianmurutu" },
+      { platform: "instagram", url: "https://www.instagram.com/sir_brian_ke" },
     ],
   },
   {
@@ -42,7 +44,12 @@ export const team: TeamMember[] = [
     initials: "PK",
     colorFrom: "#0B3D91",
     colorTo: "#07255A",
-    socials: [{ platform: "linkedin", url: "https://www.linkedin.com/company/" }],
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80",
+    socials: [
+      { platform: "linkedin", url: "https://www.linkedin.com/company/" },
+      { platform: "github", url: "https://github.com/yagwatech" },
+      { platform: "facebook", url: "https://www.facebook.com/yagwatech/" },
+    ],
   },
   {
     name: "Christina Wilson",
@@ -51,9 +58,11 @@ export const team: TeamMember[] = [
     initials: "CW",
     colorFrom: "#0F6E56",
     colorTo: "#1D9E75",
+    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/company/hi-techparks/" },
-      { platform: "twitter", url: "https://twitter.com/hitechparks" },
+      { platform: "facebook", url: "https://www.facebook.com/yagwatech/" },
+      { platform: "instagram", url: "https://www.instagram.com/yagwatech/" },
     ],
   },
   {
@@ -63,9 +72,11 @@ export const team: TeamMember[] = [
     initials: "TM",
     colorFrom: "#0B3D91",
     colorTo: "#1A56C4",
+    avatarUrl: "/images/reviewer_samuel.jpg",
     socials: [
       { platform: "linkedin", url: "https://www.linkedin.com/in/sir-brian/" },
       { platform: "facebook", url: "https://www.facebook.com/HiTechParks/" },
+      { platform: "instagram", url: "https://www.instagram.com/yagwatech/" },
     ],
   },
   {
@@ -74,7 +85,12 @@ export const team: TeamMember[] = [
     initials: "IO",
     colorFrom: "#533AB7",
     colorTo: "#7F77DD",
-    socials: [],
+    avatarUrl: "/images/reviewer_david.jpg",
+    socials: [
+      { platform: "linkedin", url: "https://www.linkedin.com/company/" },
+      { platform: "facebook", url: "https://www.facebook.com/yagwatech/" },
+      { platform: "instagram", url: "https://www.instagram.com/yagwatech/" },
+    ],
   },
 ];
 

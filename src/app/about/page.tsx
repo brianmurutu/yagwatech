@@ -7,6 +7,24 @@ import { team } from "@/lib/team";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import { FacebookIcon, InstagramIcon, LinkedinIcon, GithubIcon, TwitterIcon } from "@/components/SocialIcons";
+
+function getSocialIcon(platform: string) {
+  switch (platform.toLowerCase()) {
+    case "linkedin":
+      return LinkedinIcon;
+    case "facebook":
+      return FacebookIcon;
+    case "instagram":
+      return InstagramIcon;
+    case "github":
+      return GithubIcon;
+    case "twitter":
+      return TwitterIcon;
+    default:
+      return null;
+  }
+}
 
 export const metadata = buildMetadata({
   title: "About us",
@@ -149,16 +167,42 @@ export default function AboutPage() {
             {team.map((member) => (
               <AnimatedSection key={member.name} type="scale">
                 <div className="group rounded-xl border border-black/5 p-5 hover:shadow-md hover:-translate-y-1 transition-all">
-                  <div
-                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-base font-bold text-white shadow-md"
-                    style={{
-                      background: `linear-gradient(135deg, ${member.colorFrom}, ${member.colorTo})`,
-                    }}
-                  >
-                    {member.initials}
-                  </div>
+                  {member.avatarUrl ? (
+                    <img
+                      src={member.avatarUrl}
+                      alt={member.name}
+                      className="mx-auto h-16 w-16 rounded-full object-cover shadow-md"
+                    />
+                  ) : (
+                    <div
+                      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-base font-bold text-white shadow-md"
+                      style={{
+                        background: `linear-gradient(135deg, ${member.colorFrom}, ${member.colorTo})`,
+                      }}
+                    >
+                      {member.initials}
+                    </div>
+                  )}
                   <h4 className="mt-3 text-sm font-semibold text-ink-900">{member.name}</h4>
                   <p className="mt-1 text-xs leading-relaxed text-ink-400">{member.role}</p>
+                  <div className="mt-3 flex justify-center gap-1.5">
+                    {member.socials.map((social) => {
+                      const Icon = getSocialIcon(social.platform);
+                      if (!Icon) return null;
+                      return (
+                        <a
+                          key={social.platform}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-ink-300 hover:text-brand-blue transition-colors p-1"
+                          title={`${member.name}'s ${social.platform}`}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
               </AnimatedSection>
             ))}
