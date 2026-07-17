@@ -27,8 +27,8 @@ export const site = {
 };
 
 export const stats = [
-  { value: "150+", label: "Projects delivered" },
-  { value: "80+", label: "Clients served" },
-  { value: "12+", label: "Team members and experts" },
-  { value: "20+", label: "Workshops and programs" },
+  { value: "250+", label: "Projects delivered" },
+  { value: "150+", label: "Clients served" },
+  { value: "125+", label: "Team members and experts" },
+  { value: "40+", label: "Workshops and programs" },
 ];
