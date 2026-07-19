@@ -25,6 +25,8 @@ export default function PortalPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [kycRequired, setKycRequired] = useState(false);
+  const [kycEmail, setKycEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Signup form state
@@ -46,6 +48,8 @@ export default function PortalPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setLoginError('');
+    setKycRequired(false);
+    setKycEmail('');
 
     try {
       const response = await fetch('/api/portal/login', {
@@ -61,6 +65,10 @@ export default function PortalPage() {
         localStorage.setItem('employee_user', JSON.stringify(data.employee));
         setIsAuthenticated(true);
       } else {
+        if (response.status === 403 && data.kycRequired) {
+          setKycRequired(true);
+          setKycEmail(data.email || username);
+        }
         setLoginError(data.error || 'Invalid credentials.');
       }
     } catch {
@@ -274,9 +282,19 @@ export default function PortalPage() {
               /* Login Form */
               <form onSubmit={handleLogin} className="px-8 py-8 space-y-5">
                 {loginError && (
-                  <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-xs text-red-650">
-                    <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <p>{loginError}</p>
+                  <div className="flex flex-col gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-xs text-red-655">
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <p className="flex-1">{loginError}</p>
+                    </div>
+                    {kycRequired && (
+                      <a
+                        href={`/kyc?email=${encodeURIComponent(kycEmail)}`}
+                        className="mt-1 font-bold text-center bg-white hover:bg-slate-50 text-[#0B3D91] py-2 rounded-lg border border-slate-200 block transition-colors"
+                      >
+                        Complete KYC Verification Now &rarr;
+                      </a>
+                    )}
                   </div>
                 )}
 

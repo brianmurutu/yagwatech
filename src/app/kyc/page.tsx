@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnimatedSection from "@/components/AnimatedSection";
 import PersonaKYC from "@/components/PersonaKYC";
@@ -15,11 +16,36 @@ import {
 } from "lucide-react";
 
 export default function KYCVerificationPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-55">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-[#0B3D91] rounded-full animate-spin" />
+      </div>
+    }>
+      <KYCVerificationContent />
+    </React.Suspense>
+  );
+}
+
+function KYCVerificationContent() {
   const [email, setEmail] = useState("");
   const [activeEmail, setActiveEmail] = useState("");
   const [currentStatus, setCurrentStatus] = useState<string>("Not Started");
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    if (emailParam) {
+      const trimmed = emailParam.trim();
+      setEmail(trimmed);
+      setActiveEmail(trimmed);
+      setIsVerifying(true);
+      checkKYCStatus(trimmed);
+    }
+  }, [searchParams]);
 
   const checkKYCStatus = async (targetEmail: string) => {
     setIsLoading(true);

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyEmployee } from "@/lib/employeeStore";
 import { getClientIp, loginLimiter, rateLimitResponse } from "@/lib/rateLimit";
 import { validateOrigin } from "@/lib/csrf";
+import { getKYCStatus } from "@/lib/kycStore";
 
 export async function POST(request: Request) {
   // CSRF Check
@@ -25,6 +26,18 @@ export async function POST(request: Request) {
     const employee = verifyEmployee(username, password);
 
     if (employee) {
+      const kycStatus = getKYCStatus(employee.email);
+      if (kycStatus !== "Verified") {
+        return NextResponse.json(
+          {
+            error: "KYC verification is required. Please complete your identity verification first.",
+            kycRequired: true,
+            email: employee.email,
+          },
+          { status: 403 }
+        );
+      }
+
       return NextResponse.json({
         success: true,
         employee: {

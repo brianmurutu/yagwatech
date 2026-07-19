@@ -303,6 +303,18 @@ export default function AdminSettings() {
                 <p className="text-xs text-slate-400 mt-1">Configure third-party API integration keys, webhooks, and trackers</p>
               </div>
 
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl text-xs leading-relaxed space-y-1.5">
+                <p className="font-bold flex items-center gap-1.5 text-amber-900">
+                  ⚠️ Configuration Notice
+                </p>
+                <p>
+                  This integration dashboard is a simulated mockup. Keys typed here live only in your temporary browser session and are not persisted on the server.
+                </p>
+                <p>
+                  To make these integrations functional, you must define them as environment variables inside your <strong>.env.local</strong> file (for local development) and in your <strong>Vercel Project Settings</strong> (for production).
+                </p>
+              </div>
+
               {/* Status Panel */}
               {status && (
                 <div className="grid md:grid-cols-3 gap-3 border-b border-slate-100 pb-6">

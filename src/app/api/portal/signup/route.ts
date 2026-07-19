@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createEmployee } from "@/lib/employeeStore";
 import { getClientIp, formLimiter, rateLimitResponse } from "@/lib/rateLimit";
 import { validateOrigin } from "@/lib/csrf";
+import { getBrandedEmailHtml } from "@/lib/emailTemplate";
+import { site } from "@/lib/site";
 
 // Simple helper to normalize Kenyan phone numbers to format 254XXXXXXXXX
 function normalizePhoneNumber(phone: string): string {
@@ -37,10 +39,44 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "An employee with this email is already registered." }, { status: 400 });
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || site.url;
+    const portalUrl = `${baseUrl}/portal`;
+    const kycUrl = `${baseUrl}/kyc?email=${encodeURIComponent(employee.email)}`;
+
     // ── Send Email Notification (Resend API) ──
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey) {
       try {
+        const emailContent = `
+          <h2 style="color: #0B3D91; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 2px solid #EEF1F7; padding-bottom: 12px; margin-bottom: 16px;">
+            Welcome to YagwaTech!
+          </h2>
+          <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
+            Hello <strong>${employee.fullName}</strong>,
+          </p>
+          <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
+            Welcome to the team! Your employee portal account has been successfully created.
+          </p>
+          <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px; font-weight: 600; color: #F47B20;">
+            IMPORTANT: You must complete your identity verification (KYC) before you can log in to your profile.
+          </p>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${kycUrl}" style="background-color: #F47B20; color: white; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px rgba(244, 123, 32, 0.2);">
+              Complete KYC Verification
+            </a>
+          </div>
+          <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
+            Once verified, you will be able to log in using your credentials to access project Kanban boards, manage tasks, and read company docs:
+          </p>
+          <div style="background-color: #F7F9FC; padding: 16px; border-radius: 8px; border: 1px solid #EEF1F7; margin: 24px 0;">
+            <p style="margin: 0; font-size: 13px; color: #1A1A2E;"><strong>Login Email:</strong> ${employee.email}</p>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #1A1A2E;"><strong>Portal Link:</strong> <a href="${portalUrl}" style="color: #0B3D91; text-decoration: underline;">${portalUrl}</a></p>
+          </div>
+          <p style="color: #5A6680; font-size: 13px; line-height: 1.6; margin-top: 24px;">
+            If you did not authorize this registration, please contact system administration immediately.
+          </p>
+        `;
+
         const emailRes = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -51,26 +87,10 @@ export async function POST(request: Request) {
             from: "YagwaTech Portal <onboarding@yagwatech.com>",
             to: [employee.email],
             subject: "Welcome to YagwaTech Employee Portal!",
-            html: `
-              <div style="font-family: sans-serif; padding: 20px; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px border #e2e8f0; rounded: 12px;">
-                <div style="text-align: center; border-bottom: 2px solid #F47B20; padding-bottom: 15px;">
-                  <h2 style="color: #07255A; margin: 0;">YagwaTech Employee Portal</h2>
-                </div>
-                <div style="padding: 20px 0;">
-                  <p>Hello <strong>${employee.fullName}</strong>,</p>
-                  <p>Welcome to the family! Your employee workspace account has been successfully created.</p>
-                  <p>You can now log in using your email address and password to view and collaborate on Zoho Project Kanban boards, manage checklist tasks, and read company documentation.</p>
-                  <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 13px;"><strong>Login Email:</strong> ${employee.email}</p>
-                    <p style="margin: 5px 0 0 0; font-size: 13px;"><strong>Phone:</strong> ${employee.phone}</p>
-                  </div>
-                  <p>If you did not authorize this registration, please contact system administration immediately.</p>
-                </div>
-                <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px; font-size: 11px; color: #64748b;">
-                  Yagwa Tech Solutions Ltd &middot; Nairobi, Kenya
-                </div>
-              </div>
-            `,
+            html: getBrandedEmailHtml(emailContent, {
+              title: "Welcome to YagwaTech Employee Portal",
+              preheader: "Please complete your identity verification to access your profile.",
+            }),
           }),
         });
 
@@ -95,7 +115,7 @@ export async function POST(request: Request) {
     if (smsApiKey && smsPartnerId) {
       try {
         const normalizedPhone = normalizePhoneNumber(employee.phone);
-        const smsMessage = `Hello ${employee.fullName}, welcome to the YagwaTech Employee Portal. Your account has been registered successfully. - YagwaTech Solutions`;
+        const smsMessage = `Hello ${employee.fullName}, welcome to YagwaTech. Please complete your identity verification (KYC) at: ${kycUrl} to log in.`;
 
         const smsRes = await fetch("https://sms.textsms.co.ke/api/services/sendsms/", {
           method: "POST",

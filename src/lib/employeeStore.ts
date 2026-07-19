@@ -1,8 +1,11 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import os from "os";
 
-const STORE_PATH = path.join(process.cwd(), "src/lib/employees.json");
+const STORE_PATH = process.env.VERCEL || process.env.NODE_ENV === "production"
+  ? path.join(os.tmpdir(), "employees.json")
+  : path.join(process.cwd(), "src/lib/employees.json");
 
 export interface Employee {
   id: string;

@@ -1,7 +1,10 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-const STORE_PATH = path.join(process.cwd(), "src/lib/kyc_records.json");
+const STORE_PATH = process.env.VERCEL || process.env.NODE_ENV === "production"
+  ? path.join(os.tmpdir(), "kyc_records.json")
+  : path.join(process.cwd(), "src/lib/kyc_records.json");
 
 interface KYCStore {
   [email: string]: {
