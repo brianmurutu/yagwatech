@@ -55,22 +55,42 @@ export async function POST(request: Request) {
             Hello <strong>${employee.fullName}</strong>,
           </p>
           <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
-            Welcome to the team! Your employee portal account has been successfully created.
+            Welcome to the team! Your employee workspace portal account has been successfully created.
           </p>
           <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px; font-weight: 600; color: #F47B20;">
             IMPORTANT: You must complete your identity verification (KYC) before you can log in to your profile.
           </p>
+          
+          <!-- Dual Action Buttons -->
           <div style="text-align: center; margin: 32px 0;">
-            <a href="${kycUrl}" style="background-color: #F47B20; color: white; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px rgba(244, 123, 32, 0.2);">
-              Complete KYC Verification
+            <!--[if mso]>
+            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+            <tr>
+            <td style="padding-right: 12px;">
+            <![endif]-->
+            <a href="${kycUrl}" style="background-color: #F47B20; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; margin: 8px; box-shadow: 0 4px 6px rgba(244, 123, 32, 0.2);">
+              1. Complete KYC Verification
             </a>
+            <!--[if mso]>
+            </td>
+            <td>
+            <![endif]-->
+            <a href="${portalUrl}" style="background-color: #0B3D91; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; margin: 8px; box-shadow: 0 4px 6px rgba(11, 61, 145, 0.2);">
+              2. Login to Employee Portal
+            </a>
+            <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
           </div>
+
           <p style="color: #1A1A2E; font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
-            Once verified, you will be able to log in using your credentials to access project Kanban boards, manage tasks, and read company docs:
+            Your credentials details are below for your records:
           </p>
           <div style="background-color: #F7F9FC; padding: 16px; border-radius: 8px; border: 1px solid #EEF1F7; margin: 24px 0;">
             <p style="margin: 0; font-size: 13px; color: #1A1A2E;"><strong>Login Email:</strong> ${employee.email}</p>
-            <p style="margin: 5px 0 0 0; font-size: 13px; color: #1A1A2E;"><strong>Portal Link:</strong> <a href="${portalUrl}" style="color: #0B3D91; text-decoration: underline;">${portalUrl}</a></p>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #1A1A2E;"><strong>Registered Phone:</strong> ${employee.phone}</p>
           </div>
           <p style="color: #5A6680; font-size: 13px; line-height: 1.6; margin-top: 24px;">
             If you did not authorize this registration, please contact system administration immediately.
@@ -115,7 +135,7 @@ export async function POST(request: Request) {
     if (smsApiKey && smsPartnerId) {
       try {
         const normalizedPhone = normalizePhoneNumber(employee.phone);
-        const smsMessage = `Hello ${employee.fullName}, welcome to YagwaTech. Please complete your identity verification (KYC) at: ${kycUrl} to log in.`;
+        const smsMessage = `Hello ${employee.fullName}, welcome to YagwaTech. Complete KYC: ${kycUrl} | Login: ${portalUrl}`;
 
         const smsRes = await fetch("https://sms.textsms.co.ke/api/services/sendsms/", {
           method: "POST",

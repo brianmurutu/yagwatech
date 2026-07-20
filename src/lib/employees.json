@@ -1,0 +1,10 @@
+{
+  "test_employee_1784513412742@yagwatech.com": {
+    "id": "emp_1784513421309",
+    "fullName": "Test Employee",
+    "email": "test_employee_1784513412742@yagwatech.com",
+    "phone": "0712345678",
+    "passwordHash": "a109e36947ad56de1dca1cc49f0ef8ac9ad9a7b1aa0df41fb3c4cb73c1ff01ea",
+    "createdAt": "2026-07-20T02:10:21.309Z"
+  }
+}
