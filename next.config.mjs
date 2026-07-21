@@ -51,7 +51,7 @@ const nextConfig = {
           { key: "X-Frame-Options",           value: "SAMEORIGIN" },
           { key: "X-XSS-Protection",          value: "1; mode=block" },
           { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy",        value: "camera=(self \"https://withpersona.com\"), microphone=(self \"https://withpersona.com\"), geolocation=()" },
+          { key: "Permissions-Policy",        value: "camera=(self \"https://withpersona.com\" \"https://inquiry.withpersona.com\"), microphone=(self \"https://withpersona.com\" \"https://inquiry.withpersona.com\"), geolocation=()" },
           // New: HSTS — force HTTPS for 1 year (only set on production via Vercel)
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           // New: Content Security Policy
