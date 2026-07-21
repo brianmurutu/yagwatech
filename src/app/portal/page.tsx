@@ -343,6 +343,7 @@ export default function PortalPage() {
                   {isSubmitting ? 'Signing in…' : 'Sign In to Portal'}
                 </button>
 
+
                 <div className="text-center text-xs">
                   <span className="text-slate-500">Need an account? </span>
                   <button
@@ -356,10 +357,6 @@ export default function PortalPage() {
                     Sign Up
                   </button>
                 </div>
-
-                <p className="text-center text-[10px] text-[#5A6680]">
-                  Demo: <span className="font-mono bg-gray-100 px-1 py-0.5 rounded">employee</span> / <span className="font-mono bg-gray-100 px-1 py-0.5 rounded">yagwa2024</span>
-                </p>
               </form>
             )}
           </div>

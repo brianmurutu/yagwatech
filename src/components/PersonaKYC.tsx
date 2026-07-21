@@ -34,7 +34,7 @@ export default function PersonaKYC({ referenceId, onSuccess, onFailed }: Persona
   if (templateId) {
     const personaUrl = `https://withpersona.com/iframe?inquiry-template-id=${templateId}&client-reference-id=${encodeURIComponent(
       referenceId
-    )}&environment=sandbox`;
+    )}`;
 
     return (
       <div className="w-full bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
