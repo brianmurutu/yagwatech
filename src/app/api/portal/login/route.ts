@@ -3,6 +3,7 @@ import { verifyEmployee } from "@/lib/employeeStore";
 import { getClientIp, loginLimiter, rateLimitResponse } from "@/lib/rateLimit";
 import { validateOrigin } from "@/lib/csrf";
 import { getKYCStatus } from "@/lib/kycStore";
+import { getSupabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   // CSRF Check
@@ -56,6 +57,26 @@ export async function POST(request: Request) {
       );
     }
 
+    const db = getSupabase();
+    const emailLower = employee.email.toLowerCase();
+    let files: any[] = [];
+    try {
+      const { data } = await db.storage.from("avatars").list("", { limit: 1000 });
+      files = data || [];
+    } catch (e) {
+      console.error("[Login GET] Storage list error:", e);
+    }
+    const avatarSet = new Set(files.map((f: any) => f.name.toLowerCase()));
+    const baseUrl = process.env.SUPABASE_URL;
+    const hasAvatar = avatarSet.has(`${emailLower}.png`);
+    
+    let avatarUrl = "";
+    if (hasAvatar) {
+      avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${emailLower}.png?t=${Date.now()}`;
+    } else if (employee.avatarUrl) {
+      avatarUrl = employee.avatarUrl;
+    }
+
     return NextResponse.json({
       success: true,
       employee: {
@@ -63,7 +84,7 @@ export async function POST(request: Request) {
         fullName:   employee.fullName,
         email:      employee.email,
         phone:      employee.phone,
-        avatarUrl:  employee.avatarUrl,
+        avatarUrl:  avatarUrl,
         role:       employee.role,
         department: employee.department,
       },

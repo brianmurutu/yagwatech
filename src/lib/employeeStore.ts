@@ -25,7 +25,7 @@ function rowToEmployee(row: Record<string, any>): Employee {
     phone:        row.phone,
     passwordHash: row.password_hash,
     createdAt:    row.created_at,
-    avatarUrl:    row.avatar_url,
+    avatarUrl:    parts[4] || row.avatar_url || "",
     role:         parts[1] || "Team Member",
     department:   parts[2] || "Engineering",
     status:       (parts[3] as "Pending" | "Approved") || "Pending",
@@ -131,13 +131,20 @@ export async function updateEmployeeProfile(
   const db = getSupabase();
 
   let serializedFullName: string | undefined = undefined;
-  if (updates.fullName !== undefined || updates.role !== undefined || updates.department !== undefined || updates.status !== undefined) {
+  if (
+    updates.fullName !== undefined ||
+    updates.role !== undefined ||
+    updates.department !== undefined ||
+    updates.status !== undefined ||
+    updates.avatarUrl !== undefined
+  ) {
     const current = await getEmployeeByEmail(email);
     const name = updates.fullName !== undefined ? updates.fullName : (current?.fullName || "");
     const role = updates.role !== undefined ? updates.role : (current?.role || "Team Member");
     const dept = updates.department !== undefined ? updates.department : (current?.department || "Engineering");
     const status = updates.status !== undefined ? updates.status : (current?.status || "Pending");
-    serializedFullName = `${name.trim()} | ${role.trim()} | ${dept.trim()} | ${status.trim()}`;
+    const avatar = updates.avatarUrl !== undefined ? updates.avatarUrl : (current?.avatarUrl || "");
+    serializedFullName = `${name.trim()} | ${role.trim()} | ${dept.trim()} | ${status.trim()} | ${avatar.trim()}`;
   }
 
   const dbUpdates: Record<string, string> = {};

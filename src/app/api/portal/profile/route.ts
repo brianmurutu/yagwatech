@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getEmployeeByEmail, updateEmployeeProfile, hashPassword } from "@/lib/employeeStore";
 import bcrypt from "bcryptjs";
 import { validateOrigin } from "@/lib/csrf";
+import { getSupabase } from "@/lib/supabase";
 
 export async function GET(request: Request) {
   try {
@@ -17,6 +18,26 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Employee account not found." }, { status: 404 });
     }
 
+    const db = getSupabase();
+    const emailLower = employee.email.toLowerCase();
+    let files: any[] = [];
+    try {
+      const { data } = await db.storage.from("avatars").list("", { limit: 1000 });
+      files = data || [];
+    } catch (e) {
+      console.error("[Profile GET] Storage list error:", e);
+    }
+    const avatarSet = new Set(files.map((f: any) => f.name.toLowerCase()));
+    const baseUrl = process.env.SUPABASE_URL;
+    const hasAvatar = avatarSet.has(`${emailLower}.png`);
+    
+    let avatarUrl = "";
+    if (hasAvatar) {
+      avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${emailLower}.png?t=${Date.now()}`;
+    } else if (employee.avatarUrl) {
+      avatarUrl = employee.avatarUrl;
+    }
+
     return NextResponse.json({
       success: true,
       employee: {
@@ -24,7 +45,7 @@ export async function GET(request: Request) {
         fullName:   employee.fullName,
         email:      employee.email,
         phone:      employee.phone,
-        avatarUrl:  employee.avatarUrl,
+        avatarUrl:  avatarUrl,
         role:       employee.role,
         department: employee.department,
       },

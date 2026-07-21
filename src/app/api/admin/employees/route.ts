@@ -4,6 +4,7 @@ import { getAllKYCRecords } from "@/lib/kycStore";
 import { getBrandedEmailHtml } from "@/lib/emailTemplate";
 import { site } from "@/lib/site";
 import { Resend } from "resend";
+import { getSupabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,29 @@ export async function GET() {
     const employees = await getAllEmployees();
     const kycRecords = await getAllKYCRecords();
 
+    const db = getSupabase();
+    let files: any[] = [];
+    try {
+      const { data } = await db.storage.from("avatars").list("", { limit: 1000 });
+      files = data || [];
+    } catch (e) {
+      console.error("[Admin Employees GET] Error listing avatars:", e);
+    }
+    const avatarSet = new Set(files.map((f: any) => f.name.toLowerCase()));
+    const baseUrl = process.env.SUPABASE_URL;
+
     const team = employees.map((emp) => {
       const emailLower = emp.email.toLowerCase();
       const kycRec = kycRecords[emailLower];
+      const hasAvatar = avatarSet.has(`${emailLower}.png`);
+      
+      let avatarUrl = "";
+      if (hasAvatar) {
+        avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${emailLower}.png?t=${Date.now()}`;
+      } else if (emp.avatarUrl) {
+        avatarUrl = emp.avatarUrl;
+      }
+
       return {
         id: emp.id,
         name: emp.fullName,
@@ -61,7 +82,7 @@ export async function GET() {
         phone: emp.phone,
         role: emp.role || "Team Member",
         department: emp.department || "Engineering",
-        avatarUrl: emp.avatarUrl || "",
+        avatarUrl,
         status: emp.status || "Pending",
         kycStatus: kycRec?.status || "Not Started",
         joinDate: new Date(emp.createdAt).toISOString().split("T")[0],

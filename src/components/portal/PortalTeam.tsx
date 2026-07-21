@@ -48,7 +48,7 @@ export default function PortalTeam() {
               email: emp.email,
               phone: emp.phone,
               online: idx % 3 !== 0, // Simulation of online status
-              initials: emp.name.split(' ').map((n: any) => n[0]).join('').slice(0, 2).toUpperCase(),
+              initials: emp.name ? emp.name.split(' ').filter(Boolean).map((n: any) => n[0]).join('').slice(0, 2).toUpperCase() : 'YT',
               avatarUrl: emp.avatarUrl || '',
               colorFrom: grad.from,
               colorTo: grad.to
