@@ -31,6 +31,8 @@ const initialProjects: Project[] = [
 
 const columns: Column[] = ['Backlog', 'In Progress', 'Review', 'Done'];
 
+const TEAM_MEMBERS = ['James Otieno', 'Amina Wanjiku', 'David Mwangi', 'Faith Akinyi', 'Kevin Kimani', 'Samuel Karanja', 'Grace Njeri', 'Brian Murutu'];
+
 const priorityStyle: Record<Priority, string> = {
   High: 'bg-red-100 text-red-700 border border-red-200',
   Medium: 'bg-amber-100 text-amber-700 border border-amber-200',
