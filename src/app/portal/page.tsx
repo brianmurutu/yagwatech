@@ -12,6 +12,7 @@ import PortalLeave from '@/components/portal/PortalLeave';
 import PortalTeam from '@/components/portal/PortalTeam';
 import PortalAnnouncements from '@/components/portal/PortalAnnouncements';
 import PortalProfile from '@/components/portal/PortalProfile';
+import PortalChat from '@/components/portal/PortalChat';
 
 type Module =
   | 'dashboard'
@@ -22,6 +23,7 @@ type Module =
   | 'leave'
   | 'team'
   | 'announcements'
+  | 'chat'
   | 'profile';
 
 interface Notification {
@@ -487,6 +489,7 @@ export default function PortalPage() {
     leave: <PortalLeave />,
     team: <PortalTeam />,
     announcements: <PortalAnnouncements />,
+    chat: <PortalChat />,
     profile: <PortalProfile />,
   };
 

@@ -13,6 +13,7 @@ import {
   Users,
   Megaphone,
   User,
+  MessageSquare,
 } from 'lucide-react';
 
 type Module =
@@ -24,6 +25,7 @@ type Module =
   | 'leave'
   | 'team'
   | 'announcements'
+  | 'chat'
   | 'profile';
 
 interface Props {
@@ -36,6 +38,7 @@ const navItems: { id: Module; label: string; Icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { id: 'projects', label: 'Projects', Icon: Kanban },
   { id: 'tasks', label: 'Tasks', Icon: CheckSquare },
+  { id: 'chat', label: 'Direct Messages', Icon: MessageSquare },
   { id: 'attendance', label: 'Attendance', Icon: Clock },
   { id: 'leave', label: 'Leave', Icon: Calendar },
   { id: 'team', label: 'Team', Icon: Users },

@@ -108,7 +108,7 @@ export default function PortalTeam() {
         </select>
       </div>
 
-      {/* Grid */}
+      {/* Grouped Lists */}
       {filtered.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
           <div className="text-4xl mb-3">👥</div>
@@ -116,66 +116,87 @@ export default function PortalTeam() {
           <p className="text-sm text-gray-400 mt-1">Try adjusting your search</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filtered.map((emp) => (
-            <div
-              key={emp.id}
-              className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group"
-            >
-              {/* Avatar */}
-              <div className="relative mb-4 flex justify-center">
-                {emp.avatarUrl ? (
-                  <img
-                    src={emp.avatarUrl}
-                    alt={emp.name}
-                    className="w-16 h-16 rounded-2xl object-cover shadow-lg flex-shrink-0"
-                  />
-                ) : (
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${emp.colorFrom}, ${emp.colorTo})` }}
-                  >
-                    {emp.initials}
+        <div className="space-y-8">
+          {(() => {
+            const deptsToRender = dept === 'All' 
+              ? Array.from(new Set(filtered.map(e => e.department)))
+              : [dept];
+            
+            return deptsToRender.map(dName => {
+              const deptMembers = filtered.filter(e => e.department === dName);
+              if (deptMembers.length === 0) return null;
+              
+              return (
+                <div key={dName} className="space-y-4">
+                  <div className="flex items-center gap-3 border-b border-slate-100 pb-2">
+                    <h4 className="font-bold text-[#1A1A2E] text-xs uppercase tracking-wider">
+                      {dName} <span className="ml-1 text-slate-400 normal-case font-medium">({deptMembers.length})</span>
+                    </h4>
+                    <div className="h-[1px] bg-slate-200/60 flex-1 rounded" />
                   </div>
-                )}
-                <div
-                  className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                    emp.online ? 'bg-green-400' : 'bg-gray-300'
-                  }`}
-                  title={emp.online ? 'Online' : 'Offline'}
-                />
-              </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {deptMembers.map((emp) => (
+                      <div
+                        key={emp.id}
+                        className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all group"
+                      >
+                        {/* Avatar */}
+                        <div className="relative mb-4 flex justify-center">
+                          {emp.avatarUrl ? (
+                            <img
+                              src={emp.avatarUrl}
+                              alt={emp.name}
+                              className="w-16 h-16 rounded-2xl object-cover shadow-md flex-shrink-0"
+                            />
+                          ) : (
+                            <div
+                              className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-md"
+                              style={{ background: `linear-gradient(135deg, ${emp.colorFrom}, ${emp.colorTo})` }}
+                            >
+                              {emp.initials}
+                            </div>
+                          )}
+                          <div
+                            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+                              emp.online ? 'bg-green-400' : 'bg-gray-300'
+                            }`}
+                            title={emp.online ? 'Online' : 'Offline'}
+                          />
+                        </div>
 
-              {/* Info */}
-              <div className="text-center mb-4">
-                <h4 className="font-semibold text-[#1A1A2E] text-sm group-hover:text-[#0B3D91] transition-colors">
-                  {emp.name}
-                </h4>
-                <p className="text-xs text-[#5A6680] mt-0.5 leading-snug">{emp.role}</p>
-                <span className="inline-block mt-2 text-[10px] font-medium bg-[#0B3D91]/8 text-[#0B3D91] px-2.5 py-0.5 rounded-full">
-                  {emp.department}
-                </span>
-              </div>
+                        {/* Info */}
+                        <div className="text-center mb-4">
+                          <h4 className="font-bold text-[#1A1A2E] text-sm group-hover:text-[#0B3D91] transition-colors">
+                            {emp.name}
+                          </h4>
+                          <p className="text-xs text-[#5A6680] mt-0.5 leading-snug">{emp.role}</p>
+                        </div>
 
-              {/* Contact */}
-              <div className="space-y-1.5 pt-3 border-t border-gray-100">
-                <a
-                  href={`mailto:${emp.email}`}
-                  className="flex items-center gap-2 text-[11px] text-[#5A6680] hover:text-[#0B3D91] transition-colors group/link"
-                >
-                  <Mail className="w-3 h-3 flex-shrink-0" />
-                  <span className="truncate">{emp.email}</span>
-                </a>
-                <a
-                  href={`tel:${emp.phone}`}
-                  className="flex items-center gap-2 text-[11px] text-[#5A6680] hover:text-[#0B3D91] transition-colors"
-                >
-                  <Phone className="w-3 h-3 flex-shrink-0" />
-                  {emp.phone}
-                </a>
-              </div>
-            </div>
-          ))}
+                        {/* Contact */}
+                        <div className="space-y-1.5 pt-3 border-t border-gray-100">
+                          <a
+                            href={`mailto:${emp.email}`}
+                            className="flex items-center gap-2 text-[11px] text-[#5A6680] hover:text-[#0B3D91] transition-colors group/link"
+                          >
+                            <Mail className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate">{emp.email}</span>
+                          </a>
+                          <a
+                            href={`tel:${emp.phone}`}
+                            className="flex items-center gap-2 text-[11px] text-[#5A6680] hover:text-[#0B3D91] transition-colors"
+                          >
+                            <Phone className="w-3 h-3 flex-shrink-0" />
+                            {emp.phone}
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            });
+          })()}
         </div>
       )}
     </div>
