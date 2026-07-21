@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AnimatedSection from "@/components/AnimatedSection";
 import PersonaKYC from "@/components/PersonaKYC";
@@ -33,8 +33,22 @@ function KYCVerificationContent() {
   const [currentStatus, setCurrentStatus] = useState<string>("Not Started");
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [countdown, setCountdown] = useState(5);
 
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (currentStatus !== "Verified") return;
+    if (countdown <= 0) {
+      router.push("/portal");
+      return;
+    }
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [currentStatus, countdown, router]);
 
   useEffect(() => {
     const emailParam = searchParams.get("email");
@@ -73,6 +87,7 @@ function KYCVerificationContent() {
   const handleSuccess = async (inquiryId: string) => {
     setCurrentStatus("Verified");
     setIsVerifying(false);
+    setCountdown(5);
     try {
       await fetch("/api/kyc/status", {
         method: "POST",
@@ -228,7 +243,11 @@ function KYCVerificationContent() {
                 Thank you. Your identity has been successfully authenticated by Persona KYC compliance checks. Your partner onboarding or project initiation is now unlocked.
               </p>
 
-              <div className="mt-8 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left w-full text-xs space-y-2 text-slate-700">
+              <p className="mt-4 text-xs text-[#0B3D91] font-semibold animate-pulse">
+                Redirecting you to the portal login page in {countdown} seconds...
+              </p>
+
+              <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left w-full text-xs space-y-2 text-slate-700">
                 <div className="flex justify-between border-b border-slate-200/50 pb-2">
                   <span className="font-semibold text-slate-500">Subject Account:</span>
                   <span className="font-bold text-slate-800">{activeEmail || email}</span>
@@ -243,12 +262,12 @@ function KYCVerificationContent() {
                 </div>
               </div>
 
-              <button
-                onClick={handleReset}
-                className="mt-8 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition-colors"
+              <a
+                href="/portal"
+                className="mt-8 px-6 py-3 bg-[#0B3D91] hover:bg-[#07255A] text-white font-semibold rounded-xl text-xs transition-all shadow-md flex items-center gap-2"
               >
-                Verify another account
-              </button>
+                Go to Login Page Now <ArrowRight className="w-4 h-4" />
+              </a>
             </AnimatedSection>
           )}
 
