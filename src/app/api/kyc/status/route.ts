@@ -8,11 +8,11 @@ export async function GET(request: Request) {
 
     if (!email) {
       // If no email is provided, return all records (useful for admin overview)
-      const allRecords = getAllKYCRecords();
+      const allRecords = await getAllKYCRecords();
       return NextResponse.json({ success: true, records: allRecords });
     }
 
-    const status = getKYCStatus(email);
+    const status = await getKYCStatus(email);
     return NextResponse.json({ success: true, email, status });
   } catch (error) {
     console.error("[KYC Status GET Error]:", error);
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
     }
 
-    updateKYCStatus(email, status);
+    await updateKYCStatus(email, status);
     return NextResponse.json({ success: true, email, status });
   } catch (error) {
     console.error("[KYC Status POST Error]:", error);

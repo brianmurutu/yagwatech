@@ -162,7 +162,7 @@ export default function PortalPage() {
               </div>
               <h1 className="text-xl font-bold text-white tracking-tight">YagwaTech</h1>
               <p className="text-white/65 text-xs mt-0.5">
-                {isSignupMode ? 'Create Employee Account' : 'Employee Portal — Secure Access'}
+                {isSignupMode ? 'Create Team Account' : 'Team Portal — Secure Access'}
               </p>
             </div>
 
@@ -261,7 +261,7 @@ export default function PortalPage() {
                   disabled={isSubmitting}
                   className="w-full py-2.5 bg-[#F47B20] hover:bg-[#d46512] text-white font-semibold text-xs rounded-xl shadow-md disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Registering...' : 'Register Employee'}
+                  {isSubmitting ? 'Registering...' : 'Register Team Member'}
                 </button>
 
                 <div className="text-center pt-2 text-xs">

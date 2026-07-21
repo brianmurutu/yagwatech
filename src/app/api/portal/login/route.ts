@@ -19,51 +19,44 @@ export async function POST(request: Request) {
     const { username, password } = body;
 
     if (!username || !password) {
-      return NextResponse.json({ error: "Username/Email and Password are required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email and password are required." },
+        { status: 400 }
+      );
     }
 
-    // 1. Check database verification
-    const employee = verifyEmployee(username, password);
+    // Verify credentials against Supabase
+    const employee = await verifyEmployee(username, password);
 
-    if (employee) {
-      const kycStatus = getKYCStatus(employee.email);
-      if (kycStatus !== "Verified") {
-        return NextResponse.json(
-          {
-            error: "KYC verification is required. Please complete your identity verification first.",
-            kycRequired: true,
-            email: employee.email,
-          },
-          { status: 403 }
-        );
-      }
+    if (!employee) {
+      return NextResponse.json(
+        { error: "Invalid email/username or password." },
+        { status: 401 }
+      );
+    }
 
-      return NextResponse.json({
-        success: true,
-        employee: {
-          id: employee.id,
-          fullName: employee.fullName,
+    // Check KYC status — must be Verified to access portal
+    const kycStatus = await getKYCStatus(employee.email);
+    if (kycStatus !== "Verified") {
+      return NextResponse.json(
+        {
+          error: "KYC verification required. Please complete your identity verification first.",
+          kycRequired: true,
           email: employee.email,
-          phone: employee.phone,
         },
-      });
+        { status: 403 }
+      );
     }
 
-    // 2. Fallback check for demo credentials
-    if (username === "employee" && password === "yagwa2024") {
-      return NextResponse.json({
-        success: true,
-        employee: {
-          id: "emp_demo",
-          fullName: "Demo Employee",
-          email: "employee@yagwatech.com",
-          phone: "+254 700 000000",
-        },
-      });
-    }
-
-    // Authentication failure
-    return NextResponse.json({ error: "Invalid email/username or password." }, { status: 401 });
+    return NextResponse.json({
+      success: true,
+      employee: {
+        id:       employee.id,
+        fullName: employee.fullName,
+        email:    employee.email,
+        phone:    employee.phone,
+      },
+    });
   } catch (error) {
     console.error("[Portal Login Route Error]:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });

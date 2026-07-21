@@ -60,7 +60,7 @@ export default function PortalSidebar({ activeModule, setActiveModule, onLogout 
             <div>
               <div className="text-white font-bold text-sm leading-tight">YagwaTech</div>
               <div className="text-white/45 text-[10px] font-medium tracking-wider uppercase">
-                Employee Portal
+              Team Portal
               </div>
             </div>
           </div>

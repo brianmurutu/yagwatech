@@ -1,12 +1,7 @@
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
-import os from "os";
+import bcrypt from "bcryptjs";
+import { getSupabase } from "./supabase";
 
-const STORE_PATH = process.env.VERCEL || process.env.NODE_ENV === "production"
-  ? path.join(os.tmpdir(), "employees.json")
-  : path.join(process.cwd(), "src/lib/employees.json");
-
+// ── Types ─────────────────────────────────────────────────────────────────────
 export interface Employee {
   id: string;
   fullName: string;
@@ -16,72 +11,104 @@ export interface Employee {
   createdAt: string;
 }
 
-function readStore(): Record<string, Employee> {
-  try {
-    if (fs.existsSync(STORE_PATH)) {
-      const content = fs.readFileSync(STORE_PATH, "utf8");
-      return JSON.parse(content);
-    }
-  } catch (e) {
-    console.error("[Employee Store] Failed to read storage file:", e);
-  }
-  return {};
-}
-
-function writeStore(data: Record<string, Employee>) {
-  try {
-    const dir = path.dirname(STORE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(STORE_PATH, JSON.stringify(data, null, 2), "utf8");
-  } catch (e) {
-    console.error("[Employee Store] Failed to write storage file:", e);
-  }
-}
-
-export function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
-
-export function createEmployee(fullName: string, email: string, phone: string, password: string): Employee | null {
-  const normEmail = email.trim().toLowerCase();
-  const store = readStore();
-
-  if (store[normEmail]) {
-    return null; // Email already registered
-  }
-
-  const newEmployee: Employee = {
-    id: `emp_${Date.now()}`,
-    fullName: fullName.trim(),
-    email: normEmail,
-    phone: phone.trim(),
-    passwordHash: hashPassword(password),
-    createdAt: new Date().toISOString(),
+// DB row → Employee interface mapper
+function rowToEmployee(row: Record<string, string>): Employee {
+  return {
+    id:           row.id,
+    fullName:     row.full_name,
+    email:        row.email,
+    phone:        row.phone,
+    passwordHash: row.password_hash,
+    createdAt:    row.created_at,
   };
-
-  store[normEmail] = newEmployee;
-  writeStore(store);
-  return newEmployee;
 }
 
-export function verifyEmployee(email: string, password: string): Employee | null {
+// ── Password hashing (bcrypt, cost 12) ───────────────────────────────────────
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
+// ── createEmployee ────────────────────────────────────────────────────────────
+// Returns null if email is already registered, otherwise creates and returns the employee.
+export async function createEmployee(
+  fullName: string,
+  email: string,
+  phone: string,
+  password: string
+): Promise<Employee | null> {
   const normEmail = email.trim().toLowerCase();
-  const store = readStore();
-  const employee = store[normEmail];
+  const db = getSupabase();
 
-  if (!employee) return null;
+  // Check for duplicate
+  const { data: existing } = await db
+    .from("employees")
+    .select("id")
+    .eq("email", normEmail)
+    .maybeSingle();
 
-  const expectedHash = hashPassword(password);
-  if (employee.passwordHash === expectedHash) {
-    return employee;
+  if (existing) return null;
+
+  const passwordHash = await hashPassword(password);
+  const id = `emp_${Date.now()}`;
+
+  const { data, error } = await db
+    .from("employees")
+    .insert({
+      id,
+      full_name:     fullName.trim(),
+      email:         normEmail,
+      phone:         phone.trim(),
+      password_hash: passwordHash,
+    })
+    .select()
+    .single();
+
+  if (error || !data) {
+    console.error("[Employee Store] createEmployee error:", error);
+    return null;
   }
-  return null;
+
+  return rowToEmployee(data);
 }
 
-export function getEmployeeByEmail(email: string): Employee | null {
+// ── verifyEmployee ────────────────────────────────────────────────────────────
+// Returns the employee if credentials are valid, otherwise null.
+export async function verifyEmployee(
+  email: string,
+  password: string
+): Promise<Employee | null> {
   const normEmail = email.trim().toLowerCase();
-  const store = readStore();
-  return store[normEmail] || null;
+  const db = getSupabase();
+
+  const { data, error } = await db
+    .from("employees")
+    .select("*")
+    .eq("email", normEmail)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  const valid = await bcrypt.compare(password, data.password_hash);
+  if (!valid) return null;
+
+  return rowToEmployee(data);
+}
+
+// ── getEmployeeByEmail ────────────────────────────────────────────────────────
+// Pure lookup — no password check.
+export async function getEmployeeByEmail(
+  email: string
+): Promise<Employee | null> {
+  const normEmail = email.trim().toLowerCase();
+  const db = getSupabase();
+
+  const { data, error } = await db
+    .from("employees")
+    .select("*")
+    .eq("email", normEmail)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  return rowToEmployee(data);
 }

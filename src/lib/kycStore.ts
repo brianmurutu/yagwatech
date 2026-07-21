@@ -1,64 +1,86 @@
-import fs from "fs";
-import path from "path";
-import os from "os";
+import { getSupabase } from "./supabase";
 
-const STORE_PATH = process.env.VERCEL || process.env.NODE_ENV === "production"
-  ? path.join(os.tmpdir(), "kyc_records.json")
-  : path.join(process.cwd(), "src/lib/kyc_records.json");
+// ── Types ─────────────────────────────────────────────────────────────────────
+export type KYCStatus = "Pending" | "Verified" | "Failed" | "Not Started";
 
-interface KYCStore {
-  [email: string]: {
-    status: "Pending" | "Verified" | "Failed" | "Not Started";
-    inquiryId?: string;
-    updatedAt: string;
-  };
+export interface KYCRecord {
+  email:      string;
+  status:     KYCStatus;
+  inquiryId?: string;
+  updatedAt:  string;
 }
 
-function readStore(): KYCStore {
-  try {
-    if (fs.existsSync(STORE_PATH)) {
-      const content = fs.readFileSync(STORE_PATH, "utf8");
-      return JSON.parse(content);
-    }
-  } catch (e) {
-    console.error("[KYC Store] Failed to read storage file:", e);
-  }
-  return {};
-}
+// Full store shape returned by getAllKYCRecords (matches old file-based shape)
+export type KYCStore = Record<string, Omit<KYCRecord, "email">>;
 
-function writeStore(data: KYCStore) {
-  try {
-    const dir = path.dirname(STORE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(STORE_PATH, JSON.stringify(data, null, 2), "utf8");
-  } catch (e) {
-    console.error("[KYC Store] Failed to write storage file:", e);
-  }
-}
-
-export function getKYCStatus(email: string): "Pending" | "Verified" | "Failed" | "Not Started" {
+// ── getKYCStatus ──────────────────────────────────────────────────────────────
+// Returns the current KYC status for an email; defaults to "Not Started".
+export async function getKYCStatus(email: string): Promise<KYCStatus> {
   const normEmail = email.trim().toLowerCase();
-  const store = readStore();
-  return store[normEmail]?.status || "Not Started";
+  const db = getSupabase();
+
+  const { data, error } = await db
+    .from("kyc_records")
+    .select("status")
+    .eq("email", normEmail)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[KYC Store] getKYCStatus error:", error);
+    return "Not Started";
+  }
+
+  return (data?.status as KYCStatus) ?? "Not Started";
 }
 
-export function updateKYCStatus(
+// ── updateKYCStatus ───────────────────────────────────────────────────────────
+// Upserts a KYC record. Preserves existing inquiryId if a new one is not provided.
+export async function updateKYCStatus(
   email: string,
-  status: "Pending" | "Verified" | "Failed" | "Not Started",
+  status: KYCStatus,
   inquiryId?: string
-) {
+): Promise<void> {
   const normEmail = email.trim().toLowerCase();
-  const store = readStore();
-  store[normEmail] = {
+  const db = getSupabase();
+
+  // Build the upsert payload
+  const payload: Record<string, string> = {
+    email:      normEmail,
     status,
-    inquiryId: inquiryId || store[normEmail]?.inquiryId,
-    updatedAt: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
-  writeStore(store);
+  if (inquiryId) payload.inquiry_id = inquiryId;
+
+  const { error } = await db
+    .from("kyc_records")
+    .upsert(payload, { onConflict: "email" });
+
+  if (error) {
+    console.error("[KYC Store] updateKYCStatus error:", error);
+  }
 }
 
-export function getAllKYCRecords() {
-  return readStore();
+// ── getAllKYCRecords ───────────────────────────────────────────────────────────
+// Returns all KYC records as a keyed object { email: { status, inquiryId, updatedAt } }.
+export async function getAllKYCRecords(): Promise<KYCStore> {
+  const db = getSupabase();
+
+  const { data, error } = await db
+    .from("kyc_records")
+    .select("email, status, inquiry_id, updated_at");
+
+  if (error) {
+    console.error("[KYC Store] getAllKYCRecords error:", error);
+    return {};
+  }
+
+  const result: KYCStore = {};
+  for (const row of data ?? []) {
+    result[row.email] = {
+      status:     row.status as KYCStatus,
+      inquiryId:  row.inquiry_id ?? undefined,
+      updatedAt:  row.updated_at,
+    };
+  }
+  return result;
 }

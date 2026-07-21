@@ -37,6 +37,7 @@ export default function PersonaKYC({ referenceId, onSuccess, onFailed }: Persona
         const options: Record<string, unknown> = {
           templateId,
           referenceId: referenceId || undefined,
+          container: containerRef.current,
           onReady: () => {
             if (!cancelled) setStatus("ready");
           },
@@ -67,7 +68,7 @@ export default function PersonaKYC({ referenceId, onSuccess, onFailed }: Persona
         clientRef.current = client;
 
         // Open/embed into our container div
-        client.open(containerRef.current as HTMLElement);
+        client.open();
       } catch (err: any) {
         if (!cancelled) {
           setErrorMsg(err?.message ?? "Failed to load the verification module.");
