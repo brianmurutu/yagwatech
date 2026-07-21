@@ -33,17 +33,34 @@ interface Project {
 }
 
 const INITIAL_PROJECTS: Project[] = [
-  { id: '1', title: 'Client Onboarding Portal', client: 'Safaricom PLC', clientEmail: 'onboarding@safaricom.co.ke', status: 'Backlog', assignee: 'Faith Akinyi', priority: 'Medium', deadline: '2026-08-15', budget: 'KSh 1,200,000', description: 'Internal onboarding portal for new Safaricom business client accounts.' },
+  { id: '1', title: 'Client Onboarding Portal', client: 'Safaricom PLC', clientEmail: 'onboarding@safaricom.co.ke', status: 'Backlog', assignee: 'Winston', priority: 'Medium', deadline: '2026-08-15', budget: 'KSh 1,200,000', description: 'Internal onboarding portal for new Safaricom business client accounts.' },
   { id: '2', title: 'Mobile App Redesign', client: 'KCB Bank Group', clientEmail: 'appdev@kcbgroup.com', status: 'Backlog', assignee: 'David Mwangi', priority: 'Low', deadline: '2026-09-01', budget: 'KSh 850,000', description: 'Complete UI/UX redesign of the corporate mobile banking application.' },
-  { id: '3', title: 'ERP Integration', client: 'Equity Bank', clientEmail: 'systems@equitybank.co.ke', status: 'In Progress', assignee: 'James Otieno', priority: 'High', deadline: '2026-07-30', budget: 'KSh 3,500,000', description: 'Integrating enterprise resource planning systems with modern backend APIs.' },
+  { id: '3', title: 'ERP Integration', client: 'Equity Bank', clientEmail: 'systems@equitybank.co.ke', status: 'In Progress', assignee: 'Emmanuel Ochieng Otieno', priority: 'High', deadline: '2026-07-30', budget: 'KSh 3,500,000', description: 'Integrating enterprise resource planning systems with modern backend APIs.' },
   { id: '4', title: 'Cybersecurity Audit', client: 'Co-operative Bank', clientEmail: 'secops@co-opbank.co.ke', status: 'In Progress', assignee: 'Samuel Karanja', priority: 'High', deadline: '2026-07-20', budget: 'KSh 1,800,000', description: 'Full system penetration testing, security analysis, and compliance audit.' },
-  { id: '5', title: 'Website Optimization', client: 'Kenya Airways', clientEmail: 'marketing@kenya-airways.com', status: 'In Progress', assignee: 'Kevin Kimani', priority: 'Medium', deadline: '2026-07-25', budget: 'KSh 600,000', description: 'Performance tuning, SEO optimizations, and content rendering enhancement.' },
+  { id: '5', title: 'Website Optimization', client: 'Kenya Airways', clientEmail: 'marketing@kenya-airways.com', status: 'In Progress', assignee: 'Winston', priority: 'Medium', deadline: '2026-07-25', budget: 'KSh 600,000', description: 'Performance tuning, SEO optimizations, and content rendering enhancement.' },
   { id: '6', title: 'Digital Marketing Campaign', client: 'YagwaTech Internal', clientEmail: 'internal@yagwatech.com', status: 'Review', assignee: 'David Mwangi', priority: 'Medium', deadline: '2026-07-18', budget: 'KSh 200,000', description: 'East African regional brand campaign and targeted lead generation.' },
-  { id: '7', title: 'Cloud Migration Phase 1', client: 'Nairobi County Government', clientEmail: 'admin@nairobi.go.ke', status: 'Done', assignee: 'Grace Njeri', priority: 'High', deadline: '2026-06-30', budget: 'KSh 4,500,000', description: 'Migration of local government databases and servers to Amazon Web Services.' },
-  { id: '8', title: 'Staff Training LMS', client: 'Davis & Shirtliff', clientEmail: 'training@davis-shirtliff.com', status: 'Done', assignee: 'Amina Wanjiku', priority: 'Low', deadline: '2026-06-15', budget: 'KSh 750,000', description: 'Custom Learning Management System deployment and administration training.' },
+  { id: '7', title: 'Cloud Migration Phase 1', client: 'Nairobi County Government', clientEmail: 'admin@nairobi.go.ke', status: 'Done', assignee: 'Emmanuel Ochieng Otieno', priority: 'High', deadline: '2026-06-30', budget: 'KSh 4,500,000', description: 'Migration of local government databases and servers to Amazon Web Services.' },
+  { id: '8', title: 'Weekly Sprint Planning', client: 'YagwaTech Internal', clientEmail: 'internal@yagwatech.com', status: 'In Progress', assignee: 'Brian Murutu', priority: 'Medium', deadline: '2026-07-27', budget: 'KSh 10,000', description: 'Coordinate with engineering teams to map tasks, assign deliverables, and update Kanban sprint logs.' },
+  { id: '9', title: 'API Endpoint Optimization', client: 'YagwaTech Internal', clientEmail: 'internal@yagwatech.com', status: 'Backlog', assignee: 'Winston', priority: 'High', deadline: '2026-08-01', budget: 'KSh 45,000', description: 'Optimize the /api/portal/team and /api/admin/employees database queries to load cached profile metrics.' },
+  { id: '10', title: 'Server SSL Certificate Renewal', client: 'Safaricom PLC', clientEmail: 'ssl@safaricom.co.ke', status: 'In Progress', assignee: 'Emmanuel Ochieng Otieno', priority: 'Medium', deadline: '2026-07-28', budget: 'KSh 15,000', description: 'Update Let\'s Encrypt SSL certificates for the Safaricom staging server and configure cron auto-renewal.' }
 ];
 
-const TEAM_MEMBERS = ['James Otieno', 'Amina Wanjiku', 'David Mwangi', 'Faith Akinyi', 'Kevin Kimani', 'Samuel Karanja', 'Grace Njeri', 'Brian Murutu'];
+const TEAM_MEMBERS = [
+  'Brian Murutu',
+  'Emmanuel Ochieng Otieno',
+  'Winston',
+  'Peter Yagwa',
+  'Dennis Bright',
+  'Clinton Omwenga',
+  'antony omondi',
+  'James Otieno',
+  'Amina Wanjiku',
+  'David Mwangi',
+  'Faith Akinyi',
+  'Kevin Kimani',
+  'Samuel Karanja',
+  'Grace Njeri'
+];
 
 export default function AdminProjectsManager() {
   const [projects, setProjects] = useState<Project[]>([]);
