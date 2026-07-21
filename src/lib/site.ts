@@ -7,7 +7,7 @@ export const site = {
   phone: "+254 117 722 077",
   phoneRaw: "+254117722077",
   email: "info@yagwatech.com",
-  adminEmails: ["admin@yagwatech.com"],
+  adminEmails: ["admin@yagwatech.com", "yagwatechsolutions@gmail.com"],
   careersEmails: ["yagwatechsolutions@gmail.com", "careers@yagwatech.com"],
   supportEmail: "support@yagwatech.com",
   calendly: process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/yagwatechsolutions/30min",
