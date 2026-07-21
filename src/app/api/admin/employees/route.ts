@@ -5,6 +5,8 @@ import { getBrandedEmailHtml } from "@/lib/emailTemplate";
 import { site } from "@/lib/site";
 import { Resend } from "resend";
 
+export const dynamic = "force-dynamic";
+
 // ── Phone normalizer ──────────────────────────────────────────────────────────
 function normalizePhoneNumber(phone: string): string {
   const cleaned = phone.replace(/\D/g, "");

@@ -10,6 +10,8 @@ import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import { FacebookIcon, InstagramIcon, LinkedinIcon, GithubIcon, TwitterIcon } from "@/components/SocialIcons";
 
+export const dynamic = "force-dynamic";
+
 function getSocialIcon(platform: string) {
   switch (platform.toLowerCase()) {
     case "linkedin":

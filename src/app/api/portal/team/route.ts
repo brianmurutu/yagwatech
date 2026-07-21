@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getAllEmployees } from "@/lib/employeeStore";
 import { getSupabase } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const employees = await getAllEmployees();
