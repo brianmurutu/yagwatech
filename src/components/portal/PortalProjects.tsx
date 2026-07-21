@@ -1,7 +1,4 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { Plus, X, User, Calendar, AlertTriangle } from 'lucide-react';
 
 type Priority = 'High' | 'Medium' | 'Low';
 type Column = 'Backlog' | 'In Progress' | 'Review' | 'Done';
@@ -33,8 +30,6 @@ const initialProjects: Project[] = [
 
 const columns: Column[] = ['Backlog', 'In Progress', 'Review', 'Done'];
 
-const FALLBACK_TEAM_MEMBERS = ['Brian Murutu', 'Phineas Kirimi', 'Timothy Mugendi', 'Isaac Odari'];
-
 const priorityStyle: Record<Priority, string> = {
   High: 'bg-red-100 text-red-700 border border-red-200',
   Medium: 'bg-amber-100 text-amber-700 border border-amber-200',
@@ -50,33 +45,20 @@ const columnStyle: Record<Column, { header: string; dot: string }> = {
 
 export default function PortalProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [isSyncActive, setIsSyncActive] = useState(false);
-  const [teamMembers, setTeamMembers] = useState<string[]>(FALLBACK_TEAM_MEMBERS);
-  const [form, setForm] = useState({
-    title: '',
-    client: '',
-    assignee: 'Brian Murutu',
-    priority: 'Medium' as Priority,
-    dueDate: '',
-    column: 'Backlog' as Column,
-  });
 
   const loadProjects = async () => {
     try {
-      // Load team members dynamically
-      try {
-        const teamRes = await fetch('/api/portal/team');
-        const teamData = await teamRes.json();
-        if (teamData.success && teamData.team) {
-          const names = teamData.team.map((t: any) => t.name);
-          if (names.length > 0) {
-            setTeamMembers(names);
-            setForm((prev) => ({ ...prev, assignee: names[0] }));
-          }
+      // 1. Get logged-in user profile to filter by assignee
+      const savedUser = localStorage.getItem('employee_user');
+      let userFullName = '';
+      if (savedUser) {
+        try {
+          const parsed = JSON.parse(savedUser);
+          userFullName = parsed.fullName || '';
+        } catch (e) {
+          console.error(e);
         }
-      } catch (err) {
-        console.error('Failed to load team members:', err);
       }
 
       const configRes = await fetch('/api/crm/status');
@@ -101,7 +83,12 @@ export default function PortalProjects() {
               dueDate: p.dueDate || p.deadline || new Date().toISOString().split('T')[0],
               tags: p.tags || [],
             }));
-            setProjects(mapped);
+            
+            // Team members should only see projects assigned to them
+            const filtered = mapped.filter(
+              (p) => p.assignee?.trim().toLowerCase() === userFullName.trim().toLowerCase()
+            );
+            setProjects(filtered);
           } else {
             const formatted = initialProjects.map((p) => ({
               ...p,
@@ -112,7 +99,12 @@ export default function PortalProjects() {
               description: 'Standard onboarding phase and project review.',
               tags: [],
             }));
-            setProjects(formatted);
+            
+            // Team members should only see projects assigned to them
+            const filtered = formatted.filter(
+              (p) => p.assignee?.trim().toLowerCase() === userFullName.trim().toLowerCase()
+            );
+            setProjects(filtered);
             localStorage.setItem('yagwa_projects', JSON.stringify(formatted));
           }
         } else {
@@ -123,7 +115,12 @@ export default function PortalProjects() {
             dueDate: p.deadline,
             tags: [],
           }));
-          setProjects(mapped);
+          
+          // Team members should only see projects assigned to them
+          const filtered = mapped.filter(
+            (p) => p.assignee?.trim().toLowerCase() === userFullName.trim().toLowerCase()
+          );
+          setProjects(filtered);
         }
       }
     } catch (e) {
@@ -135,57 +132,6 @@ export default function PortalProjects() {
     loadProjects();
   }, []);
 
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.title.trim()) return;
-
-    try {
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: form.title,
-          client: form.client || 'YagwaTech Internal',
-          description: 'Project created via employee portal.',
-          assignee: form.assignee,
-          priority: form.priority,
-          deadline: form.dueDate || new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
-          budget: 'KSh 0',
-          status: form.column,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        if (data.mock) {
-          const newProject: Project = {
-            id: Date.now().toString(),
-            title: form.title,
-            client: form.client || 'YagwaTech Internal',
-            assignee: form.assignee || 'Unassigned',
-            priority: form.priority,
-            dueDate: form.dueDate || new Date().toISOString().split('T')[0],
-            column: form.column,
-            status: form.column,
-            tags: [],
-            description: 'Project created via employee portal.',
-          };
-          const updated = [...projects, newProject];
-          setProjects(updated);
-          localStorage.setItem('yagwa_projects', JSON.stringify(updated));
-        } else {
-          loadProjects();
-        }
-
-        setForm({ title: '', client: '', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '', column: 'Backlog' });
-        setShowModal(false);
-      }
-    } catch {
-      alert('Error creating project.');
-    }
-  };
-
   const cycleColumn = (id: string, current: Column) => {
     const nextColMap: Record<Column, Column> = {
       'Backlog': 'In Progress',
@@ -195,14 +141,24 @@ export default function PortalProjects() {
     };
     const next = nextColMap[current];
 
-    const updated = projects.map((p) => {
+    // Update locally filtered list
+    const updatedFiltered = projects.map((p) => {
       if (p.id.toString() !== id.toString()) return p;
       return { ...p, column: next, status: next };
     });
+    setProjects(updatedFiltered);
 
-    setProjects(updated);
+    // Save update to master list in local storage
     if (!isSyncActive) {
-      localStorage.setItem('yagwa_projects', JSON.stringify(updated));
+      const saved = localStorage.getItem('yagwa_projects');
+      if (saved) {
+        const parsed = JSON.parse(saved) as any[];
+        const updatedMaster = parsed.map((p) => {
+          if (p.id.toString() !== id.toString()) return p;
+          return { ...p, column: next, status: next };
+        });
+        localStorage.setItem('yagwa_projects', JSON.stringify(updatedMaster));
+      }
     }
   };
 
@@ -212,15 +168,8 @@ export default function PortalProjects() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold text-[#1A1A2E]">Project Kanban</h3>
-          <p className="text-sm text-[#5A6680]">{projects.length} total projects {isSyncActive ? '(Zoho Synced)' : '(Local Database)'}</p>
+          <p className="text-sm text-[#5A6680]">{projects.length} assigned projects {isSyncActive ? '(Zoho Synced)' : '(Local Database)'}</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-[#0B3D91] hover:bg-[#1A56C4] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5 shadow-md shadow-[#0B3D91]/25"
-        >
-          <Plus className="w-4 h-4" />
-          New Project
-        </button>
       </div>
 
       {/* Kanban Board */}
@@ -293,102 +242,7 @@ export default function PortalProjects() {
           );
         })}
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h3 className="font-bold text-[#1A1A2E]">Add New Project</h3>
-              <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <form onSubmit={handleAdd} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Project Title *</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Customer Portal v2"
-                  required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Client Company *</label>
-                <input
-                  type="text"
-                  value={form.client}
-                  onChange={(e) => setForm({ ...form, client: e.target.value })}
-                  placeholder="e.g. Safaricom PLC"
-                  required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/40 focus:border-[#0B3D91] transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Assignee</label>
-                <select
-                  value={form.assignee}
-                  onChange={(e) => setForm({ ...form, assignee: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
-                >
-                  {teamMembers.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Priority</label>
-                  <select
-                    value={form.priority}
-                    onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
-                  >
-                    <option>High</option>
-                    <option>Medium</option>
-                    <option>Low</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Column</label>
-                  <select
-                    value={form.column}
-                    onChange={(e) => setForm({ ...form, column: e.target.value as Column })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
-                  >
-                    {columns.map((c) => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Due Date</label>
-                <input
-                  type="date"
-                  value={form.dueDate}
-                  onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-[#5A6680] hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 bg-[#0B3D91] text-white rounded-xl text-sm font-semibold hover:bg-[#1A56C4] transition-all"
-                >
-                  Add Project
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+

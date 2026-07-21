@@ -59,10 +59,13 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       employee: {
-        id:       employee.id,
-        fullName: employee.fullName,
-        email:    employee.email,
-        phone:    employee.phone,
+        id:         employee.id,
+        fullName:   employee.fullName,
+        email:      employee.email,
+        phone:      employee.phone,
+        avatarUrl:  employee.avatarUrl,
+        role:       employee.role,
+        department: employee.department,
       },
     });
   } catch (error) {

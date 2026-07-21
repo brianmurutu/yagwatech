@@ -3,6 +3,39 @@ import { getEmployeeByEmail, updateEmployeeProfile, hashPassword } from "@/lib/e
 import bcrypt from "bcryptjs";
 import { validateOrigin } from "@/lib/csrf";
 
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get("email");
+
+    if (!email) {
+      return NextResponse.json({ error: "Email is required." }, { status: 400 });
+    }
+
+    const employee = await getEmployeeByEmail(email);
+    if (!employee) {
+      return NextResponse.json({ error: "Employee account not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      employee: {
+        id:         employee.id,
+        fullName:   employee.fullName,
+        email:      employee.email,
+        phone:      employee.phone,
+        avatarUrl:  employee.avatarUrl,
+        role:       employee.role,
+        department: employee.department,
+      },
+    });
+  } catch (error) {
+    console.error("[Portal Profile GET Error]:", error);
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+  }
+}
+
+
 export async function POST(request: Request) {
   const originErr = validateOrigin(request);
   if (originErr) return originErr;

@@ -151,7 +151,33 @@ export default function PortalPage() {
 
   useEffect(() => {
     const auth = localStorage.getItem('portal_auth');
-    if (auth === 'true') setIsAuthenticated(true);
+    if (auth === 'true') {
+      const userSaved = localStorage.getItem('employee_user');
+      if (userSaved) {
+        try {
+          const parsed = JSON.parse(userSaved);
+          if (parsed.email) {
+            // Fetch the latest profile data from server to keep roles & departments synced
+            fetch(`/api/portal/profile?email=${encodeURIComponent(parsed.email)}`)
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.success && data.employee) {
+                  localStorage.setItem('employee_user', JSON.stringify(data.employee));
+                }
+              })
+              .catch((err) => console.error("Error syncing profile on load:", err))
+              .finally(() => {
+                setIsAuthenticated(true);
+                setIsLoading(false);
+              });
+            return;
+          }
+        } catch (e) {
+          console.error("Error parsing saved employee:", e);
+        }
+      }
+      setIsAuthenticated(true);
+    }
     setIsLoading(false);
   }, []);
 
