@@ -30,10 +30,10 @@ const nextConfig = {
       "font-src 'self' https://fonts.gstatic.com",
       // Images: self + data URIs + Google Analytics + Unsplash (portfolio images)
       "img-src 'self' data: blob: https://www.google-analytics.com https://images.unsplash.com https://res.cloudinary.com",
-      // Connections: self + analytics endpoints
-      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://generativelanguage.googleapis.com",
-      // Frames: disallow embedding by default
-      "frame-src 'none'",
+      // Connections: self + analytics endpoints + Persona KYC
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://generativelanguage.googleapis.com https://*.withpersona.com https://withpersona.com",
+      // Frames: allow Persona KYC iframe
+      "frame-src 'self' https://withpersona.com https://*.withpersona.com",
       "frame-ancestors 'self'",
       // Objects / base
       "object-src 'none'",
@@ -51,7 +51,7 @@ const nextConfig = {
           { key: "X-Frame-Options",           value: "SAMEORIGIN" },
           { key: "X-XSS-Protection",          value: "1; mode=block" },
           { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Permissions-Policy",        value: "camera=(self \"https://withpersona.com\"), microphone=(self \"https://withpersona.com\"), geolocation=()" },
           // New: HSTS — force HTTPS for 1 year (only set on production via Vercel)
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           // New: Content Security Policy

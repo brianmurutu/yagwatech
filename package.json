@@ -16,6 +16,7 @@
     "lucide-react": "^1.21.0",
     "next": "14.2.35",
     "pdf-parse": "^2.4.5",
+    "persona": "^5.8.0",
     "react": "^18",
     "react-dom": "^18",
     "resend": "^6.14.0",

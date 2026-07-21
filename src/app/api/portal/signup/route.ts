@@ -5,14 +5,24 @@ import { validateOrigin } from "@/lib/csrf";
 import { getBrandedEmailHtml } from "@/lib/emailTemplate";
 import { site } from "@/lib/site";
 
-// Simple helper to normalize Kenyan phone numbers to format 254XXXXXXXXX
+// Normalize Kenyan phone numbers to format 254XXXXXXXXX
+// Handles: 07XX, 7XX, +2547XX, 2547XX, 01XX, 1XX
 function normalizePhoneNumber(phone: string): string {
-  let cleaned = phone.replace(/\D/g, ""); // Remove non-numeric characters
-  if (cleaned.startsWith("0")) {
-    cleaned = "254" + cleaned.substring(1);
-  } else if (cleaned.startsWith("7") || cleaned.startsWith("1")) {
-    cleaned = "254" + cleaned;
+  let cleaned = phone.replace(/\D/g, ""); // Strip all non-digits
+
+  // Already in full international format
+  if (cleaned.startsWith("254") && cleaned.length === 12) {
+    return cleaned;
   }
+  // Local format: 07XX or 01XX
+  if (cleaned.startsWith("0") && cleaned.length === 10) {
+    return "254" + cleaned.substring(1);
+  }
+  // Without leading zero: 7XX or 1XX (9 digits)
+  if ((cleaned.startsWith("7") || cleaned.startsWith("1")) && cleaned.length === 9) {
+    return "254" + cleaned;
+  }
+  // Fallback — return as-is and let the API reject it with a clear error
   return cleaned;
 }
 
@@ -137,6 +147,8 @@ export async function POST(request: Request) {
         const normalizedPhone = normalizePhoneNumber(employee.phone);
         const smsMessage = `Hello ${employee.fullName}, welcome to YagwaTech. Complete KYC: ${kycUrl} | Login: ${portalUrl}`;
 
+        console.log(`[TextSMS] Sending to normalized number: ${normalizedPhone} (raw input: ${employee.phone})`);
+
         const smsRes = await fetch("https://sms.textsms.co.ke/api/services/sendsms/", {
           method: "POST",
           headers: {
@@ -144,18 +156,22 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify({
             apikey: smsApiKey,
-            partnerID: smsPartnerId,
+            partnerID: parseInt(smsPartnerId, 10), // TextSMS requires an integer, not a string
             message: smsMessage,
             shortcode: smsShortcode,
             mobile: normalizedPhone,
           }),
         });
 
-        if (!smsRes.ok) {
-          const errText = await smsRes.text();
-          console.error("[TextSMS API Error]:", errText);
-        } else {
+        // TextSMS always returns HTTP 200 — must read body to detect errors
+        const smsBody = await smsRes.json().catch(() => null);
+        console.log("[TextSMS API Response]:", JSON.stringify(smsBody));
+
+        const responseCode = smsBody?.responses?.[0]?.["response-code"];
+        if (responseCode === 200 || responseCode === "200") {
           console.log(`[TextSMS Notification] Welcome SMS sent successfully to ${normalizedPhone}`);
+        } else {
+          console.error(`[TextSMS API Error] Unexpected response for ${normalizedPhone}:`, smsBody);
         }
       } catch (e) {
         console.error("[SMS Notification Exception]:", e);
