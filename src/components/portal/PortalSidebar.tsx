@@ -8,13 +8,23 @@ import {
   FolderOpen,
   LogOut,
   ChevronRight,
+  Clock,
+  Calendar,
+  Users,
+  Megaphone,
+  User,
 } from 'lucide-react';
 
 type Module =
   | 'dashboard'
   | 'projects'
   | 'tasks'
-  | 'documents';
+  | 'documents'
+  | 'attendance'
+  | 'leave'
+  | 'team'
+  | 'announcements'
+  | 'profile';
 
 interface Props {
   activeModule: Module;
@@ -26,20 +36,27 @@ const navItems: { id: Module; label: string; Icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { id: 'projects', label: 'Projects', Icon: Kanban },
   { id: 'tasks', label: 'Tasks', Icon: CheckSquare },
+  { id: 'attendance', label: 'Attendance', Icon: Clock },
+  { id: 'leave', label: 'Leave', Icon: Calendar },
+  { id: 'team', label: 'Team', Icon: Users },
+  { id: 'announcements', label: 'Announcements', Icon: Megaphone },
   { id: 'documents', label: 'Documents', Icon: FolderOpen },
+  { id: 'profile', label: 'My Profile', Icon: User },
 ];
 
 export default function PortalSidebar({ activeModule, setActiveModule, onLogout }: Props) {
-  const [user, setUser] = useState({ name: 'Employee User', email: 'employee@yagwatech.com' });
+  const [user, setUser] = useState({ name: 'Employee User', email: 'employee@yagwatech.com', avatarUrl: '' });
 
   useEffect(() => {
     const saved = localStorage.getItem('employee_user');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        const localAvatar = localStorage.getItem(`yagwa_avatar_${parsed.email}`) || '';
         setUser({
           name: parsed.fullName || 'Employee User',
-          email: parsed.email || 'employee@yagwatech.com'
+          email: parsed.email || 'employee@yagwatech.com',
+          avatarUrl: parsed.avatarUrl || localAvatar || '',
         });
       } catch (e) {
         console.error(e);
@@ -94,11 +111,19 @@ export default function PortalSidebar({ activeModule, setActiveModule, onLogout 
         {/* User info + logout */}
         <div className="px-3 py-4 border-t border-white/10">
           <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F47B20] to-[#1A56C4] flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xs font-bold">
-                {user.name.split(' ').map(n => n[0]).join('')}
-              </span>
-            </div>
+            {user.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F47B20] to-[#1A56C4] flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs font-bold">
+                  {user.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="text-white text-xs font-semibold truncate">{user.name}</div>
               <div className="text-white/40 text-[10px] truncate">{user.email}</div>

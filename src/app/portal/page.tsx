@@ -1,24 +1,133 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Lock, User, AlertCircle, Phone, FileText, Check } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, AlertCircle, Phone, FileText, Check, Bell } from 'lucide-react';
 import PortalSidebar from '@/components/portal/PortalSidebar';
 import PortalDashboard from '@/components/portal/PortalDashboard';
 import PortalProjects from '@/components/portal/PortalProjects';
 import PortalTasks from '@/components/portal/PortalTasks';
 import PortalDocuments from '@/components/portal/PortalDocuments';
+import PortalAttendance from '@/components/portal/PortalAttendance';
+import PortalLeave from '@/components/portal/PortalLeave';
+import PortalTeam from '@/components/portal/PortalTeam';
+import PortalAnnouncements from '@/components/portal/PortalAnnouncements';
+import PortalProfile from '@/components/portal/PortalProfile';
 
 type Module =
   | 'dashboard'
   | 'projects'
   | 'tasks'
-  | 'documents';
+  | 'documents'
+  | 'attendance'
+  | 'leave'
+  | 'team'
+  | 'announcements'
+  | 'profile';
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  type: 'info' | 'success' | 'warning' | 'error';
+}
+
+const getInitialNotifications = (userName: string): Notification[] => [
+  {
+    id: 'n1',
+    title: 'Welcome to YagwaTech!',
+    message: `Hello ${userName}, welcome to your secure team portal. Explore your dashboard, tasks, and directory.`,
+    time: 'Just now',
+    read: false,
+    type: 'info',
+  },
+  {
+    id: 'n2',
+    title: 'KYC Verified Successfully',
+    message: 'Your identity and KYC documents have been reviewed and approved by compliance.',
+    time: '2 hours ago',
+    read: false,
+    type: 'success',
+  },
+  {
+    id: 'n3',
+    title: 'Mandatory Security Training',
+    message: 'Please complete the mandatory cybersecurity training by July 31st.',
+    time: '1 day ago',
+    read: true,
+    type: 'warning',
+  },
+];
 
 export default function PortalPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [activeModule, setActiveModule] = useState<Module>('dashboard');
   const [isSignupMode, setIsSignupMode] = useState(false);
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let email = 'default';
+    let name = 'Team Member';
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.email) email = parsed.email;
+        if (parsed.fullName) name = parsed.fullName;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const storageKey = `yagwa_notifications_${email}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        setNotifications(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      const initial = getInitialNotifications(name.split(' ')[0]);
+      setNotifications(initial);
+      localStorage.setItem(storageKey, JSON.stringify(initial));
+    }
+  }, [isAuthenticated]);
+
+  const markAllAsRead = () => {
+    let email = 'default';
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.email) email = parsed.email;
+      } catch (e) {}
+    }
+    const updated = notifications.map((n) => ({ ...n, read: true }));
+    setNotifications(updated);
+    localStorage.setItem(`yagwa_notifications_${email}`, JSON.stringify(updated));
+  };
+
+  const toggleRead = (id: string) => {
+    let email = 'default';
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.email) email = parsed.email;
+      } catch (e) {}
+    }
+    const updated = notifications.map((n) => (n.id === id ? { ...n, read: !n.read } : n));
+    setNotifications(updated);
+    localStorage.setItem(`yagwa_notifications_${email}`, JSON.stringify(updated));
+  };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // Login form state
   const [username, setUsername] = useState('');
@@ -374,6 +483,11 @@ export default function PortalPage() {
     projects: <PortalProjects />,
     tasks: <PortalTasks />,
     documents: <PortalDocuments />,
+    attendance: <PortalAttendance />,
+    leave: <PortalLeave />,
+    team: <PortalTeam />,
+    announcements: <PortalAnnouncements />,
+    profile: <PortalProfile />,
   };
 
   return (
@@ -399,9 +513,83 @@ export default function PortalPage() {
               })}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm text-[#5A6680] hidden sm:block">System Online</span>
+          <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 rounded-xl text-[#5A6680] hover:text-[#1A1A2E] hover:bg-slate-100 transition-colors"
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setShowNotifications(false)} />
+                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 z-40 overflow-hidden">
+                    <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between bg-slate-50">
+                      <span className="font-bold text-xs text-[#1A1A2E]">Notifications</span>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={markAllAsRead}
+                          className="text-[10px] text-[#0B3D91] hover:underline font-semibold"
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+                      {notifications.length === 0 ? (
+                        <div className="px-5 py-8 text-center text-slate-400 text-xs">
+                          All caught up! 🔔
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            onClick={() => toggleRead(notif.id)}
+                            className={`px-5 py-3.5 flex items-start gap-3 hover:bg-slate-50/70 transition-colors cursor-pointer ${
+                              !notif.read ? 'bg-blue-50/10' : ''
+                            }`}
+                          >
+                            <div className="mt-1 flex-shrink-0">
+                              {notif.type === 'success' && <div className="w-2 h-2 rounded-full bg-green-500" />}
+                              {notif.type === 'warning' && <div className="w-2 h-2 rounded-full bg-amber-500" />}
+                              {notif.type === 'info' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                              {notif.type === 'error' && <div className="w-2 h-2 rounded-full bg-red-500" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <p className={`text-xs text-[#1A1A2E] leading-tight ${!notif.read ? 'font-bold' : 'font-medium'}`}>
+                                  {notif.title}
+                                </p>
+                                <span className="text-[9px] text-[#5A6680] whitespace-nowrap shrink-0">
+                                  {notif.time}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-[#5A6680] mt-1 leading-normal">
+                                {notif.message}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm text-[#5A6680] hidden sm:block">System Online</span>
+            </div>
           </div>
         </header>
 

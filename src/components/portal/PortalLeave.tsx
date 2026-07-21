@@ -45,14 +45,56 @@ export default function PortalLeave() {
   const [submitted, setSubmitted] = useState(false);
   const [history, setHistory] = useState<LeaveRequest[]>([]);
   const [allLeaves, setAllLeaves] = useState<LeaveRequest[]>([]);
+  const [currentUser, setCurrentUser] = useState({ name: 'Admin User', department: 'Management', avatar: 'AD' });
 
   useEffect(() => {
+    let name = 'Admin User';
+    let dept = 'Management';
+    let avatar = 'AD';
+
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.fullName) {
+          name = parsed.fullName;
+          avatar = parsed.fullName
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase();
+        }
+        const matchName = name.toLowerCase();
+        if (matchName.includes('amina')) {
+          dept = 'Design';
+        } else if (matchName.includes('kevin') || matchName.includes('james') || matchName.includes('grace') || matchName.includes('samuel') || matchName.includes('patrick')) {
+          dept = 'Engineering';
+        } else if (matchName.includes('faith')) {
+          dept = 'Operations';
+        } else if (matchName.includes('lucy')) {
+          dept = 'Sales';
+        } else if (matchName.includes('david')) {
+          dept = 'Marketing';
+        } else if (matchName.includes('mercy')) {
+          dept = 'HR';
+        } else if (matchName.includes('brian') || matchName.includes('caroline')) {
+          dept = 'Management';
+        } else {
+          dept = 'Engineering';
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setCurrentUser({ name, department: dept, avatar });
+
     const saved = localStorage.getItem('yagwa_leaves');
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as LeaveRequest[];
         setAllLeaves(parsed);
-        const filtered = parsed.filter((l) => l.employee === 'Admin User');
+        const filtered = parsed.filter((l) => l.employee.toLowerCase() === name.toLowerCase());
         setHistory(filtered);
       } catch (e) {
         console.error('Failed to load leaves:', e);
@@ -71,7 +113,7 @@ export default function PortalLeave() {
       ];
       localStorage.setItem('yagwa_leaves', JSON.stringify(seeds));
       setAllLeaves(seeds);
-      setHistory(seeds.filter((l) => l.employee === 'Admin User'));
+      setHistory(seeds.filter((l) => l.employee.toLowerCase() === name.toLowerCase()));
     }
   }, []);
 
@@ -97,9 +139,9 @@ export default function PortalLeave() {
 
     const newRequest: LeaveRequest = {
       id: Date.now().toString(),
-      employee: 'Admin User',
-      department: 'Management',
-      avatar: 'AD',
+      employee: currentUser.name,
+      department: currentUser.department,
+      avatar: currentUser.avatar,
       type: form.type,
       startDate: form.startDate,
       endDate: form.endDate,

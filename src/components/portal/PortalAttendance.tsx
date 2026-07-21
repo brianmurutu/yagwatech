@@ -33,6 +33,7 @@ export default function PortalAttendance() {
   const [clockInTime, setClockInTime] = useState<Date | null>(null);
   const [todayElapsed, setTodayElapsed] = useState('0h 0m');
   const [log, setLog] = useState<DayLog[]>(weekLog);
+  const [storageKey, setStorageKey] = useState('yagwa_attendance_default');
 
   useEffect(() => {
     // Only run on client
@@ -41,8 +42,21 @@ export default function PortalAttendance() {
       setTime(new Date());
     }, 1000);
 
+    let email = 'default';
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.email) email = parsed.email;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const key = `yagwa_attendance_${email}`;
+    setStorageKey(key);
+
     // Load state from localStorage
-    const saved = localStorage.getItem('yagwa_attendance');
+    const saved = localStorage.getItem(key);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -75,7 +89,7 @@ export default function PortalAttendance() {
 
   const saveState = (isClockedIn: boolean, inTime: Date | null, currentLog: DayLog[]) => {
     localStorage.setItem(
-      'yagwa_attendance',
+      storageKey,
       JSON.stringify({
         clockedIn: isClockedIn,
         clockInTime: inTime ? inTime.toISOString() : null,

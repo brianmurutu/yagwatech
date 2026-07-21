@@ -65,8 +65,30 @@ export default function PortalDashboard({ setActiveModule }: Props) {
   const [documentsCount, setDocumentsCount] = useState(5);
   const [isSyncActive, setIsSyncActive] = useState(false);
   const [tasksPercentage, setTasksPercentage] = useState(75);
+  const [userName, setUserName] = useState('Team Member');
+  const [greeting, setGreeting] = useState('Good afternoon');
 
   useEffect(() => {
+    // Determine greeting
+    const hr = new Date().getHours();
+    if (hr < 12) setGreeting('Good morning');
+    else if (hr < 17) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+
+    // Load user name
+    const userSaved = localStorage.getItem('employee_user');
+    if (userSaved) {
+      try {
+        const parsed = JSON.parse(userSaved);
+        if (parsed.fullName) {
+          const firstName = parsed.fullName.split(' ')[0];
+          setUserName(firstName);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     // 1. Projects
     const projects = localStorage.getItem('yagwa_projects');
     if (projects) {
@@ -136,7 +158,7 @@ export default function PortalDashboard({ setActiveModule }: Props) {
       {/* Welcome banner */}
       <div className="bg-gradient-to-r from-[#07255A] to-[#1A56C4] rounded-2xl p-6 text-white flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">Good afternoon, Team Member! 👋</h3>
+          <h3 className="text-xl font-bold">{greeting}, {userName}! 👋</h3>
           <p className="text-white/65 text-sm mt-1">
             Access Zoho Kanban, document repositories, and daily checklists in one workspace.
           </p>
