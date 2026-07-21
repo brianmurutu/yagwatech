@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Target, Eye, Award, Layers, Download, ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import { stats, site } from "@/lib/site";
-import { team } from "@/lib/team";
+import { getAllEmployees } from "@/lib/employeeStore";
+import { getSupabase } from "@/lib/supabase";
 import { buildMetadata } from "@/lib/seo";
 import AnimatedSection from "@/components/AnimatedSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
@@ -39,7 +40,58 @@ export const metadata = buildMetadata({
   ],
 });
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const employees = await getAllEmployees();
+
+  let files: any[] = [];
+  try {
+    const db = getSupabase();
+    const { data } = await db.storage.from("avatars").list("", { limit: 1000 });
+    files = data || [];
+  } catch (e) {
+    console.error("[About Page] Error listing avatars:", e);
+  }
+
+  const avatarSet = new Set(files.map((f: any) => f.name.toLowerCase()));
+  const baseUrl = process.env.SUPABASE_URL;
+
+  const gradients = [
+    { from: "#0B3D91", to: "#1A56C4" },
+    { from: "#F47B20", to: "#F99A50" },
+    { from: "#8B2FC9", to: "#A855E8" },
+    { from: "#059669", to: "#10B981" },
+    { from: "#DC2626", to: "#EF4444" },
+    { from: "#0891B2", to: "#06B6D4" },
+    { from: "#D97706", to: "#F59E0B" },
+    { from: "#7C3AED", to: "#8B5CF6" }
+  ];
+
+  const team = employees.map((emp, idx) => {
+    const emailLower = emp.email.toLowerCase();
+    const hasAvatar = avatarSet.has(`${emailLower}.png`);
+    
+    let avatarUrl = "";
+    if (hasAvatar) {
+      avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${emailLower}.png?t=${Date.now()}`;
+    } else if (emp.avatarUrl) {
+      avatarUrl = emp.avatarUrl;
+    }
+
+    const grad = gradients[idx % gradients.length];
+    
+    return {
+      name: emp.fullName,
+      role: emp.role || "Team Member",
+      initials: emp.fullName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase(),
+      avatarUrl,
+      colorFrom: grad.from,
+      colorTo: grad.to,
+      socials: [
+        { platform: "linkedin", url: "https://www.linkedin.com/company/hi-techparks/" }
+      ]
+    };
+  });
+
   return (
     <>
       <PageHero

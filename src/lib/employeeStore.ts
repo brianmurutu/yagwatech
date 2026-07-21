@@ -10,18 +10,25 @@ export interface Employee {
   passwordHash: string;
   createdAt: string;
   avatarUrl?: string;
+  role?: string;
+  department?: string;
+  status?: "Pending" | "Approved";
 }
 
 // DB row → Employee interface mapper
 function rowToEmployee(row: Record<string, any>): Employee {
+  const parts = (row.full_name || "").split(" | ");
   return {
     id:           row.id,
-    fullName:     row.full_name,
+    fullName:     parts[0] || "",
     email:        row.email,
     phone:        row.phone,
     passwordHash: row.password_hash,
     createdAt:    row.created_at,
     avatarUrl:    row.avatar_url,
+    role:         parts[1] || "Team Member",
+    department:   parts[2] || "Engineering",
+    status:       (parts[3] as "Pending" | "Approved") || "Pending",
   };
 }
 
@@ -118,13 +125,23 @@ export async function getEmployeeByEmail(
 // ── updateEmployeeProfile ──────────────────────────────────────────────────────
 export async function updateEmployeeProfile(
   email: string,
-  updates: { fullName?: string; phone?: string; passwordHash?: string; avatarUrl?: string }
+  updates: { fullName?: string; phone?: string; passwordHash?: string; avatarUrl?: string; role?: string; department?: string; status?: "Pending" | "Approved" }
 ): Promise<Employee | null> {
   const normEmail = email.trim().toLowerCase();
   const db = getSupabase();
 
+  let serializedFullName: string | undefined = undefined;
+  if (updates.fullName !== undefined || updates.role !== undefined || updates.department !== undefined || updates.status !== undefined) {
+    const current = await getEmployeeByEmail(email);
+    const name = updates.fullName !== undefined ? updates.fullName : (current?.fullName || "");
+    const role = updates.role !== undefined ? updates.role : (current?.role || "Team Member");
+    const dept = updates.department !== undefined ? updates.department : (current?.department || "Engineering");
+    const status = updates.status !== undefined ? updates.status : (current?.status || "Pending");
+    serializedFullName = `${name.trim()} | ${role.trim()} | ${dept.trim()} | ${status.trim()}`;
+  }
+
   const dbUpdates: Record<string, string> = {};
-  if (updates.fullName) dbUpdates.full_name = updates.fullName.trim();
+  if (serializedFullName !== undefined) dbUpdates.full_name = serializedFullName;
   if (updates.phone) dbUpdates.phone = updates.phone.trim();
   if (updates.passwordHash) dbUpdates.password_hash = updates.passwordHash;
   if (updates.avatarUrl) dbUpdates.avatar_url = updates.avatarUrl.trim();
@@ -156,4 +173,20 @@ export async function updateEmployeeProfile(
 
   if (!data) return null;
   return rowToEmployee(data);
+}
+
+// ── getAllEmployees ──────────────────────────────────────────────────────────
+export async function getAllEmployees(): Promise<Employee[]> {
+  const db = getSupabase();
+  const { data, error } = await db
+    .from("employees")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error || !data) {
+    console.error("[Employee Store] getAllEmployees error:", error);
+    return [];
+  }
+
+  return data.map(rowToEmployee);
 }

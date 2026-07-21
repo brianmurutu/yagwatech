@@ -33,10 +33,12 @@ interface Project {
 }
 
 const INITIAL_PROJECTS: Project[] = [
-  { id: "1", title: "Client Onboarding Portal", client: "Safaricom PLC", status: "Backlog", assignee: "Faith Akinyi", priority: "Medium", deadline: "2026-08-15", budget: "KSh 1,200,000", description: "Internal onboarding portal for new Safaricom business client accounts." },
-  { id: "2", title: "Mobile App Redesign", client: "KCB Bank Group", status: "Backlog", assignee: "David Mwangi", priority: "Low", deadline: "2026-09-01", budget: "KSh 850,000", description: "Complete UI/UX redesign of the corporate mobile banking application." },
-  { id: "3", title: "ERP Integration", client: "Equity Bank", status: "In Progress", assignee: "James Otieno", priority: "High", deadline: "2026-07-30", budget: "KSh 3,500,000", description: "Integrating enterprise resource planning systems with modern backend APIs." },
-  { id: "4", title: "Cybersecurity Audit", client: "Co-operative Bank", status: "In Progress", assignee: "Samuel Karanja", priority: "High", deadline: "2026-07-20", budget: "KSh 1,800,000", description: "Full system penetration testing, security analysis, and compliance audit." },
+  { id: "1", title: "AI Trainer Academy Portal", client: "AI Trainer Academy", status: "Done", assignee: "Phineas Kirimi", priority: "High", deadline: "2026-06-15", budget: "KSh 1,500,000", description: "Global training and certification learning management platform for AI professionals." },
+  { id: "2", title: "Rusinga Island Digital Literacy", client: "Rusinga Digital Empowerment Initiative", status: "Done", assignee: "Timothy Mugendi", priority: "Medium", deadline: "2025-12-20", budget: "KSh 600,000", description: "Community-driven digital training platform and literacy curriculum delivery." },
+  { id: "3", title: "Investor Matchmaker Platform", client: "Business Matching", status: "Review", assignee: "Brian Murutu", priority: "High", deadline: "2026-08-10", budget: "KSh 2,200,000", description: "Secure investment matchmaking platform connecting investors with growth-stage businesses." },
+  { id: "4", title: "Technology Asset Manager", client: "Assets For Technology", status: "In Progress", assignee: "Phineas Kirimi", priority: "Medium", deadline: "2026-08-30", budget: "KSh 1,100,000", description: "Centralized tracking and maintenance scheduling platform for corporate technology assets." },
+  { id: "5", title: "Secure M&A Virtual Data Room", client: "Confidential", status: "In Progress", assignee: "Timothy Mugendi", priority: "High", deadline: "2026-09-15", budget: "KSh 3,200,000", description: "Granular permission security vault for mergers and acquisitions document audits." },
+  { id: "6", title: "SaaS Startup Funding Hub", client: "Confidential", status: "Backlog", assignee: "Isaac Odari", priority: "Medium", deadline: "2026-10-01", budget: "KSh 1,750,000", description: "Application scoring and financial reporting system for startup funding distribution." },
 ];
 
 const columns: Column[] = ["Backlog", "In Progress", "Review", "Done"];

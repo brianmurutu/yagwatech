@@ -13,10 +13,12 @@ const PRESET_AVATARS = [
 ];
 
 export default function PortalProfile() {
-  const [user, setUser] = useState({ id: '', fullName: '', email: '', phone: '', avatarUrl: '' });
+  const [user, setUser] = useState({ id: '', fullName: '', email: '', phone: '', avatarUrl: '', role: '', department: '' });
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [role, setRole] = useState('');
+  const [department, setDepartment] = useState('');
   const [showAvatarPresets, setShowAvatarPresets] = useState(false);
 
   // Password state
@@ -42,16 +44,56 @@ export default function PortalProfile() {
           email: parsed.email || '',
           phone: parsed.phone || '',
           avatarUrl: parsed.avatarUrl || localAvatar || '',
+          role: parsed.role || 'Team Member',
+          department: parsed.department || 'Engineering',
         };
         setUser(initialUser);
         setFullName(initialUser.fullName);
         setPhone(initialUser.phone);
         setAvatarUrl(initialUser.avatarUrl);
+        setRole(initialUser.role);
+        setDepartment(initialUser.department);
       } catch (e) {
         console.error('Failed to load user in profile component:', e);
       }
     }
   }, []);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File is too large. Maximum size allowed is 5MB.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("email", user.email);
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("/api/portal/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAvatarUrl(data.avatarUrl);
+        setSuccess("Profile photo uploaded successfully! Save Settings to finalize.");
+      } else {
+        setError(data.error || "Failed to upload profile photo.");
+      }
+    } catch (err) {
+      setError("Failed to connect for image upload.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +123,8 @@ export default function PortalProfile() {
           currentPassword,
           newPassword: newPassword || undefined,
           avatarUrl,
+          role,
+          department,
         }),
       });
 
@@ -162,20 +206,35 @@ export default function PortalProfile() {
             )}
             <button
               type="button"
-              onClick={() => setShowAvatarPresets(!showAvatarPresets)}
-              className="absolute -bottom-2 -right-2 bg-[#F47B20] text-white p-2.5 rounded-2xl shadow-lg hover:bg-[#d46512] transition-colors"
-              title="Change Photo"
+              onClick={() => document.getElementById('avatar-file-input')?.click()}
+              className="absolute -bottom-2 -right-2 bg-[#F47B20] text-white p-2.5 rounded-2xl shadow-lg hover:bg-[#d46512] transition-colors animate-pulse"
+              title="Upload Photo from Local Storage"
             >
               <Camera className="w-4 h-4" />
             </button>
+            <input
+              id="avatar-file-input"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
           </div>
 
           <h4 className="font-semibold text-slate-800 text-sm mt-2">{fullName || 'User'}</h4>
           <p className="text-xs text-slate-400 mt-0.5">{user.email}</p>
 
+          <button
+            type="button"
+            onClick={() => setShowAvatarPresets(!showAvatarPresets)}
+            className="text-[11px] font-medium text-[#0B3D91] hover:underline mt-3"
+          >
+            {showAvatarPresets ? "Hide Presets" : "Or Choose Preset Avatar"}
+          </button>
+
           {showAvatarPresets && (
-            <div className="mt-5 p-3 bg-slate-50 rounded-2xl border border-slate-200 w-full animate-fade-in">
-              <p className="text-[11px] font-semibold text-slate-500 mb-2.5">Select a profile picture</p>
+            <div className="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-200 w-full animate-fade-in">
+              <p className="text-[11px] font-semibold text-slate-500 mb-2">Select a preset avatar</p>
               <div className="grid grid-cols-3 gap-2">
                 {PRESET_AVATARS.map((url, idx) => (
                   <button
@@ -186,21 +245,12 @@ export default function PortalProfile() {
                       setShowAvatarPresets(false);
                     }}
                     className={`relative rounded-xl overflow-hidden aspect-square border-2 ${
-                      avatarUrl === url ? 'border-[#0B3D91] scale-95' : 'border-transparent hover:border-slate-350'
+                      avatarUrl === url ? 'border-[#0B3D91] scale-95' : 'border-transparent hover:border-slate-300'
                     }`}
                   >
                     <img src={url} alt={`Preset ${idx}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
-              </div>
-              <div className="mt-3 pt-3 border-t border-slate-200">
-                <input
-                  type="text"
-                  placeholder="Or paste an image URL..."
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-[#0B3D91]"
-                />
               </div>
             </div>
           )}
@@ -239,6 +289,34 @@ export default function PortalProfile() {
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/20 focus:border-[#0B3D91] transition-all text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700">Job Title / Role</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/20 focus:border-[#0B3D91] transition-all text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700">Department</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
                     className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0B3D91]/20 focus:border-[#0B3D91] transition-all text-slate-800"
                   />
                 </div>

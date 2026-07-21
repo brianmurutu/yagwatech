@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { email, fullName, phone, currentPassword, newPassword, avatarUrl } = body;
+    const { email, fullName, phone, currentPassword, newPassword, avatarUrl, role, department } = body;
 
     if (!email || !currentPassword) {
       return NextResponse.json(
@@ -32,6 +32,8 @@ export async function POST(request: Request) {
     if (fullName) updates.fullName = fullName;
     if (phone) updates.phone = phone;
     if (avatarUrl !== undefined) updates.avatarUrl = avatarUrl;
+    if (role !== undefined) updates.role = role;
+    if (department !== undefined) updates.department = department;
 
     if (newPassword) {
       updates.passwordHash = await hashPassword(newPassword);
@@ -50,6 +52,8 @@ export async function POST(request: Request) {
         email:    updatedEmployee.email,
         phone:    updatedEmployee.phone,
         avatarUrl: updatedEmployee.avatarUrl,
+        role:     updatedEmployee.role,
+        department: updatedEmployee.department,
       },
     });
   } catch (error) {

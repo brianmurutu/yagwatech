@@ -23,15 +23,17 @@ interface Project {
 }
 
 const initialProjects: Project[] = [
-  { id: '1', title: 'Client Onboarding Portal', client: 'Safaricom PLC', status: 'Backlog', assignee: 'Faith Njeri', priority: 'Medium', dueDate: '2026-08-15', column: 'Backlog', tags: ['Web', 'Portal'] },
-  { id: '2', title: 'Mobile App Redesign', client: 'KCB Bank Group', status: 'Backlog', assignee: 'Dennis Mutua', priority: 'Low', dueDate: '2026-09-01', column: 'Backlog', tags: ['Mobile', 'UI/UX'] },
-  { id: '3', title: 'ERP Integration for KCB', client: 'Equity Bank', status: 'In Progress', assignee: 'David Kamau', priority: 'High', dueDate: '2026-07-30', column: 'In Progress', tags: ['Enterprise', 'API'] },
-  { id: '4', title: 'Cybersecurity Audit', client: 'Co-operative Bank', status: 'In Progress', assignee: 'Peter Njoroge', priority: 'High', dueDate: '2026-07-20', column: 'In Progress', tags: ['Security'] },
+  { id: '1', title: 'AI Trainer Academy Portal', client: 'AI Trainer Academy', status: 'Done', assignee: 'Phineas Kirimi', priority: 'High', dueDate: '2026-06-15', column: 'Done', tags: ['Web', 'AI', 'SaaS'] },
+  { id: '2', title: 'Rusinga Island Digital Literacy', client: 'Rusinga Digital Empowerment Initiative', status: 'Done', assignee: 'Timothy Mugendi', priority: 'Medium', dueDate: '2025-12-20', column: 'Done', tags: ['Community', 'Education'] },
+  { id: '3', title: 'Investor Matchmaker Platform', client: 'Business Matching', status: 'Review', assignee: 'Brian Murutu', priority: 'High', dueDate: '2026-08-10', column: 'Review', tags: ['Finance', 'Branding'] },
+  { id: '4', title: 'Technology Asset Manager', client: 'Assets For Technology', status: 'In Progress', assignee: 'Phineas Kirimi', priority: 'Medium', dueDate: '2026-08-30', column: 'In Progress', tags: ['Systems', 'Enterprise'] },
+  { id: '5', title: 'Secure M&A Virtual Data Room', client: 'Confidential', status: 'In Progress', assignee: 'Timothy Mugendi', priority: 'High', dueDate: '2026-09-15', column: 'In Progress', tags: ['Security', 'Compliance'] },
+  { id: '6', title: 'SaaS Startup Funding Hub', client: 'Confidential', status: 'Backlog', assignee: 'Isaac Odari', priority: 'Medium', dueDate: '2026-10-01', column: 'Backlog', tags: ['Web', 'Finance'] },
 ];
 
 const columns: Column[] = ['Backlog', 'In Progress', 'Review', 'Done'];
 
-const TEAM_MEMBERS = ['James Otieno', 'Amina Wanjiku', 'David Mwangi', 'Faith Akinyi', 'Kevin Kimani', 'Samuel Karanja', 'Grace Njeri', 'Brian Murutu'];
+const FALLBACK_TEAM_MEMBERS = ['Brian Murutu', 'Phineas Kirimi', 'Timothy Mugendi', 'Isaac Odari'];
 
 const priorityStyle: Record<Priority, string> = {
   High: 'bg-red-100 text-red-700 border border-red-200',
@@ -50,10 +52,11 @@ export default function PortalProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [isSyncActive, setIsSyncActive] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<string[]>(FALLBACK_TEAM_MEMBERS);
   const [form, setForm] = useState({
     title: '',
     client: '',
-    assignee: 'Faith Njeri',
+    assignee: 'Brian Murutu',
     priority: 'Medium' as Priority,
     dueDate: '',
     column: 'Backlog' as Column,
@@ -61,6 +64,21 @@ export default function PortalProjects() {
 
   const loadProjects = async () => {
     try {
+      // Load team members dynamically
+      try {
+        const teamRes = await fetch('/api/portal/team');
+        const teamData = await teamRes.json();
+        if (teamData.success && teamData.team) {
+          const names = teamData.team.map((t: any) => t.name);
+          if (names.length > 0) {
+            setTeamMembers(names);
+            setForm((prev) => ({ ...prev, assignee: names[0] }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load team members:', err);
+      }
+
       const configRes = await fetch('/api/crm/status');
       const configData = await configRes.json();
       const isLive = configData.projects?.status === 'connected';
@@ -316,7 +334,7 @@ export default function PortalProjects() {
                   onChange={(e) => setForm({ ...form, assignee: e.target.value })}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-white"
                 >
-                  {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+                  {teamMembers.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">

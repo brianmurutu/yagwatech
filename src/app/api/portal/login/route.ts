@@ -35,6 +35,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check Approval status first — must be Approved by admin
+    if (employee.status !== "Approved") {
+      return NextResponse.json(
+        { error: "Your account is pending administrator approval. Please contact support." },
+        { status: 403 }
+      );
+    }
+
     // Check KYC status — must be Verified to access portal
     const kycStatus = await getKYCStatus(employee.email);
     if (kycStatus !== "Verified") {
