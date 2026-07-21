@@ -70,14 +70,32 @@ function KYCVerificationContent() {
     checkKYCStatus(email.trim());
   };
 
-  const handleSuccess = (inquiryId: string) => {
+  const handleSuccess = async (inquiryId: string) => {
     setCurrentStatus("Verified");
     setIsVerifying(false);
+    try {
+      await fetch("/api/kyc/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: activeEmail, status: "Verified" }),
+      });
+    } catch (e) {
+      console.error("Failed to update KYC status on success:", e);
+    }
   };
 
-  const handleFailed = (inquiryId: string) => {
+  const handleFailed = async (inquiryId: string) => {
     setCurrentStatus("Failed");
     setIsVerifying(false);
+    try {
+      await fetch("/api/kyc/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: activeEmail, status: "Failed" }),
+      });
+    } catch (e) {
+      console.error("Failed to update KYC status on failure:", e);
+    }
   };
 
   const handleReset = () => {
