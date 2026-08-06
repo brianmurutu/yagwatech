@@ -11,6 +11,8 @@
 
 const ALLOWED_ORIGINS = new Set([
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "",
+  "https://yagwatech-leads-phi.vercel.app",
+  "https://leads.yagwatech.com",
   // Allow localhost in development
   "http://localhost:3000",
   "http://localhost:3001",
